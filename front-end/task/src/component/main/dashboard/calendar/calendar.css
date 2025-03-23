@@ -1,0 +1,53 @@
+#calendar{
+    background-color: #fff;
+    border-radius: 1rem;
+    margin: 0.5rem;
+    height: 310px;
+}
+.calendar-day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    margin: 0 2px;
+}
+.outsideCurrentMonth{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 36px;
+    width: 36px;
+    border-radius: 50%;
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: 600;
+    margin: 0 2px;
+    visibility: hidden;
+}
+  /* Màu tùy theo trạng thái */
+.calendar-day.completed {
+    background-color: black;
+    color: white;
+}
+  
+.calendar-day.urgent {
+    background-color: orange;
+    color: white;
+}
+  
+.calendar-day.in-progress {
+    background-color: #00c897;
+    color: white;
+}
+  
+  /* Thêm hover cho đẹp */
+.calendar-day:hover {
+    transform: scale(1.1);
+    transition: 0.2s ease-in-out;
+}
+#calendar .css-1rl1vrc-MuiDayCalendar-header span{
+   height: unset;
+}

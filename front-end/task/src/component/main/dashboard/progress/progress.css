@@ -1,0 +1,34 @@
+#progress{
+    grid-column: 1/2;
+    background-color: #fff;
+    border-radius: 1rem;
+    margin: .5rem;
+    padding: 1rem .5rem;
+    display: flex;
+    gap: 1rem;
+    flex-direction: column;
+    align-items: stretch;
+}
+.progressItem{
+    border-radius: .5rem;
+    border: 1px solid ;
+    width: 90%;
+    text-align: start;
+    padding: .5rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+}
+.progressBar{
+    height: 1rem;
+    width: 80%;
+    background-color: #ebebf3;
+    border-radius: 1rem;
+}
+.progressBar div{
+    width: 65%;
+    background-color: #00c897;
+    height: 1rem;
+    border-radius: 1rem;
+}

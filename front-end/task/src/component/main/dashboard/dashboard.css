@@ -1,0 +1,18 @@
+.dashboard{
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    height: 100%;
+    width: 95%;
+    border-radius: 1rem;
+    align-self: flex-end;
+    background-color: #ebebf3;
+}
+.dashboard #row1{
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    height: 300px;
+}
+.dashboard #row2{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
