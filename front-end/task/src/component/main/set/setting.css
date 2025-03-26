@@ -1,0 +1,30 @@
+@import url('../../../theme.css');
+#setting{
+    height: 98%;
+    width: 95%;
+    border-left:3px solid rgb(29, 41, 57);
+    align-self: flex-end;
+    text-align: start;
+}
+#setting .language{
+    padding: 1rem;
+    margin: 2rem 4rem;
+}
+#setting .language select{
+    padding: 1rem 4rem 1rem 1rem;
+    border-radius: .5rem;
+    margin-top: 1rem;
+}
+#setting .darkMode{
+    padding: 1rem;
+    margin: 2rem 4rem;
+}
+#setting .timezone{
+    padding: 1rem;
+    margin: 2rem 4rem;
+}
+#setting .timezone select{
+    padding: 1rem 4rem 1rem 1rem;
+    border-radius: .5rem;
+    margin-top: 1rem;
+}

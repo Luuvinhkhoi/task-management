@@ -1,0 +1,28 @@
+@import url('../../../../theme.css');
+.list{
+    border-top: 1px solid rgb(29, 41, 57);
+    padding: 1rem;
+}
+.list h3{
+    text-align: start;
+    margin-bottom: 3rem;
+}
+.list >div{
+    border-radius: .5rem;
+    border: 1px solid rgb(29, 41, 57);
+    padding: 1rem;
+    background-color: var(--task-bg);
+}
+.listHeader{
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr 1fr;
+    font-size: 14px;
+    font-weight: 500;
+    padding-bottom: .5rem;
+    border-bottom: 3px solid rgb(40, 47, 56);   
+    margin-bottom: 1rem;
+}
+.listContentItem{
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr 1fr;
+}

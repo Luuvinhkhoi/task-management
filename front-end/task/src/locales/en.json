@@ -1,0 +1,21 @@
+{
+    "kanban": {
+      "todo": "TO DO",
+      "inProgress": "IN PROGRESS",
+      "complete": "COMPLETE",
+      "priority": {
+        "high": "High"
+      }
+    },
+    "dashboard":{
+        "todayTask":"Today Task",
+        "calendar":"Calendar",
+        "progress":"Progress"
+    },
+    "sideBar":{
+        "dashboard":"Dashboard",
+        "project":"Project",
+        "setting":"Setting"
+    }
+
+}

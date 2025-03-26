@@ -1,6 +1,7 @@
 /* Custom major label (e.g. March) */
+@import url('../../../../theme.css');
 #timeline{
-  background-color: #fff;
+  background-color: var(--task-bg);
   border-radius: 1rem;
   margin: 0.5rem;
   padding: 1rem .5rem;
@@ -8,11 +9,20 @@
   overflow: hidden;
   font-weight: 600;
 }
+.react-calendar-timeline .rct-dateHeader{
+  background-color: var(--task-item-bg) !important;
+}
+.rct-scroll{
+  background-color: var(--task-item-bg) !important;
+}
 .react-calendar-timeline .rct-header-root{
-  background-color: #f0f0f0;
+  background-color: var(--task-footer);
 }
 .rct-dateHeader {
-  background-color: #f0f0f0 !important; /* màu mới */
+  background-color: var(--task-footer) !important; /* màu mới */
+}
+.rct-sidebar{
+  background-color: var(--task-footer);
 }
 .rct-item {
   border-radius: 20px !important;

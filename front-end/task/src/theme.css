@@ -1,0 +1,32 @@
+:root {
+    /* Light Mode */
+    --text-color: #000000;
+    --dashboard-bg: #ebebf3;
+    --task-bg: #ffffff;
+    --task-item-bg:  #ebebf3;
+    --task-footer:#ffffff;
+    --task-footer-bg:#000;
+    --card-bg: #f8f9fa;
+    --sidebar-bg: #f4f4f4;
+    --button-bg: #007bff;
+    --button-text: #ffffff;
+    --progress-bar: #4caf50;
+}
+[data-theme="dark"] {
+    /* Dark Mode */
+    --background-color:  #101828;
+    --text-color: #ffffff !important;
+    --primary-color: #bb86fc;  
+    --text-color: #ffffff ;
+    --dashboard-bg:  #101828;
+    --task-bg: #1c2536;
+    --task-item-bg: #101828;
+    --task-footer:#000000;
+    --task-footer-bg:#fff;
+    --card-bg: #181818;
+    --sidebar-bg: #161616;
+    --button-bg: #90caf9;
+    --button-text: #000000;
+    --progress-bar: #ff9800;
+    --kanban-bg:#1f2a37;
+}

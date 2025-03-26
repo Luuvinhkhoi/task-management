@@ -1,0 +1,54 @@
+@import url('../../../../theme.css');
+.kanban{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 1rem;
+    border-top:1px solid rgb(29, 41, 57)
+}
+.kanbanHeader{
+    border-radius: .5rem;
+    border: 1px solid rgb(29, 41, 57);
+    padding: .5rem 1rem;
+    text-align: start;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    background-color: var(--kanban-bg);
+}
+.kanbanItem{
+    border-radius: .5rem;
+    border: 1px solid rgb(29, 41, 57) ;
+    text-align: start;
+    padding: 1rem;
+    background-color: var(--kanban-bg);
+
+}
+.kanbanItem .priority{
+    padding: .5rem 1rem;
+    display: inline-block;
+    border-radius: 1rem;
+    font-weight: 600;
+    color: #df573f ;
+    margin-bottom: 1rem;
+}
+.kanbanItem p{
+    font-weight: 500;
+    font-size: 20px;
+}
+.kanbanItem span{
+    font-size: 14px;
+}
+.kanbanItem .member{
+    border-top: 1px solid;
+    padding-top: .5rem;
+}
+.kanbanItem .member div{
+    border-radius: 10rem;
+    overflow: hidden;
+    width: 32px;
+    height: 32px;
+}
+.kanbanItem .member div img{
+    height: 100%;
+    width: 100%;
+}

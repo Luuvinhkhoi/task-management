@@ -1,16 +1,28 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {Settings, LayoutDashboard, FolderGit2, ChevronDown} from 'lucide-react'
-import {motion} from 'framer-motion'
+import { AnimatePresence, motion} from 'framer-motion'
 import './sidebar.css'
 import app from '../../../assets/app.png'
+import { useTranslation } from 'react-i18next';
 export const SideBar = ()=>{
    let location=useLocation()
+   const {t}=useTranslation()
    const [isOpen, setIsOpen]=useState('unActive')
    const navigate=useNavigate()
+   console.log(location.pathname)
    const isActive=(path)=>{
      return location.pathname===path
    }
+   const isSubActive = (subPath) => {
+      return location.pathname === subPath
+    }
+   useEffect(() => {
+      if (location.pathname.startsWith('/project')) {
+        setIsOpen('active')
+      }
+    }, [location.pathname])
+  
    return (
         <div className="sideBar">
            <div className='brand'>
@@ -21,36 +33,40 @@ export const SideBar = ()=>{
                <div onClick={()=>navigate('/')} className={`menuItem ${isActive('/')?'active':''}`}>
                   <div>
                      <LayoutDashboard></LayoutDashboard>
-                     Dashboard
+                     {t('sideBar.dashboard')}
                   </div>
                </div>
                <div  className={`menuItem ${isActive('/project')?'active':''}`} onClick={()=>isOpen==='unActive'?setIsOpen('active'):setIsOpen('unActive')}>
                   <div style={{justifyContent:'space-between'}}>
                      <div style={{padding:'0', display:'flex', alignItems:'center', gap:'1rem'}}>
                         <FolderGit2></FolderGit2>
-                        Project
+                        {t('sideBar.project')}
                      </div>
                      <ChevronDown style={{justifySelf:'end'}}></ChevronDown>
                   </div>
-                  <motion.div 
-                    initial={{ height: 0, opacity: 0 }} 
-                    animate={{ height: isOpen==='active' ? "auto" : 0, opacity: isOpen ==='active'? 1 : 0 }} 
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.3, ease: "easeOut" }}
-                    className='projectList'
-                  >
-                     <ul>
-                        <li>Project A</li>
-                        <li>Project B</li>
-                        <li>Project C</li>
-                        <li>Project D</li>
-                     </ul>
-                  </motion.div>
+                  <AnimatePresence>
+                     {isOpen === 'active' && (
+                        <motion.div 
+                           initial={{ height: 0, opacity: 0 }} 
+                           animate={{ height: "auto", opacity: 1 }} 
+                           exit={{ opacity: 0, height: 0 }}
+                           transition={{ duration: 0.3, ease: "easeOut" }}
+                           className='projectList'
+                        >
+                           <ul>
+                           <li onClick={() => navigate('/project/1')} className={isSubActive('/project/1') ? 'sub-active' : ''}>Project A</li>
+                           <li onClick={() => navigate('/project/2')} className={isSubActive('/project/2') ? 'sub-active' : ''}>Project B</li>
+                           <li onClick={() => navigate('/project/3')} className={isSubActive('/project/3') ? 'sub-active' : ''}>Project C</li>
+                           <li onClick={() => navigate('/project/4')} className={isSubActive('/project/4') ? 'sub-active' : ''}>Project D</li>
+                           </ul>
+                        </motion.div>
+                     )}
+                  </AnimatePresence>
                </div>
                <div onClick={()=>navigate('/setting')} className={`menuItem ${isActive('/setting')?'active':''}`}>
                   <div>
                      <Settings></Settings>
-                     Setting
+                     {t('sideBar.setting')}
                   </div>
                </div>
            </div>

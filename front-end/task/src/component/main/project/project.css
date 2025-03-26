@@ -1,0 +1,21 @@
+.project{
+    border-left:3px solid rgb(29, 41, 57);
+    height: 100%;
+}
+.project .projectHeader{
+    display: flex;
+    width: 300px;
+    margin: 3rem 0 0 3rem;
+    justify-content: space-around;
+}
+.project .projectHeader-unActive{
+    color: #747b88;
+    font-weight: 500;
+}
+.project .projectHeader-active{
+    font-weight: 500;
+}
+.project .projectHeader div{
+    padding: 1rem;
+    border-radius: .5rem;
+}

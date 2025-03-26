@@ -1,6 +1,7 @@
+@import url('../../../../theme.css');
 #progress{
     grid-column: 1/2;
-    background-color: #fff;
+    background-color: var(--task-bg);
     border-radius: 1rem;
     margin: .5rem;
     padding: 1rem .5rem;

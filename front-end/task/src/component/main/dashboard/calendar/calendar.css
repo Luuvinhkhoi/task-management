@@ -1,8 +1,12 @@
+@import url('../../../../theme.css');
 #calendar{
-    background-color: #fff;
+    background-color: var(--task-bg);
     border-radius: 1rem;
     margin: 0.5rem;
     height: 310px;
+}
+.css-17f9e7e-MuiTypography-root-MuiDayCalendar-weekDayLabel{
+    color: var(--text-color) !important;
 }
 .calendar-day {
     display: flex;

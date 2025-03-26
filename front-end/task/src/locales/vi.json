@@ -1,0 +1,22 @@
+{
+    "kanban": {
+      "todo": "CẦN LÀM",
+      "inProgress": "ĐANG LÀM",
+      "complete": "HOÀN THÀNH",
+      "priority": {
+        "high": "Cao"
+      },
+      "taskTitle": "Kiểm thử",
+      "taskDescription": "Mô tả công việc kiểm thử ở đây."
+    },
+    "dashboard":{
+        "todayTask":"Nhiệm vụ hôm nay",
+        "calendar":"Lịch",
+        "progress":"Tiến độ"
+    },
+    "sideBar":{
+        "dashboard":"Tổng quan",
+        "project":"Dự án",
+        "setting":"Cài đặt"
+    }
+  }

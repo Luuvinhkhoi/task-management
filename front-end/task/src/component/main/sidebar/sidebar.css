@@ -34,6 +34,15 @@
 .sideBar .projectList{
     padding-left: 1rem;
 }
+.sideBar .projectList ul{
+    width: 100%;
+    text-align: start;
+}
 .sideBar .projectList li{
-    padding: .5rem 0;
+    padding: .5rem;
+}
+.sideBar .sub-active{
+    background-color: #526cff;  
+    color: #ffffff;
+    border-radius: 1rem;
 }

@@ -1,6 +1,6 @@
-
+@import url('../../../../theme.css');
 #task{
-    background-color: #fff;
+    background-color: var(--task-bg);
     margin: 0.5rem;
     padding: 1rem .5rem;
     border-radius: 1rem;
@@ -30,7 +30,7 @@
     text-align: start;
     padding: .5rem;
     border-radius: 1rem;
-    background-color:  #ebebf3;
+    background-color: var(--task-item-bg);
 }
 .task-item p{
     font-size: 12px;
@@ -48,8 +48,8 @@
     border-radius: 1rem;
 }
 .task-footer{
-    background-color: #000;
-    color: white;
+    background-color: var(--task-footer-bg);
+    color: var(--task-footer);
     width: 97%;
     margin: 1rem auto 0 auto;
     padding: 8px;

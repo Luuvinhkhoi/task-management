@@ -12,6 +12,24 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+:root {
+  --background-color: #ffffff;
+  --text-color: #000000;
+  --primary-color: #007bff;
+  --task-color:rgb(20,21,34);
+}
+
+[data-theme="dark"] {
+  --background-color: #121212 ;
+  --text-color: #ffffff !important;
+  --primary-color: #bb86fc;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: all 0.3s ease-in-out;
+}
 
 a {
   font-weight: 500;
