@@ -25,22 +25,37 @@
 }
 .header .profile{
     color: var(--text-color);
+    display: flex;
+    gap: 1.5rem;
+    position: relative;
 }
 .header .profile span{
     color: var(--button-bg);
     font-size: 20px;
     font-weight: 500;
 }
-.header div{
+.header .profileDropdrown{
+    position: absolute;
+    background-color: var(--task-bg);
+    padding: 1rem .5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: start;
+    border-radius: .5rem;
+    border: 2px solid var(--border);
+}
+.header #authOption{
     display: flex;
     gap: 1rem;
     color: #fff;
 }
-.header div >div{
+.header #authOption >div{
     padding: 1rem;
     border-radius: .5rem;
     background-color: #526cff;
 }
+
 .header div a{
     color: #fff;
 }

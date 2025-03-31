@@ -54,7 +54,6 @@ let task={
         });
     },
     getUserProfile(){
-        console.log("Fetching user profile...")
         return fetch(`${baseUrl}/user`,{
             method:'GET',
             credentials: 'include'
@@ -62,7 +61,24 @@ let task={
             if (response.ok) {
               return response.json();
             }
-            console.log(response);
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    logOut(){
+        return fetch(`${baseUrl}/auth/logout`,{
+            method:'POST',
+            credentials: 'include'
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
             throw new Error(`Request failed with ${response.status}`);
         }).then(jsonResponse => {
             if (!jsonResponse) {
