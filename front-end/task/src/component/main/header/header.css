@@ -1,0 +1,46 @@
+@import url('../../../theme.css');
+.header{
+    margin: 1rem auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding: 0rem 5rem;
+}
+.header .searchBar {
+    width: 400px;
+    background-color: var(--search-bg);
+    padding: 1rem;
+    border-radius: 5rem;
+    border: 1px solid var(--border)
+}
+.header input{
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: 500;
+    width: 90%;
+}
+.header .profile{
+    color: var(--text-color);
+}
+.header .profile span{
+    color: var(--button-bg);
+    font-size: 20px;
+    font-weight: 500;
+}
+.header div{
+    display: flex;
+    gap: 1rem;
+    color: #fff;
+}
+.header div >div{
+    padding: 1rem;
+    border-radius: .5rem;
+    background-color: #526cff;
+}
+.header div a{
+    color: #fff;
+}

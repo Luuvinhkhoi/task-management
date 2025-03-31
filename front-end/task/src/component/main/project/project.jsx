@@ -17,8 +17,14 @@ export const Project = ()=>{
     return (
         <div className="project">
            <div className='projectHeader'>
-             <div className={`projectHeader-${listActive()?'unActive':'active'}`} onClick={()=>navigate(`/project/${param.id}`)}>Kanban board</div>
-             <div className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>List</div>
+             <div>
+                <div className={`projectHeader-${listActive()?'unActive':'active'}`} onClick={()=>navigate(`/project/${param.id}`)}>Kanban board</div>
+                <div className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>List</div>
+             </div>
+             <div>
+                <div className='create'>New project</div>
+                <div className='create'>New task</div>
+             </div>
            </div>
            <Outlet></Outlet>
         </div>

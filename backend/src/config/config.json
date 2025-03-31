@@ -4,11 +4,7 @@
     "password": "elkhoikun282002",
     "database": "task",
     "host": "127.0.0.1",
-    "dialect": "postgres",
-    "define": {
-      "freezeTableName": true
-    },
-    "logging":false
+    "dialect": "postgres"
   },
   "test": {
     "username": "root",

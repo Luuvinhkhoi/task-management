@@ -34,6 +34,7 @@
   border-radius: 1rem;
   overflow: hidden;
   background-color: #fff;
+  height: 200px;
 }
 .react-calendar-timeline .rct-dateHeader{
   border: unset !important;

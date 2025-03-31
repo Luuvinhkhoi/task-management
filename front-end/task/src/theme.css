@@ -11,6 +11,9 @@
     --button-bg: #007bff;
     --button-text: #ffffff;
     --progress-bar: #4caf50;
+    --status-bg:#4caf50;
+    --search-bg:#fff;
+    --border:rgb(228, 231, 236);
 }
 [data-theme="dark"] {
     /* Dark Mode */
@@ -25,8 +28,10 @@
     --task-footer-bg:#fff;
     --card-bg: #181818;
     --sidebar-bg: #161616;
-    --button-bg: #90caf9;
     --button-text: #000000;
     --progress-bar: #ff9800;
     --kanban-bg:#1f2a37;
+    --status-bg:#4caf50;
+    --search-bg:#1c2536;
+    --border:rgb(29, 41, 57);
 }

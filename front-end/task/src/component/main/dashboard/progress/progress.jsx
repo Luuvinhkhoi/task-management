@@ -15,12 +15,7 @@ export const Progress = ()=>{
           <div></div>
         </div>
       </div>
-      <div className='progressItem'>
-        <h4>project C</h4>
-        <div className='progressBar'>
-          <div></div>
-        </div>
-      </div>
+      
     </div>
   )
 }

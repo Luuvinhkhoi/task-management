@@ -1,12 +1,16 @@
+@import url('../../../theme.css');
 .project{
     border-left:3px solid rgb(29, 41, 57);
-    height: 100%;
 }
 .project .projectHeader{
     display: flex;
-    width: 300px;
-    margin: 3rem 0 0 3rem;
-    justify-content: space-around;
+    width: 90%;
+    margin: 3rem auto 0 auto;
+    justify-content: space-between;
+}
+.project .projectHeader div{
+    display: flex;
+    gap: 2rem;
 }
 .project .projectHeader-unActive{
     color: #747b88;
@@ -17,5 +21,10 @@
 }
 .project .projectHeader div{
     padding: 1rem;
-    border-radius: .5rem;
+    border-radius: 1rem;
+}
+.project .projectHeader div .create{
+    background-color: var(--button-bg);
+    color: #fff;
+    font-weight: 500;
 }

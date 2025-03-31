@@ -19,10 +19,17 @@
     font-size: 14px;
     font-weight: 500;
     padding-bottom: .5rem;
-    border-bottom: 3px solid rgb(40, 47, 56);   
+    border-bottom: 1px solid rgb(40, 47, 56);   
     margin-bottom: 1rem;
 }
 .listContentItem{
     display: grid;
     grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr 1fr;
+}
+.list .status{
+    background-color: var(--status-bg);
+    display: inline-block;
+    border-radius: 1rem;
+    color: #000;
+    font-weight: 500;
 }

@@ -1,0 +1,93 @@
+@import url('../../../theme.css');
+.sign-up{
+    place-items: center;
+}
+
+.sign-up-box{
+    padding: 2rem;
+    text-align: center;
+    border-radius: 0.5rem;
+    width: 30%;
+    text-align: start;
+}
+.sign-up-box-row-1 span{
+    font-weight: 600;
+    font-size: 32px;
+}
+.sign-up-box-row-1 p{
+    font-size: unset;
+    font-weight: unset;
+}
+
+.sign-up-box-row-2 {
+    margin-top: 2rem;
+    display: flex; 
+    flex-direction: column; 
+    gap: 1rem; 
+}
+.sign-up-box-row-2 .sign-up-email-input{
+    background-color: #ffff;
+    padding: 1.5rem 2rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--border);
+}
+.sign-up-box-row-2 .sign-up-email-input input{
+    border: none;
+    outline: none;
+    width: 100%;
+}
+.sign-up-box-row-2 .sign-up-user-name-input{
+    background-color: #ffff;
+    padding: 1.5rem 2rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--border);
+}
+.sign-up-box-row-2 .sign-up-user-name-input input{
+    border: none;
+    outline: none;
+    width: 100%;
+}
+.sign-up-box-row-2 .sign-up-password-input{
+    background-color: #ffff;
+    padding: 1.5rem 2rem;
+    border-radius: 0.5rem;
+    border: 2px solid var(--border);
+}
+.sign-up-box-row-2 .sign-up-password-input input{
+    border: none;
+    outline: none;
+    width: 100%;
+}
+.sign-up-box-row-2 .sign-up-button{
+    background-color: var(--button-bg);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+}
+.sign-up-box-row-2 .sign-up-button button{
+    border: none;
+    outline: none;
+    background: none;
+    color: #ffff;
+    font-weight: 600;
+    font-size: 18px;
+}
+.third-party-sign-up{
+    margin: 1.5rem 0;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+.third-party-sign-up img{
+    height: 28px;
+    width: 28px;
+}
+.sign-up-link{
+    display: flex;
+    gap: 1rem;
+}
+.sign-up-link a{
+    text-decoration: none;
+    color: var(--button-bg);
+    font-weight: 500;
+}

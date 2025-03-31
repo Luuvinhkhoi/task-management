@@ -40,9 +40,6 @@ export const Task = () =>{
                 </div>
             </div>
           </div>
-          <div className='task-footer'>
-                <p>You have 5 tasks today. Keep it up!</p>
-          </div>
         </div>
     )
 }

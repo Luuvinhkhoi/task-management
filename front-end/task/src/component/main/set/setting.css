@@ -1,6 +1,5 @@
 @import url('../../../theme.css');
 #setting{
-    height: 98%;
     width: 95%;
     border-left:3px solid rgb(29, 41, 57);
     align-self: flex-end;

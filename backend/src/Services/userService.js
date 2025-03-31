@@ -1,15 +1,37 @@
+const { where } = require('sequelize')
 const db = require('../Model/models')
-const createUser=(email, password, username)=>{
+const bcrypt=require('bcryptjs');
+const createUser=async(email, password, username)=>{
   try{
-    db.User.create({
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await db.User.create({
         email: email,
-        password:password,
+        password:hashedPassword,
         username:username
     })
   } catch(error){
-    throw new Error('check error', error)
+    throw new Error(`check error ${error}`, error)
   }
 }
+const loginUser = async (email, password, done) => {
+  try {
+    const user = await db.User.findOne({ where: { email } });
+
+    if (!user) {
+      return done(null, false, { message: 'User not found' });
+    }
+
+    const matchFound = await bcrypt.compare(password, user.password);
+    if (!matchFound) {
+      return done(null, false, { message: 'Incorrect password' });
+    }
+
+    return done(null, user);
+  } catch (error) {
+    return done(error);
+  }
+};
 module.exports={
-    createUser
+    createUser,
+    loginUser
 }

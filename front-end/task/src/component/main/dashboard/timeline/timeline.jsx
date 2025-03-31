@@ -51,7 +51,6 @@ export const TimelineElement = () => {
         defaultTimeEnd={moment().add(7, 'days').endOf('day')}
         lineHeight={45}
         itemRenderer={({ item, getItemProps, itemContext }) => {
-          console.log('Rendering item:', item);
           const props = getItemProps(); 
           return (
             <div

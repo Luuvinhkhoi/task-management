@@ -17,7 +17,7 @@ export const List = ()=>{
                 <div className='listContentItem'>
                     <div>Testing</div>
                     <div>Sint ex excepteur proident...</div>
-                    <div>To do</div>
+                    <div  className='status'>To do</div>
                     <div>High</div>
                     <div>Test</div>
                     <div>26-03-2024</div>
