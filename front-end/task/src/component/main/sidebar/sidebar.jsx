@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {Settings, LayoutDashboard, FolderGit2, ChevronDown} from 'lucide-react'
 import { AnimatePresence, motion} from 'framer-motion'
+import task from '../../../util/task'
 import './sidebar.css'
 import app from '../../../assets/app.png'
 import { useTranslation } from 'react-i18next';
 export const SideBar = ()=>{
    let location=useLocation()
    const {t}=useTranslation()
+   const [projects, setProject]=useState([])
    const [isOpen, setIsOpen]=useState('unActive')
    const navigate=useNavigate()
    console.log(location.pathname)
@@ -22,7 +24,17 @@ export const SideBar = ()=>{
         setIsOpen('active')
       }
     }, [location.pathname])
-  
+   useEffect(()=>{
+      const fetchProjects = async () => {
+         try {
+           const result = await task.getAllProject();
+           setProject(result); // Chỉ setProject nếu component vẫn còn mounted
+         } catch (error) {
+           console.error("Error fetching projects:", error);
+         }
+       };
+      fetchProjects()
+   },[])
    return (
         <div className="sideBar">
            <div className='brand'>
@@ -54,10 +66,9 @@ export const SideBar = ()=>{
                            className='projectList'
                         >
                            <ul>
-                           <li onClick={() => navigate('/project/1')} className={isSubActive('/project/1') ? 'sub-active' : ''}>Project A</li>
-                           <li onClick={() => navigate('/project/2')} className={isSubActive('/project/2') ? 'sub-active' : ''}>Project B</li>
-                           <li onClick={() => navigate('/project/3')} className={isSubActive('/project/3') ? 'sub-active' : ''}>Project C</li>
-                           <li onClick={() => navigate('/project/4')} className={isSubActive('/project/4') ? 'sub-active' : ''}>Project D</li>
+                           {projects.map(project=>
+                              <li onClick={() => navigate( `/project/${project.id}`)} className={isSubActive(`/project/${project.id}`) ? 'sub-active' : ''}>{project.title}</li>
+                           )}
                            </ul>
                         </motion.div>
                      )}

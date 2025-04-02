@@ -2,36 +2,38 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('Task-members', {
-      task_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model:{
-            tableName:'Tasks',
+    await queryInterface.createTable(
+      'TaskMembers',
+      {
+        task_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          primaryKey: true, // Đánh dấu là một phần của composite primary key
+          references: {
+            model: 'Tasks',
+            key: 'id',
           },
-          key:'id',
-        }
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
+        },
+        user_id: {
+          type: Sequelize.INTEGER,
+          allowNull: false,
+          primaryKey: true, // Đánh dấu là một phần của composite primary key
+          references: {
+            model: 'Users',
+            key: 'id',
+          },
+          onUpdate: 'CASCADE',
+          onDelete: 'CASCADE',
+        },
       },
-      user_id: {
-        type: Sequelize.INTEGER,
-        references: {
-          model:{
-            tableName:'Users',
-          },  
-          key:'id',
-        }
-      },
-      createdAt: {
-        allowNull: false,
-        type: Sequelize.DATE
-      },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE
+      {
+        timestamps: false,
       }
-    });
+    );
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('Task-members');
-  }
+    await queryInterface.dropTable('TaskMembers'); // Sửa lại tên bảng đúng chính tả
+  },
 };

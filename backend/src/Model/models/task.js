@@ -19,10 +19,14 @@ module.exports = (sequelize, DataTypes) => {
     status: DataTypes.STRING,
     priority: DataTypes.STRING,
     tags: DataTypes.STRING,
-    description: DataTypes.STRING
+    description: DataTypes.STRING,
+    
   }, {
     sequelize,
     modelName: 'Task',
+    timestamps: true,
+    createdAt: true, 
+    updatedAt: 'endedAt'
   });
   return Task;
 };

@@ -13,12 +13,37 @@ module.exports = (sequelize, DataTypes) => {
       // define association here
     }
   }
-  TaskMember.init({
-    task_id: DataTypes.STRING,
-    user_id: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'TaskMember',
-  });
+  TaskMember.init(
+    {
+      task_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey: true, // Đánh dấu là một phần của composite primary key
+        references: {
+          model: 'Tasks',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+      user_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        primaryKey: true, // Đánh dấu là một phần của composite primary key
+        references: {
+          model: 'Users',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
+      },
+    },
+    {
+      sequelize,
+      modelName: 'TaskMember',
+      timestamps: false,
+    }
+  );
+  
   return TaskMember;
 };

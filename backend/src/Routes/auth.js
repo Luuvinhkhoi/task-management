@@ -12,4 +12,12 @@ authRouter.post('/logout', function(req, res, next){
       res.status(200).json({message:'Logout sucess'})
     });
 });
+authRouter.get('/', (req, res) => { 
+  console.log(req.session)
+  if (req.isAuthenticated()) { 
+    res.json({ user_name: req.user.username, email: req.user.email }); 
+  } else { 
+    res.status(401).json({ message: 'Not authenticated' }); 
+  } 
+})
 module.exports=authRouter

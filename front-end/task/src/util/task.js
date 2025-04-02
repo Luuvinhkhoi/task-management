@@ -54,7 +54,7 @@ let task={
         });
     },
     getUserProfile(){
-        return fetch(`${baseUrl}/user`,{
+        return fetch(`${baseUrl}/auth`,{
             method:'GET',
             credentials: 'include'
         }).then(response => {
@@ -75,6 +75,100 @@ let task={
         return fetch(`${baseUrl}/auth/logout`,{
             method:'POST',
             credentials: 'include'
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    createProject(title, startDate, endDate){
+        return fetch(`${baseUrl}/project`,{
+            method:'POST',
+            credentials:'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                title,
+                startDate,
+                endDate
+            })
+        }).then(response=>{
+            if(response.ok){
+                return response.json()
+            }
+            throw new Error (`Request failed with ${response.status}`)
+        }).then(jsonResponse=>{
+            if (!jsonResponse) {
+                console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    }
+    ,
+    getAllProject(){
+        return fetch(`${baseUrl}/project`,{
+            method:'GET',
+            credentials:'include',
+        }).then(response=>{
+            if(response.ok){
+                return response.json()
+            }
+            throw new Error (`Request failed with ${response.status}`)
+        }).then(jsonResponse=>{
+            if (!jsonResponse) {
+                console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    createTask(title, description, status, priority, startDate, dueDate, assignedUserId, projectId){
+        return fetch(`${baseUrl}/task`,{
+            method:'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                title,
+                description, 
+                status, 
+                priority,
+                assignedUserId,
+                projectId,
+                startDate,
+                dueDate,
+            }),
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    getAllUser(){
+        return fetch(`${baseUrl}/user`,{
+            method:'GET',
+            credentials: 'include',
         }).then(response => {
             if (response.ok) {
               return response.json();

@@ -14,10 +14,18 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Project.init({
-    title: DataTypes.STRING
+    title: DataTypes.STRING,
+    endedAt: {
+      type: DataTypes.DATE,
+      field: 'endedAt' // Ánh xạ cột updatedAt thành endedAt
+    }
+
   }, {
     sequelize,
     modelName: 'Project',
+    timestamps: true,
+    createdAt: true, 
+    updatedAt: false 
   });
   return Project;
 };

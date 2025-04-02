@@ -31,7 +31,17 @@ const loginUser = async (email, password, done) => {
     return done(error);
   }
 };
+const getAllUser= async()=>{
+  try {
+    let result= await db.User.findAll()
+    const plainResult =await result.map(user => user.get({ plain: true }))    
+    return plainResult
+  } catch (error) {
+    throw new Error(`check error ${error}`, error)  
+  }
+}
 module.exports={
     createUser,
-    loginUser
+    loginUser,
+    getAllUser
 }

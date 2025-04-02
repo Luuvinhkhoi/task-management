@@ -5,6 +5,8 @@ const session = require("express-session")
 const passport=require('./src/config/passport')
 const cors = require('cors');
 const userRouter = require('./src/Routes/user');
+const projectRouter = require('./src/Routes/project');
+const taskRouter = require('./src/Routes/task');
 const port=4001
 const app=express()
 const store = new session.MemoryStore();
@@ -28,6 +30,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 app.use('/auth', authRouter)
 app.use('/user',userRouter)
+app.use('/project',projectRouter)
+app.use('/task',taskRouter)
 app.listen(port,()=>{
     console.log(`Sever is listening on port ${port}`)
 })
