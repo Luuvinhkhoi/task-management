@@ -16,6 +16,25 @@ const createTask= async(req, res)=>{
      res.status(500).json({error: error.message})
   }
 }
+const getAllTask=async(req, res)=>{
+   try{
+      const result=await service.getAllTask()
+      res.status(201).json(result)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
+const updateTaskStatus=async(req, res)=>{
+   try{
+      const {id, status}=req.body
+      const result=await service.updateTaskStatus(id, status)
+      res.status(201).json(result)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
 module.exports={
-    createTask
+    createTask, 
+    getAllTask, 
+    updateTaskStatus
 }

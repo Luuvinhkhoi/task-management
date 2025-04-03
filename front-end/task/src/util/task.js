@@ -165,6 +165,50 @@ let task={
             console.log(networkError.message);
         });
     },
+    getAllTask(){
+        return fetch(`${baseUrl}/task`,{
+            method:'GET',
+            credentials: 'include',
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    updateTaskStatus(id, status){
+        return fetch(`${baseUrl}/task`,{
+            method:'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                id, 
+                status
+            }),
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    }
+    ,
     getAllUser(){
         return fetch(`${baseUrl}/user`,{
             method:'GET',

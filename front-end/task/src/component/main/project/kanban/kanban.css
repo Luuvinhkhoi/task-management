@@ -6,6 +6,9 @@
     padding: 1rem;
     border-top:1px solid rgb(29, 41, 57)
 }
+.kanbanColumn{
+    min-height: 400px;
+}
 .kanbanHeader{
     border-radius: .5rem;
     border: 1px solid rgb(29, 41, 57);
@@ -21,7 +24,7 @@
     text-align: start;
     padding: 1rem;
     background-color: var(--kanban-bg);
-
+    margin-bottom: 1rem;
 }
 .kanbanItem .priority{
     padding: .5rem 1rem;

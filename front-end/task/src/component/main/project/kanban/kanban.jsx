@@ -1,50 +1,163 @@
-import './kanban.css'
-import { useTranslation } from 'react-i18next';
-export const Kanban = ()=>{
+import './kanban.css';
+import React, { use, useEffect, useState } from "react";
+import { DndProvider, useDrag, useDrop } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import { useTranslation } from "react-i18next";
+import { useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllTask, updateTaskStatus } from '../../../../store/task';
+import { updateItem } from '../../../../store/task';
+const ItemType = "KANBAN_ITEM";
+
+export const Kanban = () => {
     const { t } = useTranslation();
-    return(
-        <div className="kanban">
-            <div>
-                <div className='kanbanHeader' style={{borderLeft:'1rem solid rgba(99, 153, 253, 0.8)'}}>{t('kanban.todo')}</div>
-                <div className='kanbanItem'>
-                    <div className='priority' style={{backgroundColor:'rgb(255, 142, 66)'}}>High</div>
-                    <p>Testing</p>
-                    <span>Sint ex excepteur proident adipisicing adipisicing occaecat pariatur.</span>
-                    <div className='member'>
-                        <div>
-                            <img src='https://lh3.googleusercontent.com/a/ACg8ocJjlHAFWaF957u8qFuvF7CVlk86-UxE92BQR3tx8fXRawVL_g=s96-c' ></img>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
-                <div className='kanbanHeader' style={{borderLeft:'1rem solid rgba(243, 175, 115, 0.8)'}}>{t('kanban.inProgress')}</div>
-                <div className='kanbanItem'>
-                    <div className='priority' style={{backgroundColor:'rgb(255, 142, 66)'}}>High</div>
-                    <p>Testing</p>
-                    <span>Sint ex excepteur proident adipisicing adipisicing occaecat pariatur.</span>
-                    <div className='member'>
-                        <div>
-                            <img src='https://lh3.googleusercontent.com/a/ACg8ocJjlHAFWaF957u8qFuvF7CVlk86-UxE92BQR3tx8fXRawVL_g=s96-c' ></img>
-                        </div>
-                    </div>
-                </div>
+    const dispatch=useDispatch()
+    const location=useLocation()
+    const tasks=useSelector((state)=>state.tasks.task)
+    const hasUnsavedChanges = useSelector(state => state.tasks.hasUnsavedChanges);
+    // Hàm di chuyển item khi kéo thả
+    const moveItem = (id, newStatus) => {
+        try{
+          console.log(id, newStatus)
+          dispatch(updateItem(id, newStatus))
+        } catch(error){
+          console.log(error)
+        }
+    };
+    useEffect(()=>{
+      async function fetchTask(){
+        try{
+          await dispatch(getAllTask())
+        } catch(error){
+          console.log(error)
+        }
+      }
+      fetchTask()
+    }, [])
+    useEffect(() => {
+            // Lưu URL hiện tại để theo dõi trang
+            const currentPath = location.pathname;
+    
+            // Function gửi cart lên server
+            const saveTask = async () => {
+                if (hasUnsavedChanges) {
+                    await dispatch(updateTaskStatus(items));
+                    console.log("Cart data saved!");
+                }
 
-            </div>
-            <div>
-                <div className='kanbanHeader' style={{borderLeft:'1rem solid rgb(50, 213, 131)'}}>{t('kanban.complete')}</div>
-                <div className='kanbanItem'>
-                    <div className='priority' style={{backgroundColor:'rgb(255, 142, 66)'}}>High</div>
-                    <p>Testing</p>
-                    <span>Sint ex excepteur proident adipisicing adipisicing occaecat pariatur.</span>
-                    <div className='member'>
-                        <div>
-                            <img src='https://lh3.googleusercontent.com/a/ACg8ocJjlHAFWaF957u8qFuvF7CVlk86-UxE92BQR3tx8fXRawVL_g=s96-c' ></img>
-                        </div>
-                    </div>
-                </div>
+            };
+    
+            // Xử lý khi tải lại trang hoặc đóng tab
+            const handleBeforeUnload = (event) => {
+                if (hasUnsavedChanges) {
+                    saveCart();
+                }
+            };
+    
+            // Xử lý back/forward trên trình duyệt
+            const handlePopState = () => {
+                if (currentPath === "/cart") {
+                    saveCart();
+                }
+            };
+    
+            // Đăng ký event listeners
+            window.addEventListener("beforeunload", handleBeforeUnload);
+            window.addEventListener("popstate", handlePopState);
+    
+            // Cleanup function
+            return () => {
+                saveTask(); // Lưu lại trước khi component unmount
+                window.removeEventListener("beforeunload", handleBeforeUnload);
+                window.removeEventListener("popstate", handlePopState);
+            };
+    }, [location.pathname, dispatch, hasUnsavedChanges]);
+    return (
+        <DndProvider backend={HTML5Backend}>
+            <div className="kanban">
+                {/* To Do Column */}
+                <KanbanColumn 
+                    status="To do" 
+                    title={t('kanban.todo')} 
+                    tasks={tasks}
+                    moveItem={moveItem}
+                    borderColor="rgba(99, 153, 253, 0.8)" 
+                />
 
+                {/* In Progress Column */}
+                <KanbanColumn 
+                    status="In progress" 
+                    title={t('kanban.inProgress')} 
+                    tasks={tasks}
+                    moveItem={moveItem}
+                    borderColor="rgba(243, 175, 115, 0.8)" 
+                />
+
+                {/* Complete Column */}
+                <KanbanColumn 
+                    status="Complete" 
+                    title={t('kanban.complete')} 
+                    tasks={tasks}
+                    moveItem={moveItem}
+                    borderColor="rgb(50, 213, 131)" 
+                />
+            </div>
+        </DndProvider>
+    );
+};
+
+// Định nghĩa KanbanColumn bên ngoài Kanban nhưng vẫn trong cùng file
+const KanbanColumn = ({ status, title, tasks, moveItem, borderColor }) => {
+    const [{ isOver }, drop] = useDrop({
+        accept: ItemType,
+        drop: (item) => moveItem(item.id, status),
+        collect: (monitor) => ({
+            isOver: monitor.isOver(),
+        }),
+    });
+
+    const filteredTasks = tasks.filter(task => task.status === status);
+    
+    return (
+        <div 
+            className="kanbanColumn" 
+            ref={drop}
+            style={{ backgroundColor: isOver ? 'rgba(0, 0, 0, 0.05)' : '' }}
+        >
+            <div className="kanbanHeader" style={{borderLeft: `1rem solid ${borderColor}`}}>
+                {title}
+            </div>
+            {filteredTasks.map((task) => (
+                <KanbanItem key={task.id} task={task} />
+            ))}
+        </div>
+    );
+};
+
+// Định nghĩa KanbanItem bên ngoài Kanban nhưng vẫn trong cùng file
+const KanbanItem = ({ task }) => {
+    const [{ isDragging }, drag] = useDrag({
+        type: ItemType,
+        item: { id: task.id },
+        collect: (monitor) => ({
+            isDragging: monitor.isDragging(),
+        }),
+    });
+
+    return (
+        <div 
+            ref={drag} 
+            className="kanbanItem" 
+            style={{ opacity: isDragging ? 0.5 : 1 }}
+        >
+            <div className="priority" style={{ backgroundColor: 'rgb(255, 142, 66)' }}>High</div>
+            <p>{task.title}</p>
+            <span>{task.description}</span>
+            <div className="member">
+                <div>
+                    <img src={task.avatar} alt="Avatar" />
+                </div>
             </div>
         </div>
-    )
-}
+    );
+};

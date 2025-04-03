@@ -21,6 +21,36 @@ const createTask=async(title, description, status, priority, assignedUserId, pro
         throw new Error(`check error ${error}`)
     }
 }
+const getAllTask=async()=>{
+    try{
+        let result=await db.Task.findAll()
+        console.log(result)
+        const plainResult = await result.map(task => task.get({ plain: true }))    
+        console.log(plainResult)
+        return plainResult
+    }catch(error){
+        throw new Error(`check error ${error}`)
+    }
+}
+const updateTaskStatus=async(id, status)=>{
+    try{
+        let result=db.Task.Update(
+            { status: status },
+            {
+                where: {
+                  id: id,
+                },
+            },
+        )
+        const plainResult =await result.map(project => project.get({ plain: true }))    
+        console.log(plainResult)
+        return plainResult
+    }catch(error){
+        throw new Error(`check error ${error}`)
+    }
+}
 module.exports={
-    createTask
+    createTask,
+    getAllTask,
+    updateTaskStatus
 }
