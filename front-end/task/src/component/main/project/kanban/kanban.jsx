@@ -13,13 +13,13 @@ export const Kanban = () => {
     const { t } = useTranslation();
     const dispatch=useDispatch()
     const location=useLocation()
-    const tasks=useSelector((state)=>state.tasks.task)
+    const tasks=useSelector((state)=>state.tasks.tasks)
+    console.log(tasks)
     const hasUnsavedChanges = useSelector(state => state.tasks.hasUnsavedChanges);
     // Hàm di chuyển item khi kéo thả
     const moveItem = (id, newStatus) => {
         try{
-          console.log(id, newStatus)
-          dispatch(updateItem(id, newStatus))
+          dispatch(updateItem({id: id,status: newStatus}))
         } catch(error){
           console.log(error)
         }
@@ -41,23 +41,27 @@ export const Kanban = () => {
             // Function gửi cart lên server
             const saveTask = async () => {
                 if (hasUnsavedChanges) {
-                    await dispatch(updateTaskStatus(items));
+                    console.log(tasks)
+                    const updatedTasks = tasks.filter(task=>task.isModified)
+                    console.log(updatedTasks)
+                    if (updatedTasks.length > 0) {
+                       await dispatch(updateTaskStatus(updatedTasks)); 
+                    }
                     console.log("Cart data saved!");
                 }
-
             };
     
             // Xử lý khi tải lại trang hoặc đóng tab
             const handleBeforeUnload = (event) => {
                 if (hasUnsavedChanges) {
-                    saveCart();
+                    saveTask();
                 }
             };
     
             // Xử lý back/forward trên trình duyệt
             const handlePopState = () => {
-                if (currentPath === "/cart") {
-                    saveCart();
+                if (currentPath === "/project") {
+                    saveTask();
                 }
             };
     
@@ -71,7 +75,7 @@ export const Kanban = () => {
                 window.removeEventListener("beforeunload", handleBeforeUnload);
                 window.removeEventListener("popstate", handlePopState);
             };
-    }, [location.pathname, dispatch, hasUnsavedChanges]);
+    }, [location.pathname, dispatch, hasUnsavedChanges, tasks]);
     return (
         <DndProvider backend={HTML5Backend}>
             <div className="kanban">

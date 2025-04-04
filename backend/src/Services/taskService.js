@@ -24,9 +24,7 @@ const createTask=async(title, description, status, priority, assignedUserId, pro
 const getAllTask=async()=>{
     try{
         let result=await db.Task.findAll()
-        console.log(result)
         const plainResult = await result.map(task => task.get({ plain: true }))    
-        console.log(plainResult)
         return plainResult
     }catch(error){
         throw new Error(`check error ${error}`)
@@ -34,7 +32,7 @@ const getAllTask=async()=>{
 }
 const updateTaskStatus=async(id, status)=>{
     try{
-        let result=db.Task.Update(
+        const [updatedRows]= await db.Task.update(
             { status: status },
             {
                 where: {
@@ -42,9 +40,14 @@ const updateTaskStatus=async(id, status)=>{
                 },
             },
         )
-        const plainResult =await result.map(project => project.get({ plain: true }))    
-        console.log(plainResult)
-        return plainResult
+        if (updatedRows === 0) {
+            throw new Error(`No task found with id: ${id}`);
+        }
+
+        // Tìm lại task đã được cập nhật
+        const updatedTask = await db.Task.findOne({ where: { id } });
+
+        return updatedTask;
     }catch(error){
         throw new Error(`check error ${error}`)
     }

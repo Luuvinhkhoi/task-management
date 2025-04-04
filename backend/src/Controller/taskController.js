@@ -26,8 +26,11 @@ const getAllTask=async(req, res)=>{
 }
 const updateTaskStatus=async(req, res)=>{
    try{
-      const {id, status}=req.body
-      const result=await service.updateTaskStatus(id, status)
+      const {task}=req.body
+      console.log(task)
+      const result= await Promise.all(
+         task.map(item => service.updateTaskStatus(item.id, item.status))
+     );
       res.status(201).json(result)
    } catch(error){
       res.status(500).json({error: error.message})

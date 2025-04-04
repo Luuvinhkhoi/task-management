@@ -183,16 +183,15 @@ let task={
             console.log(networkError.message);
         });
     },
-    updateTaskStatus(id, status){
+    updateTaskStatus(task){
         return fetch(`${baseUrl}/task`,{
-            method:'PATCH',
+            method:'PUT',
             credentials: 'include',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                id, 
-                status
+                task
             }),
         }).then(response => {
             if (response.ok) {

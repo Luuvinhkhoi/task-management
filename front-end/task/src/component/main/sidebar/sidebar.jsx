@@ -12,7 +12,6 @@ export const SideBar = ()=>{
    const [projects, setProject]=useState([])
    const [isOpen, setIsOpen]=useState('unActive')
    const navigate=useNavigate()
-   console.log(location.pathname)
    const isActive=(path)=>{
      return location.pathname===path
    }

@@ -61,8 +61,6 @@ export const Project = ()=>{
       }
     };
     
-    console.log(users)
-    console.log(assignedUserId)
     useEffect(()=>{
       setProjectId(param.id)
     },[param])
