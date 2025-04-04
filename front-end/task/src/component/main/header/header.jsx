@@ -64,7 +64,7 @@ export const Header=()=>{
                            transition={{ duration: 0.3, ease: "easeOut" }}
                            className='profileDropdrown'
                         >
-                            <div style={{display:'flex',gap:'.5rem'}}>
+                            <div style={{display:'flex',gap:'.5rem'}} onClick={()=>navigate('/profile')}>
                                 <UserPen></UserPen>
                                 <p>Edit profile</p>
                             </div>

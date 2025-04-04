@@ -8,6 +8,7 @@ import { List } from './component/main/project/list/list.jsx'
 import { Kanban } from './component/main/project/kanban/kanban.jsx'
 import { SignUp } from './component/main/sign-up/sign-up.jsx'
 import { SignIn } from './component/main/sign-in/sign-in.jsx'
+import { Profile } from './component/main/profile/profile.jsx'
 import './i18n'
 import './App.css'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements} from 'react-router-dom'
@@ -22,6 +23,7 @@ function App() {
           <Route path='/project/:id/list' element={<List></List>}></Route>
         </Route>
         <Route path='/setting' element={<Setting></Setting>}></Route>
+        <Route path='/profile' element={<Profile></Profile>}></Route>
       </Route>
       <Route path='/sign-up' element={<SignUp></SignUp>}></Route>
       <Route path='/sign-in' element={<SignIn></SignIn>}></Route>

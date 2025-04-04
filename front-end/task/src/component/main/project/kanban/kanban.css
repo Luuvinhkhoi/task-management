@@ -15,28 +15,28 @@
     padding: .5rem 1rem;
     text-align: start;
     font-weight: 600;
-    margin-bottom: 2rem;
+    margin-bottom: .5rem;
     background-color: var(--kanban-bg);
 }
 .kanbanItem{
     border-radius: .5rem;
     border: 1px solid rgb(29, 41, 57) ;
     text-align: start;
-    padding: 1rem;
+    padding: .5rem;
     background-color: var(--kanban-bg);
     margin-bottom: 1rem;
 }
 .kanbanItem .priority{
-    padding: .5rem 1rem;
+    padding: 0 1rem;
     display: inline-block;
     border-radius: 1rem;
     font-weight: 600;
     color: #df573f ;
-    margin-bottom: 1rem;
+    font-size: 14px;
 }
 .kanbanItem p{
     font-weight: 500;
-    font-size: 20px;
+    font-size: 16px;
 }
 .kanbanItem span{
     font-size: 14px;
