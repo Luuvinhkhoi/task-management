@@ -26,7 +26,7 @@ let task={
             console.log(networkError.message);
         });
     },
-    signUp(email, password, userName){
+    signUp(email, password, firstname, lastname){
         return fetch(`${baseUrl}/auth/signUp`,{
             method:'POST',
             credentials:'include',
@@ -36,7 +36,8 @@ let task={
             body: JSON.stringify({
                 email: email,
                 password: password,
-                username:userName
+                firstname: firstname,
+                lastname: lastname
             }),
         }).then(response => {
             if (response.ok) {
@@ -225,7 +226,23 @@ let task={
         }).catch(networkError => {
             console.log(networkError.message);
         });
+    },
+    uploadAvatar(file){
+        const formData = new FormData();
+        formData.append('image', file);
+        return fetch(`${baseUrl}/upload`, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData, // Gửi FormData với dữ liệu file
+          
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+          }
+          return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
     }
+      
 
 }
 export default task

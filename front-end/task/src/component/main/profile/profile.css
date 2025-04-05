@@ -16,6 +16,15 @@
 .profileHeader>div{
     display: flex;
     gap: 1rem;
+    align-items: center;
+}
+.profileHeader .avatar{
+    height: 120px;
+    width: 120px;
+    border-radius: 10rem;
+    overflow: hidden;
+}
+.profileHeader .avatar{
 }
 .profileBody{
     display: flex;
@@ -55,4 +64,59 @@
     grid-template-columns: 2.5fr 1fr;
     gap: 1rem;
     grid-row: 2;
+}
+.profile .overlay-active{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: unset !important;
+}
+.profile .overlay-unActive{
+    display: none !important;
+}
+
+.profile  .avaForm-unActive{
+    display: none;
+}
+.profile  .avaForm-active{
+    position: absolute;
+    z-index: 10;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    text-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+.profile  .avaForm-active .close-button{
+    display: inline-block;
+    padding: unset;
+    border: unset;
+    color: var(--text-color);
+}
+.profile  .avaForm-active .avaInput{
+    text-align: center;
+}
+.profile  .avaForm-active .avaInput input[type="file"]{
+    background: none;
+    outline: none;
+    width: 180px;
+}
+.profile  .avaForm-active .avaInput #file-upload-button{
+    background: none;
+    outline: none;
+    width: 180px;
 }

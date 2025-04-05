@@ -36,6 +36,10 @@
     outline: none;
     width: 100%;
 }
+.sign-up-box-row-2 .sign-up-name{
+    display: flex;
+    gap: 1.5rem;
+}
 .sign-up-box-row-2 .sign-up-user-name-input{
     background-color: #ffff;
     padding: 1.5rem 2rem;

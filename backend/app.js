@@ -7,6 +7,7 @@ const cors = require('cors');
 const userRouter = require('./src/Routes/user');
 const projectRouter = require('./src/Routes/project');
 const taskRouter = require('./src/Routes/task');
+const uploadRouter = require('./src/Routes/upload');
 const port=4001
 const app=express()
 const store = new session.MemoryStore();
@@ -28,10 +29,18 @@ app.use(cors({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.status(401).json({ message: 'Unauthorized' });
+}
+
 app.use('/auth', authRouter)
 app.use('/user',userRouter)
 app.use('/project',projectRouter)
 app.use('/task',taskRouter)
+app.use('/upload', isAuthenticated,uploadRouter)
 app.listen(port,()=>{
     console.log(`Sever is listening on port ${port}`)
 })

@@ -1,13 +1,14 @@
 const { where } = require('sequelize')
 const db = require('../Model/models')
 const bcrypt=require('bcryptjs');
-const createUser=async(email, password, username)=>{
+const createUser=async(email, password, firstname, lastname)=>{
   try{
     const hashedPassword = await bcrypt.hash(password, 10);
     await db.User.create({
         email: email,
         password:hashedPassword,
-        username:username
+        firstname:firstname,
+        lastname: lastname,
     })
   } catch(error){
     throw new Error(`check error ${error}`, error)

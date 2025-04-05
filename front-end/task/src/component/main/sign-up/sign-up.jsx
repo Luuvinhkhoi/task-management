@@ -4,23 +4,28 @@ import task from '../../../util/task'
 import { ChevronLeft } from 'lucide-react'
 import {Link, useNavigate, useLocation} from 'react-router-dom'
 export const SignUp = ()=>{
-    const [userNameState, setUserNameState]=useState('')
+    const [firstnameState, setFirstnameState]=useState('')
+    const [lastnameState, setLastnameState]=useState('')
     const [emailState, setEmailState]=useState('')
     const [passwordState, setPasswordState]=useState('')    
     const [error, setError] = useState("");
     const location=useLocation()
     const navigate=useNavigate()
-    function handleUserNameInput(e){
-        setUserNameState(prev=>prev=e.target.value)   
-    }
+
     function handleEmailInput(e){
         setEmailState(prev=>prev=e.target.value)    
+    }
+    function handleFirstnameInput(e){
+        setFirstnameState(prev=>prev=e.target.value)    
+    }
+    function handleLastnameInput(e){
+        setLastnameState(prev=>prev=e.target.value)    
     }
     function handlePasswordInput(e){
         setPasswordState(prev=>prev=e.target.value)    
     }
     async function handleSignUp(){
-        const result= await task.signUp(emailState, passwordState, userNameState)
+        const result= await task.signUp(emailState, passwordState, firstnameState, lastnameState)
         if (!result){
             setError("Invalid credential");
         } else{
@@ -48,9 +53,19 @@ export const SignUp = ()=>{
                         <div className='sign-up-email-input'>
                             <input type='email' placeholder='Type your email here' onChange={handleEmailInput}></input>
                         </div>
-                        <h3>Username</h3>
-                        <div className='sign-up-user-name-input'> 
-                            <input placeholder='Type your user name here' onChange={handleUserNameInput} required minLength={2} maxLength={30}></input>
+                        <div className='sign-up-name'>
+                            <div>
+                                <h3>Firstname</h3>
+                                <div className='sign-up-user-name-input'> 
+                                    <input placeholder='Type your user name here' onChange={handleFirstnameInput} required minLength={2} maxLength={30}></input>
+                                </div>
+                            </div>
+                            <div>
+                                <h3>Lastname</h3>
+                                <div className='sign-up-user-name-input'> 
+                                    <input placeholder='Type your user name here' onChange={handleLastnameInput} required minLength={2} maxLength={30}></input>
+                                </div>
+                            </div>
                         </div>
                         <h3>Password</h3>
                         <div className='sign-up-password-input'>

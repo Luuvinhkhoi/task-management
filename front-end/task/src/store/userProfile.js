@@ -3,11 +3,19 @@ import task from "../util/task";
 const userSlice= createSlice({
     name: 'userProfile',
     initialState:{
-        userName:''
+        email:'',
+        firstname:'',
+        lastname:'',
+        avatar:'',
+        phone:'',
     },
     reducers:{
         getUserProfile:(state, action)=>{
-            state.userName=action.payload
+            state.firstname=action.payload.firstname,
+            state.lastname=action.payload.lastname,
+            state.email=action.payload.email,
+            state.avatar=action.payload.avatar,
+            state.phone=action.payload.phonenumber
         }
     }
 })
@@ -15,7 +23,7 @@ export const getProfile=createAsyncThunk(
     'profile/getUserProfile',
     async(_,thunkAPI)=>{
         const result=await task.getUserProfile()
-        thunkAPI.dispatch(getUserProfile(result.user_name))
+        thunkAPI.dispatch(getUserProfile(result))
     }
 )
 export const {getUserProfile}=userSlice.actions

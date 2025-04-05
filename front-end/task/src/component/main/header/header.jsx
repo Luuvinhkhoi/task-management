@@ -11,7 +11,7 @@ export const Header=()=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const [OpenDropdown, setOpenDropDown]=useState(false)
-    const userName=useSelector((state)=>state.userProfile.userName)
+    const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
     const dropdownRef = useRef(null);
     async function handleLogout(){
