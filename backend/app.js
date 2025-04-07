@@ -37,7 +37,7 @@ const isAuthenticated = (req, res, next) => {
 }
 
 app.use('/auth', authRouter)
-app.use('/user',userRouter)
+app.use('/user',isAuthenticated,userRouter)
 app.use('/project',projectRouter)
 app.use('/task',taskRouter)
 app.use('/upload', isAuthenticated,uploadRouter)

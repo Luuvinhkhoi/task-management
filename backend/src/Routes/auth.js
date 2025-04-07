@@ -13,7 +13,6 @@ authRouter.post('/logout', function(req, res, next){
     });
 });
 authRouter.get('/', (req, res) => { 
-  console.log(req.session)
   if (req.isAuthenticated()) { 
     res.json({ firstname: req.user.firstname,lastname: req.user.lastname , email: req.user.email, avatar:req.user.avatar, phone:req.user.phonenumber  }); 
   } else { 

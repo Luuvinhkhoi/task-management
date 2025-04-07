@@ -241,8 +241,24 @@ let task={
           }
           return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
+    },
+    updateProfile(updateData){
+        return fetch(`${baseUrl}/user`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                updateData
+            })
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+          });
     }
-      
 
 }
 export default task

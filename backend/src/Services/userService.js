@@ -41,8 +41,26 @@ const getAllUser= async()=>{
     throw new Error(`check error ${error}`, error)  
   }
 }
+const updateUser=async(id,updateData)=>{
+  try{
+    console.log(updateData)
+    let result= await db.User.update(
+      updateData,
+      {
+        where:{
+          id: id
+        }
+      }
+    )
+    console.log(result)
+  } catch (error){
+    throw new Error(`check error ${error}`, error)  
+
+  }
+}
 module.exports={
     createUser,
     loginUser,
-    getAllUser
+    getAllUser,
+    updateUser
 }

@@ -3,7 +3,6 @@ const uploadService = require('../Services/uploadService');
 const uploadImage = async (req, res) => {
   const userId = req.user.id;
   try {
-    console.log(req.file);
     const result = await uploadService.uploadImageToCloudinary(req.file.path, userId);
     res.json({ url: result.url });
   } catch (error) {

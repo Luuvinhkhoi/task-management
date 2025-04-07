@@ -16,7 +16,17 @@ const getAllUser=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
+const updateUser=async(req, res)=>{
+   try{
+      const {updateData}=req.body      
+      const user=await service.updateUser(req.user.id, updateData)
+      res.status(201).json({message: 'sucess update'})
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
 module.exports={
     createUser,
-    getAllUser
+    getAllUser,
+    updateUser
 }

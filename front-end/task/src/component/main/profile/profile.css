@@ -120,3 +120,25 @@
     outline: none;
     width: 180px;
 }
+.profile .avaForm-active .name >div >div{
+    padding: .2rem;
+    border-radius: .5rem;
+    background-color: var(--task-bg);
+}
+.profile .avaForm-active .email-phone >div >div{
+    padding: .2rem;
+    border-radius: .5rem;
+    background-color: var(--task-bg);
+}
+.profile .avaForm-active .name >div >div input{
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--text-color);
+}
+.profile .avaForm-active .email-phone >div >div input{
+    background: none;
+    border: none;
+    outline: none;
+    color:var(--text-color);
+}
