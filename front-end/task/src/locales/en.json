@@ -4,9 +4,24 @@
       "inProgress": "IN PROGRESS",
       "complete": "COMPLETE",
       "priority": {
-        "high": "High"
+        "urgent":"Urgent",
+        "high": "High",
+        "medium":"Medium",
+        "low":"Low"
       }
     },
+    "list":{
+      "To do": "To do",
+      "In progress": "In progress",
+      "Complete": "Complete",
+      "priority": {
+        "urgent":"Urgent",
+        "high": "High",
+        "medium":"Medium",
+        "low":"Low"
+      }
+    }
+    ,
     "dashboard":{
         "todayTask":"Today Task",
         "calendar":"Calendar",

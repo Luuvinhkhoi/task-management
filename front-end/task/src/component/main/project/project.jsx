@@ -22,6 +22,7 @@ export const Project = ()=>{
     const [users, setUser]=useState([])
     const location=useLocation()
     const navigate=useNavigate()
+    console.log(users)
     let param=useParams()
     function listActive(){
       if(location.pathname.endsWith('list')){
@@ -70,7 +71,12 @@ export const Project = ()=>{
           const result = await task.getAllUser()
           const formattedUsers = result.map(user => ({
             value: user.id, // Dùng ID làm giá trị
-            label: user.username // Dùng username làm tên hiển thị
+            label: (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+                <span>{user.firstname}</span>
+              </div>
+            )// Dùng username làm tên hiển thị
           }));
           setUser(formattedUsers)
         } catch(error){

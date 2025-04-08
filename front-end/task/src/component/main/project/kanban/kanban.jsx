@@ -14,7 +14,8 @@ export const Kanban = () => {
     const dispatch=useDispatch()
     const location=useLocation()
     const tasks=useSelector((state)=>state.tasks.tasks)
-    console.log(tasks)
+    const taskMembers=useSelector((state)=>state.tasks.members)
+    console.log(taskMembers)
     const hasUnsavedChanges = useSelector(state => state.tasks.hasUnsavedChanges);
     // Hàm di chuyển item khi kéo thả
     const moveItem = (id, newStatus) => {
@@ -84,6 +85,7 @@ export const Kanban = () => {
                     status="To do" 
                     title={t('kanban.todo')} 
                     tasks={tasks}
+                    taskMembers={taskMembers}
                     moveItem={moveItem}
                     borderColor="rgba(99, 153, 253, 0.8)" 
                 />
@@ -93,6 +95,7 @@ export const Kanban = () => {
                     status="In progress" 
                     title={t('kanban.inProgress')} 
                     tasks={tasks}
+                    taskMembers={taskMembers}
                     moveItem={moveItem}
                     borderColor="rgba(243, 175, 115, 0.8)" 
                 />
@@ -102,6 +105,7 @@ export const Kanban = () => {
                     status="Complete" 
                     title={t('kanban.complete')} 
                     tasks={tasks}
+                    taskMembers={taskMembers}
                     moveItem={moveItem}
                     borderColor="rgb(50, 213, 131)" 
                 />
@@ -111,7 +115,7 @@ export const Kanban = () => {
 };
 
 // Định nghĩa KanbanColumn bên ngoài Kanban nhưng vẫn trong cùng file
-const KanbanColumn = ({ status, title, tasks, moveItem, borderColor }) => {
+const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor }) => {
     const [{ isOver }, drop] = useDrop({
         accept: ItemType,
         drop: (item) => moveItem(item.id, status),
@@ -119,9 +123,23 @@ const KanbanColumn = ({ status, title, tasks, moveItem, borderColor }) => {
             isOver: monitor.isOver(),
         }),
     });
-
+    console.log(tasks)
+    console.log(taskMembers)
     const filteredTasks = tasks.filter(task => task.status === status);
-    
+    const mergeTask=filteredTasks.map((task)=>{
+        const members = taskMembers.find(memberGroup => 
+            memberGroup[0]?.task_id === task.id
+          ) || []
+        
+        return {
+            ...task,
+            members: members.map(mem => ({
+              firstname: mem.user.firstname,
+              lastname: mem.user.lastname,
+              avatar: mem.user.avatar,
+            }))
+        }
+    })  
     return (
         <div 
             className="kanbanColumn" 
@@ -131,7 +149,7 @@ const KanbanColumn = ({ status, title, tasks, moveItem, borderColor }) => {
             <div className="kanbanHeader" style={{borderLeft: `1rem solid ${borderColor}`}}>
                 {title}
             </div>
-            {filteredTasks.map((task) => (
+            {mergeTask.map((task) => (
                 <KanbanItem key={task.id} task={task} />
             ))}
         </div>
@@ -157,10 +175,12 @@ const KanbanItem = ({ task }) => {
             <div className="priority" style={{ backgroundColor: 'rgb(255, 142, 66)' }}>High</div>
             <p>{task.title}</p>
             <span>{task.description}</span>
-            <div className="member">
-                <div>
-                    <img src={task.avatar} alt="Avatar" />
-                </div>
+            <div className="member" style={{display:'flex', gap:'1rem'}}>
+                {task.members.map(member=>
+                     <div>
+                        <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="Avatar" />
+                    </div>
+                )}
             </div>
         </div>
     );

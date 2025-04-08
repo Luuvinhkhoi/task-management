@@ -4,11 +4,24 @@
       "inProgress": "ĐANG LÀM",
       "complete": "HOÀN THÀNH",
       "priority": {
-        "high": "Cao"
-      },
-      "taskTitle": "Kiểm thử",
-      "taskDescription": "Mô tả công việc kiểm thử ở đây."
+        "urgent":"Khẩn cấp",
+        "high": "Cao",
+        "medium":"Bình thường",
+        "low":"Thấp"
+      }
     },
+    "list": {
+      "Todo": "CẦN LÀM",
+      "Inprogress": "ĐANG LÀM",
+      "Complete": "HOÀN THÀNH",
+      "priority": {
+        "urgent":"Khẩn cấp",
+        "high": "Cao",
+        "medium":"Bình thường",
+        "low":"Thấp"
+      }
+    }
+    ,
     "dashboard":{
         "todayTask":"Nhiệm vụ hôm nay",
         "calendar":"Lịch",

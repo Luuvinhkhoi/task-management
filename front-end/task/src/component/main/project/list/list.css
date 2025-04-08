@@ -15,7 +15,7 @@
 }
 .listHeader{
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1fr 1fr;
     font-size: 14px;
     font-weight: 500;
     padding-bottom: .5rem;
@@ -29,7 +29,8 @@
 }
 .listContentItem{
     display: grid;
-    grid-template-columns: 1fr 2fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1fr 1fr;
+    align-items: center;
 }
 .list .status{
     background-color: var(--status-bg);

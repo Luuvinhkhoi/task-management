@@ -52,8 +52,37 @@ const updateTaskStatus=async(id, status)=>{
         throw new Error(`check error ${error}`)
     }
 }
+const getTaskMember=async(taskId)=>{
+    try{
+        const result1= await db.TaskMember.findAll(
+            {
+                where: {
+                  task_id: taskId,
+                },
+            },
+        )
+        const plainResult1 = result1.map(task => task.get({ plain: true }))
+        const result2 = await Promise.all(plainResult1.map(user => db.User.findByPk(user.user_id)))
+        const plainResult2 =  result2.map(task => task.get({ plain: true }))  
+        const mergedResult = plainResult1.map((member, index) => {
+            return {
+                ...member,
+                user: {
+                    id: plainResult2[index].id,
+                    firstname: plainResult2[index].firstname,
+                    lastname: plainResult2[index].lastname,
+                    avatar: plainResult2[index].avatar
+                }
+            }
+        })
+        return mergedResult
+    }catch(error){
+        throw new Error(`check error ${error}`)
+    }
+}
 module.exports={
     createTask,
     getAllTask,
-    updateTaskStatus
+    updateTaskStatus,
+    getTaskMember
 }

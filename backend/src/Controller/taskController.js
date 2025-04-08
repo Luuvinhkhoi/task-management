@@ -18,8 +18,12 @@ const createTask= async(req, res)=>{
 }
 const getAllTask=async(req, res)=>{
    try{
-      const result=await service.getAllTask()
-      res.status(201).json(result)
+      const result1=await service.getAllTask()
+      const result2= await Promise.all(
+         result1.map(item => service.getTaskMember(item.id))
+     );
+     console.log(result2)
+     res.status(200).json({tasks:result1, members:result2})
    } catch(error){
       res.status(500).json({error: error.message})
    }
@@ -36,6 +40,7 @@ const updateTaskStatus=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
+
 module.exports={
     createTask, 
     getAllTask, 

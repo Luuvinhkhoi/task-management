@@ -4,11 +4,13 @@ const taskSlice= createSlice({
     name: 'tasks',
     initialState:{
         hasUnsavedChanges: false,
-        tasks:[]
+        tasks:[],
+        members:[]
     },
     reducers:{
         getTask:(state, action)=>{
-            state.tasks=action.payload
+            state.tasks = action.payload.tasks
+            state.members = action.payload.members
         },
         updateItem:(state, action)=>{
             const task=action.payload
@@ -26,7 +28,10 @@ export const getAllTask=createAsyncThunk(
     'task/getTask',
     async(_,thunkAPI)=>{
         const result=await task.getAllTask()
-        thunkAPI.dispatch(getTask(result))
+        await thunkAPI.dispatch(getTask({
+            tasks: result.tasks,
+            members: result.members
+        }))
     }
 )
 export const updateTaskStatus=createAsyncThunk(
@@ -36,5 +41,5 @@ export const updateTaskStatus=createAsyncThunk(
         const result=await task.updateTaskStatus(tasks)
     }
 )
-export const {getTask, updateItem}=taskSlice.actions
+export const {getTask, updateItem, getMember}=taskSlice.actions
 export default taskSlice.reducer
