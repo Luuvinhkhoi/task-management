@@ -1,6 +1,21 @@
 import { ChevronRight, CircleUser } from 'lucide-react'
 import './task.css'
+import task from '../../../../util/task'
+import { useEffect, useState } from 'react'
 export const Task = () =>{
+    const [todayTask, setTodayTask]=useState()
+    useEffect(()=>{
+      async function getTask(){
+        try{
+          const result=await task.getTodayTask()
+          console.log(result)
+          setTodayTask(result)
+        } catch(error){
+          console.log(error)
+        }
+      }
+      getTask()
+    },[])
     return(
         <div id='task'>
           <div className='task-header'>

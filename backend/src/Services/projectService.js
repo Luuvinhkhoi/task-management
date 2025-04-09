@@ -14,7 +14,6 @@ const getAllProject=async()=>{
     try{
       let result= await db.Project.findAll()
       const plainResult =await result.map(project => project.get({ plain: true }))    
-      console.log(plainResult)
       return plainResult
     } catch (error){
       throw new Error(`check error ${error}`)

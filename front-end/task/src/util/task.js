@@ -166,8 +166,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getAllTask(){
-        return fetch(`${baseUrl}/task`,{
+    getAllTask(id){
+        return fetch(`${baseUrl}/task/project/${id}`,{
             method:'GET',
             credentials: 'include',
         }).then(response => {
@@ -184,6 +184,25 @@ let task={
             console.log(networkError.message);
         });
     },
+    getTodayTask(){
+        return fetch(`${baseUrl}/task/user`,{
+            method:'GET',
+            credentials: 'include',
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    }
+    ,
     updateTaskStatus(task){
         return fetch(`${baseUrl}/task`,{
             method:'PUT',

@@ -26,8 +26,8 @@ const taskSlice= createSlice({
 })
 export const getAllTask=createAsyncThunk(
     'task/getTask',
-    async(_,thunkAPI)=>{
-        const result=await task.getAllTask()
+    async(id,thunkAPI)=>{
+        const result=await task.getAllTask(id)
         await thunkAPI.dispatch(getTask({
             tasks: result.tasks,
             members: result.members

@@ -3,7 +3,7 @@ import React, { use, useEffect, useState } from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "react-i18next";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { getAllTask, updateTaskStatus } from '../../../../store/task';
 import { updateItem } from '../../../../store/task';
@@ -11,6 +11,7 @@ const ItemType = "KANBAN_ITEM";
 
 export const Kanban = () => {
     const { t } = useTranslation();
+    const { id } = useParams()
     const dispatch=useDispatch()
     const location=useLocation()
     const tasks=useSelector((state)=>state.tasks.tasks)
@@ -28,7 +29,7 @@ export const Kanban = () => {
     useEffect(()=>{
       async function fetchTask(){
         try{
-          await dispatch(getAllTask())
+          await dispatch(getAllTask(id))
         } catch(error){
           console.log(error)
         }

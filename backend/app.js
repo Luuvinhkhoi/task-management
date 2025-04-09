@@ -39,7 +39,7 @@ const isAuthenticated = (req, res, next) => {
 app.use('/auth', authRouter)
 app.use('/user',isAuthenticated,userRouter)
 app.use('/project',projectRouter)
-app.use('/task',taskRouter)
+app.use('/task',isAuthenticated,taskRouter)
 app.use('/upload', isAuthenticated,uploadRouter)
 app.listen(port,()=>{
     console.log(`Sever is listening on port ${port}`)

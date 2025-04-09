@@ -6,10 +6,12 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { getProfile } from '../../../store/userProfile'
 import { AnimatePresence, motion} from 'framer-motion'
+import { useTranslation } from "react-i18next";
 import { CircleUser, UserPen, LogOut } from 'lucide-react'
 export const Header=()=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
+    const { t } = useTranslation();
     const [OpenDropdown, setOpenDropDown]=useState(false)
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);

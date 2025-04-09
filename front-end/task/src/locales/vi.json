@@ -1,4 +1,14 @@
 {
+    "header":{
+      "Sign in":"Đăng nhập",
+      "Create account":"Tạo mới tài khoản"
+    },
+    "project":{
+      "Kanban board":"Bảng Kanban",
+      "List":"Danh sách",
+      "New project":"Dự án mới",
+      "New task":"Nhiệm vụ mới"
+    },
     "kanban": {
       "todo": "CẦN LÀM",
       "inProgress": "ĐANG LÀM",
@@ -11,14 +21,21 @@
       }
     },
     "list": {
-      "Todo": "CẦN LÀM",
-      "Inprogress": "ĐANG LÀM",
+      "Title":"Tên",
+      "Description":"Mô tả",
+      "Status":"Trạng thái",
+      "Priority":"Mức độ",
+      "Assign":"Giao cho",
+      "Start Date":"Ngày bắt đầu",
+      "Due Date":"Ngày kết thúc",
+      "To do": "CẦN LÀM",
+      "In progress": "ĐANG LÀM",
       "Complete": "HOÀN THÀNH",
       "priority": {
-        "urgent":"Khẩn cấp",
-        "high": "Cao",
-        "medium":"Bình thường",
-        "low":"Thấp"
+        "Urgent":"Khẩn cấp",
+        "High": "Cao",
+        "Medium":"Bình thường",
+        "Low":"Thấp"
       }
     }
     ,

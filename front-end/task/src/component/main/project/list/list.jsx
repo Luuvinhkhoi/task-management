@@ -19,10 +19,6 @@ export const List = ()=>{
             })) || []   
         }
     })
-    const convertTitleToKey = (title) => {
-        console.log(title)
-        return title.toLowerCase().replace(/\s/g, '') // "To do" -> "todo"
-    }
     useEffect(()=>{
           async function fetchTask(){
             try{
@@ -39,21 +35,21 @@ export const List = ()=>{
            <h3>List</h3> 
            <div>
             <div className='listHeader'>
-                <div>Title</div>
-                <div>Description</div>
-                <div>Status</div>
-                <div>Priority</div>
-                <div>{}</div>
-                <div>Start Date</div>
-                <div>Due Date</div>
+                <div>{t('list.Title')}</div>
+                <div>{t('list.Description')}</div>
+                <div>{t('list.Status')}</div>
+                <div>{t('list.Priority')}</div>
+                <div>{t('list.Assign')}</div>
+                <div>{t('list.Start Date')}</div>
+                <div>{t('list.Due Date')}</div>
             </div>
             <div className='listContent'>
                 {mergeTask.map(task=>
                     <div className='listContentItem'>
-                        <div>{task.tile}</div>                        
+                        <div>{task.title}</div>                        
                         <div>{task.description}</div>
                         <div className='status'>{t(`list.${task.status}`)}</div>
-                        <div>{task.priority}</div>
+                        <div>{t(`list.priority.${task.priority}`)}</div>
                         <div style={{display:'flex', gap:'5px', justifyContent:'center'}}>{task.members.map(member=>
                             <div>
                                 <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />

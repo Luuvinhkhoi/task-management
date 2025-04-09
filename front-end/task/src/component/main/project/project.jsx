@@ -5,7 +5,9 @@ import {X} from 'lucide-react'
 import task from '../../../util/task'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
+import { useTranslation } from "react-i18next";
 export const Project = ()=>{
+    const { t } = useTranslation();
     const animatedComponents = makeAnimated();
     const [isActive, setActive]=useState()
     const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -89,8 +91,8 @@ export const Project = ()=>{
         <div className="project">
            <div className='projectHeader'>
              <div className='headerItem'>
-                <div className={`projectHeader-${listActive()?'unActive':'active'}`} onClick={()=>navigate(`/project/${param.id}`)}>Kanban board</div>
-                <div className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>List</div>
+                <div className={`projectHeader-${listActive()?'unActive':'active'}`} onClick={()=>navigate(`/project/${param.id}`)}>{t('project.Kanban board')}</div>
+                <div className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>{t('project.List')}</div>
              </div>
              <div className='headerItem'>
                 <div className='create' onClick={()=>setProjectFormOpen(true)}>

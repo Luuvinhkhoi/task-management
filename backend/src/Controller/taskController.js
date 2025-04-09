@@ -18,7 +18,7 @@ const createTask= async(req, res)=>{
 }
 const getAllTask=async(req, res)=>{
    try{
-      const result1=await service.getAllTask()
+      const result1=await service.getAllTaskByProjectId(req.params.project_id)
       const result2= await Promise.all(
          result1.map(item => service.getTaskMember(item.id))
      );
@@ -40,9 +40,18 @@ const updateTaskStatus=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
+const getTodayTask=async(req, res)=>{
+   try{
+      const result= await service.getTodayTask(req.user.id)
+      res.status(201).json(result)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
 
 module.exports={
     createTask, 
     getAllTask, 
-    updateTaskStatus
+    updateTaskStatus,
+    getTodayTask
 }
