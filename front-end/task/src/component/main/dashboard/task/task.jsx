@@ -3,13 +3,14 @@ import './task.css'
 import task from '../../../../util/task'
 import { useEffect, useState } from 'react'
 export const Task = () =>{
-    const [todayTask, setTodayTask]=useState()
+    const [todayTask, setTodayTask]=useState([])
     useEffect(()=>{
       async function getTask(){
         try{
           const result=await task.getTodayTask()
-          console.log(result)
-          setTodayTask(result)
+          if(result){
+            setTodayTask(result)
+          }
         } catch(error){
           console.log(error)
         }
@@ -26,35 +27,24 @@ export const Task = () =>{
             </div>
           </div>
           <div className='task-list'>
-            <div className='task-item'>
-                <h4>Delievery App Kit</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adip incididunt ut labore et dolore magna aliqua.</p>
-                <div className='task-member'>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                </div>
-                <div className='task-progress'>
-                    <div></div>
-                </div>
-            </div>
-            <div className='task-item'>
-                <h4>Delievery App Kit</h4>
-                <p>Lorem ipsum dolor sit amet, consectetur adip incididunt ut labore et dolore magna aliqua.</p>
-                <div className='task-member'>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                  <CircleUser></CircleUser>
-                </div>
-                <div className='task-progress'>
-                    <div></div>
-                </div>
-            </div>
+            {todayTask.length>0 ? todayTask.map(task=>
+              <div className='task-item'>
+                  <h4>{task.title}</h4>
+                  <p>{task.description}</p>
+                  <div className='task-member' style={{display:'flex', gap:'.5rem'}}>
+                      {task.user && Array.isArray(task.user) ? task.user.map(member=>
+                          <div>
+                              <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{height:'32px', width:'32px', borderRadius:'10rem'}} alt="Avatar" />
+                          </div>
+                      ):null}
+                  </div>
+              </div>
+            ):<p>Tasks assigned to you will appear here. </p>}
           </div>
+          {todayTask.length>0?
+          <div className='task-footer'>
+              {todayTask.length >0 ?<p>You have {todayTask.length} tasks today. Keep it up!</p>:<p></p>}
+          </div>:null}
         </div>
     )
 }

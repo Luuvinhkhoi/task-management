@@ -70,8 +70,10 @@ const getTaskMember=async(taskId)=>{
             },
         )
         const plainResult1 = result1.map(task => task.get({ plain: true }))
+        console.log(plainResult1)
         const result2 = await Promise.all(plainResult1.map(user => db.User.findByPk(user.user_id)))
         const plainResult2 =  result2.map(task => task.get({ plain: true }))  
+        console.log(plainResult2)
         const mergedResult = plainResult1.map((member, index) => {
             return {
                 ...member,
@@ -99,6 +101,7 @@ const getTodayTask=async(userId)=>{
             },
         )
         const plainResult1 = result1.map(task => task.get({ plain: true }))
+        console.log(plainResult1)
         const result2 = await Promise.all(plainResult1.map(task => db.Task.findAll(
             {
                 where: {
@@ -122,20 +125,23 @@ const getTodayTask=async(userId)=>{
                 },
             },
         )))
-        console.log(result3)
-        const flatResult3 = result3.flat();
-        const plainResult3 = flatResult3.map(task => task.get({ plain: true }))
-        const result4 = await Promise.all(plainResult3.map(user => db.User.findByPk(user.user_id)))
-        const plainResult4 =  result4.map(task => task.get({ plain: true }))  
-        const mergedResult = plainResult2.map((member, index) => {
+        const plainResult3 = result3.map(taskArr => taskArr.map(task=>task.get({ plain: true })))
+        console.log(plainResult3)
+        const result4 = await Promise.all(plainResult3.map(userArr=> Promise.all(userArr.map(user =>db.User.findByPk(user.user_id)))))
+        console.log(result4)
+        const plainResult4 = result4.map(userArr =>
+            userArr.map(user => user.get({ plain: true }))
+        )
+        console.log(plainResult4)
+        const mergedResult = plainResult2.map((task, index) => {
             return {
-                ...member,
-                user: {
-                    id: plainResult4[index].id,
-                    firstname: plainResult4[index].firstname,
-                    lastname: plainResult4[index].lastname,
-                    avatar: plainResult4[index].avatar
-                }
+                ...task,
+                user: plainResult4[index].map(user=>({
+                    id: user.id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    avatar: user.avatar
+                }))
             }
         })
 

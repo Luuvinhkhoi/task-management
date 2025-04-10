@@ -20,7 +20,9 @@
 }
 .task-list{
     margin-top: 1rem;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    justify-items: stretch;
     gap: .5rem
 }
 .task-item{
