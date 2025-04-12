@@ -135,6 +135,25 @@ let task={
             console.log(networkError.message);
         });
     },
+    getProjectProgress(){
+        return fetch(`${baseUrl}/project/progress`,{
+            method:'GET',
+            credentials: 'include',
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    }
+    ,
     createTask(title, description, status, priority, startDate, dueDate, assignedUserId, projectId){
         return fetch(`${baseUrl}/task`,{
             method:'POST',
@@ -185,6 +204,42 @@ let task={
         });
     },
     getTodayTask(){
+        return fetch(`${baseUrl}/task/today`,{
+            method:'GET',
+            credentials: 'include',
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    getUpcomingTask(){
+        return fetch(`${baseUrl}/task/upcoming`,{
+            method:'GET',
+            credentials: 'include',
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    getAllTaskForUser(){
         return fetch(`${baseUrl}/task/user`,{
             method:'GET',
             credentials: 'include',

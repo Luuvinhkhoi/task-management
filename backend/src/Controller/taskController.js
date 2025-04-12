@@ -48,10 +48,27 @@ const getTodayTask=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
-
+const getUpcomingTask=async(req, res)=>{
+   try{
+      const result= await service.getUpcomingTask(req.user.id)
+      res.status(201).json(result)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
+const getAllTaskByUserId=async(req, res)=>{
+   try{
+      const result= await service.getAllTaskByUserId(req.user.id)
+      res.status(201).json(result)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
 module.exports={
     createTask, 
     getAllTask, 
     updateTaskStatus,
-    getTodayTask
+    getTodayTask,
+    getUpcomingTask,
+    getAllTaskByUserId
 }

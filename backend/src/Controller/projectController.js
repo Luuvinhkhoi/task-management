@@ -24,7 +24,17 @@ const getAllProject=async(req, res)=>{
         res.status(500).json({error: error.message})
     }
 }
+const getProjectProgress=async(req, res)=>{
+    try{
+        const project1= await service.getAllProject()
+        const project2= await Promise.all (project1.map(project=>service.getProjectProgress(project.id)))
+        res.status(201).json(project2)
+    } catch(error){
+        res.status(500).json({error: error.message})
+    }
+}
 module.exports={
     createProject,
-    getAllProject
+    getAllProject,
+    getProjectProgress
 }

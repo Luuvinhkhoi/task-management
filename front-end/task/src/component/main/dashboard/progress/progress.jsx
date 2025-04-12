@@ -1,21 +1,30 @@
+import task from '../../../../util/task'
 import './progress.css'
+import { useEffect, useState } from 'react'
 export const Progress = ()=>{
+  const [progress, setProgress]=useState([])
+  useEffect(()=>{
+     const fetchProgress=async ()=>{
+       try{
+        const result=await task.getProjectProgress()
+        setProgress(result)
+       }catch(error){
+        console.log(error)
+       }
+     }
+     fetchProgress()
+  }, [])
   return (
     <div id='progress'>
       <h3 style={{textAlign:'start'}}>Progress</h3>
-      <div className='progressItem'>
-        <h4>project A</h4>
-        <div className='progressBar'>
-          <div></div>
+      {progress.length > 0?progress.map(item=>
+        <div className='progressItem'>
+          <h4>{item.projectName}</h4>
+          <div className='progressBar'>
+            <div style={{width:`${item.totalTask === 0 ? '0%' : (item.completeTask / item.totalTask) * 100 + '%'}`}}></div>
+          </div>
         </div>
-      </div>
-      <div className='progressItem'>
-        <h4>project B</h4>
-        <div className='progressBar'>
-          <div></div>
-        </div>
-      </div>
-      
+      ):null}
     </div>
   )
 }

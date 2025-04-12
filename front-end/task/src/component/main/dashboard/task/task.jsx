@@ -26,17 +26,17 @@ export const Task = () =>{
                 <ChevronRight></ChevronRight>
             </div>
           </div>
-          <div className='task-list'>
+          <div className='task-list' style={{ display: todayTask.length > 0 ? 'grid' : 'block' }} >
             {todayTask.length>0 ? todayTask.map(task=>
               <div className='task-item'>
                   <h4>{task.title}</h4>
                   <p>{task.description}</p>
                   <div className='task-member' style={{display:'flex', gap:'.5rem'}}>
-                      {task.user && Array.isArray(task.user) ? task.user.map(member=>
+                      {task.user.map(member=>
                           <div>
                               <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{height:'32px', width:'32px', borderRadius:'10rem'}} alt="Avatar" />
                           </div>
-                      ):null}
+                      )}
                   </div>
               </div>
             ):<p>Tasks assigned to you will appear here. </p>}

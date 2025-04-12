@@ -17,7 +17,6 @@ const createTask=async(title, description, status, priority, assignedUserId, pro
             task_id: taskId,
             user_id:memberId
         }));
-        console.log(taskMembers)
         await db.TaskMember.bulkCreate(taskMembers);
     } catch (error){
         throw new Error(`check error ${error}`)
@@ -35,6 +34,26 @@ const getAllTaskByProjectId=async(projectId)=>{
         const plainResult = await result.map(task => task.get({ plain: true }))    
         return plainResult
     }catch(error){
+        throw new Error(`check error ${error}`)
+    }
+}
+const getAllTaskByUserId=async(userId)=>{
+    try{
+        const result1=await db.TaskMember.findAll(
+            {
+                where:{
+                    user_id:userId
+                }
+            }
+        )
+        console.log(result1)
+        const plainResult1 = result1.map(task => task.get({ plain: true }))
+        console.log(plainResult1)
+        const result2=await Promise.all(plainResult1.map(task=>db.Task.findByPk(task.task_id)))
+        console.log(result2)
+        const plainResult2 = result2.map(task => task.get({ plain: true }))
+        return plainResult2
+    } catch(error){
         throw new Error(`check error ${error}`)
     }
 }
@@ -70,10 +89,8 @@ const getTaskMember=async(taskId)=>{
             },
         )
         const plainResult1 = result1.map(task => task.get({ plain: true }))
-        console.log(plainResult1)
         const result2 = await Promise.all(plainResult1.map(user => db.User.findByPk(user.user_id)))
         const plainResult2 =  result2.map(task => task.get({ plain: true }))  
-        console.log(plainResult2)
         const mergedResult = plainResult1.map((member, index) => {
             return {
                 ...member,
@@ -101,7 +118,6 @@ const getTodayTask=async(userId)=>{
             },
         )
         const plainResult1 = result1.map(task => task.get({ plain: true }))
-        console.log(plainResult1)
         const result2 = await Promise.all(plainResult1.map(task => db.Task.findAll(
             {
                 where: {
@@ -117,7 +133,6 @@ const getTodayTask=async(userId)=>{
         )))
         const flatTask=result2.flat()
         const plainResult2=flatTask.map(task=>task.get({plain:true}))
-        console.log(plainResult2)
         const result3= await Promise.all(plainResult2.map(task => db.TaskMember.findAll(
             {
                 where: {
@@ -126,13 +141,62 @@ const getTodayTask=async(userId)=>{
             },
         )))
         const plainResult3 = result3.map(taskArr => taskArr.map(task=>task.get({ plain: true })))
-        console.log(plainResult3)
         const result4 = await Promise.all(plainResult3.map(userArr=> Promise.all(userArr.map(user =>db.User.findByPk(user.user_id)))))
-        console.log(result4)
         const plainResult4 = result4.map(userArr =>
             userArr.map(user => user.get({ plain: true }))
         )
-        console.log(plainResult4)
+        const mergedResult = plainResult2.map((task, index) => {
+            return {
+                ...task,
+                user: plainResult4[index].map(user=>({
+                    id: user.id,
+                    firstname: user.firstname,
+                    lastname: user.lastname,
+                    avatar: user.avatar
+                }))
+            }
+        })
+
+        return mergedResult
+    }catch(error){
+        throw new Error(`check error ${error}`)
+    }
+}
+const getUpcomingTask=async (userId)=>{
+    try{
+        const today = new Date();
+        const result1=await db.TaskMember.findAll(
+            {
+                where: {
+                  user_id: userId,
+                },
+            },
+        )
+        const plainResult1 = result1.map(task => task.get({ plain: true }))
+        const result2 = await Promise.all(plainResult1.map(task => db.Task.findAll(
+            {
+                where: {
+                  id: task.task_id,
+                  createdAt: {
+                    [Op.gte]: today,
+                  },
+                },
+            }
+        )))
+        const flatTask=result2.flat()
+        const plainResult2=flatTask.map(task=>task.get({plain:true}))
+        const result3= await Promise.all(plainResult2.map(task => db.TaskMember.findAll(
+            {
+                where: {
+                  task_id: task.id,
+                },
+            },
+        )))
+        const plainResult3 = result3.map(taskArr => taskArr.map(task=>task.get({ plain: true })))
+        const result4 = await Promise.all(plainResult3.map(userArr=> Promise.all(userArr.map(user =>db.User.findByPk(user.user_id)))))
+        const plainResult4 = result4.map(userArr =>
+            userArr.map(user => user.get({ plain: true }))
+        )
         const mergedResult = plainResult2.map((task, index) => {
             return {
                 ...task,
@@ -155,5 +219,7 @@ module.exports={
     getAllTaskByProjectId,
     updateTaskStatus,
     getTaskMember,
-    getTodayTask
+    getTodayTask, 
+    getUpcomingTask,
+    getAllTaskByUserId
 }
