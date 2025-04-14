@@ -66,7 +66,7 @@ export const SideBar = ()=>{
                         >
                            <ul>
                            {projects.map(project=>
-                              <li onClick={() => navigate( `/project/${project.id}`)} className={isSubActive(`/project/${project.id}`) ? 'sub-active' : ''}>{project.title}</li>
+                              <li onClick={() => navigate( `/project/${project.id}`)} className={isSubActive(`/project/${project.id}`)|| isSubActive(`/project/${project.id}/list`)? 'sub-active' : ''}>{project.title}</li>
                            )}
                            </ul>
                         </motion.div>

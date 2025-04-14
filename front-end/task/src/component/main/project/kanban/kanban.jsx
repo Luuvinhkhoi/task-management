@@ -98,7 +98,7 @@ export const Kanban = () => {
                     tasks={tasks}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
-                    borderColor="rgb(255, 153, 89)" 
+                    borderColor="#f59e0b" 
                 />
 
                 {/* Complete Column */}
@@ -173,7 +173,7 @@ const KanbanItem = ({ task }) => {
             className="kanbanItem" 
             style={{ opacity: isDragging ? 0.5 : 1 }}
         >
-            <div className="priority" style={{ backgroundColor: 'rgb(255, 142, 66)' }}>{task.priority}</div>
+            <div className={`priority-${task.priority.toLowerCase()}`} style={{display:'inline-block'}}>{task.priority}</div>
             <p>{task.title}</p>
             <span>{task.description}</span>
             <div className="member" style={{display:'flex', gap:'1rem'}}>

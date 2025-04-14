@@ -50,7 +50,7 @@ export const List = ()=>{
                     <div className='listContentItem'>
                         <div>{task.title}</div>                        
                         <div>{task.description.length>20?task.description.slice(0,20)+'...':task.description}</div>
-                        <div className='status'>{t(`list.${task.status}`)}</div>
+                        <div style={{borderRadius:'1rem'}} className={`status-${task.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${task.status}`)}</div>
                         <div>{t(`list.priority.${task.priority}`)}</div>
                         <div style={{display:'flex', gap:'5px', justifyContent:'center'}}>{task.members.map(member=>
                             <div>
