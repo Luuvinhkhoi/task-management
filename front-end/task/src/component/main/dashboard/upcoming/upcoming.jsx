@@ -1,7 +1,7 @@
-import './todayTask.css'
+import './upcoming.css'
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom';
-export const TodayTask = () => {
+export const Upcoming= () => {
   const [isOpenTab, setIsOpenTab] = useState('all');
   const location=useLocation()
   const tasks=location.state
@@ -18,7 +18,7 @@ export const TodayTask = () => {
     return true
   })
   return (
-    <div id="todayTask">
+    <div id="upcomingTask">
       <div className="taskHeader">
         {tabs.map(tab => (
           <div

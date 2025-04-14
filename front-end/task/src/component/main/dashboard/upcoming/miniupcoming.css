@@ -1,0 +1,43 @@
+/* Custom major label (e.g. March) */
+@import url('../../../../theme.css');
+#mini-upcoming{
+  background-color: var(--task-bg);
+  border-radius: 1rem;
+  margin: 0.5rem;
+  padding: 1rem .5rem;
+  min-height: 190px;
+  overflow: hidden;
+}
+.upcomingTask-header{
+  text-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.upcomingTask-header div{
+  display: flex;
+  font-weight: 500;
+  padding: .5rem;
+  border-radius: 1rem;
+  border: 2px solid #ebebf3;
+}
+.upcomingTask-list{
+  margin-top: 1rem;
+  grid-template-columns: 1fr 1fr;
+  justify-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem
+}
+.upcomingTask-item{
+  display: flex;
+  flex-direction: column;
+  gap:.5rem;
+  text-align: start;
+  padding: .5rem;
+  border-radius: 1rem;
+  background-color: var(--task-item-bg);
+}
+.upcomingTask-item p{
+  font-size: 12px;
+}

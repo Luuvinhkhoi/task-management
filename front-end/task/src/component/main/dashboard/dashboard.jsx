@@ -1,7 +1,7 @@
 import './dashboard.css'
 import { Task } from './task/minitask';
 import { Progress } from './progress/progress';
-import { Upcoming } from './upcoming/miniUpcoming';
+import { MiniUpcoming } from './upcoming/miniUpcoming';
 import {  Distribution } from './distribution/distribution';
 export const Dashboard = () =>{
   return(
@@ -12,7 +12,7 @@ export const Dashboard = () =>{
         </div>
         <div id='row2'>
           <Progress></Progress>
-          <Upcoming></Upcoming>
+          <MiniUpcoming></MiniUpcoming>
         </div>
     </div>
   )

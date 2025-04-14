@@ -23,7 +23,7 @@ export const Task = () =>{
         <div id='task'>
           <div className='task-header'>
             <h3>Today Tasks</h3>
-            <div onClick={()=>navigate('/todayTask',{
+            <div onClick={()=>navigate('/today-task',{
               state:todayTask
             })}>
                 See All 

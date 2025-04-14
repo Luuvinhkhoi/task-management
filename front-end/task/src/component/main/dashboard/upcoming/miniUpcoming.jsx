@@ -1,10 +1,12 @@
 import React from 'react';
-import './upcoming.css';
+import './miniupcoming.css';
 import task from '../../../../util/task';
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-export const Upcoming = () => {
+export const MiniUpcoming = () => {
   const [todayTask, setTodayTask]=useState([])
+  const navigate=useNavigate()
   useEffect(()=>{
     async function getTask(){
       try{
@@ -19,10 +21,12 @@ export const Upcoming = () => {
     getTask()
   },[])
   return (
-    <div id='upcoming'>
+    <div id='mini-upcoming'>
         <div className='upcomingTask-header'>
             <h3>Upcoming Tasks</h3>
-            <div>
+            <div onClick={()=>navigate('/upcoming-task',{
+              state:todayTask
+            })}>
                 See All 
                 <ChevronRight></ChevronRight>
             </div>
@@ -30,7 +34,10 @@ export const Upcoming = () => {
         <div className='upcomingTask-list'>
             {todayTask.length>0 ? todayTask.slice(0,2).map(task=>
               <div className='upcomingTask-item'>
-                  <h4>{task.title}</h4>
+                  <div style={{display:'flex', gap:'1rem', alignContent:'center'}}>
+                    <h4>{task.title}</h4>
+                    <div className={`priority-${task.priority.toLowerCase()}`}>{task.priority}</div>
+                  </div>
                   <p>{task.description}</p>
                   <div className='upcomingTask-member' style={{display:'flex', gap:'.5rem'}}>
                       {task.user.map(member=>
