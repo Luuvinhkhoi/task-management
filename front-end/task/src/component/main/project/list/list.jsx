@@ -3,10 +3,12 @@ import './list.css'
 import { useEffect } from 'react'
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from 'react-redux'
+import { useParams } from 'react-router-dom';
 import { getAllTask, updateTaskStatus } from '../../../../store/task';
 export const List = ()=>{
     const dispatch=useDispatch()
     const { t } = useTranslation();
+    const { id } = useParams()
     const tasks=useSelector(state=> state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
     const mergeTask=tasks.map((task, index)=>{
@@ -22,13 +24,13 @@ export const List = ()=>{
     useEffect(()=>{
           async function fetchTask(){
             try{
-              await dispatch(getAllTask())
+              await dispatch(getAllTask(id))
             } catch(error){
               console.log(error)
             }
           }
           fetchTask()
-    }, [dispatch])
+    }, [dispatch,id])
    console.log(mergeTask)
     return (
         <div className='list'>
@@ -47,7 +49,7 @@ export const List = ()=>{
                 {mergeTask.map(task=>
                     <div className='listContentItem'>
                         <div>{task.title}</div>                        
-                        <div>{task.description}</div>
+                        <div>{task.description.length>20?task.description.slice(0,20)+'...':task.description}</div>
                         <div className='status'>{t(`list.${task.status}`)}</div>
                         <div>{t(`list.priority.${task.priority}`)}</div>
                         <div style={{display:'flex', gap:'5px', justifyContent:'center'}}>{task.members.map(member=>

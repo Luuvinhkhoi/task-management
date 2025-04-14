@@ -20,8 +20,11 @@ export const Progress = ()=>{
       {progress.length > 0?progress.map(item=>
         <div className='progressItem'>
           <h4>{item.projectName}</h4>
-          <div className='progressBar'>
-            <div style={{width:`${item.totalTask === 0 ? '0%' : (item.completeTask / item.totalTask) * 100 + '%'}`}}></div>
+          <div>
+            <div className='progressBar'>
+              <div style={{width:`${item.totalTask === 0 ? '0%' : (item.completeTask / item.totalTask) * 100 + '%'}`}}></div>
+            </div>
+            <div>{item.totalTask === 0 ? '0%' : (item.completeTask / item.totalTask) * 100 + '%'}</div>
           </div>
         </div>
       ):null}

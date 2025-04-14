@@ -21,6 +21,11 @@
     flex-direction: column;
     gap: .5rem;
 }
+.progressItem div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .progressBar{
     height: 1rem;
     width: 80%;

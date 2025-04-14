@@ -1,7 +1,7 @@
 import './dashboard.css'
-import { Task } from './task/task';
+import { Task } from './task/minitask';
 import { Progress } from './progress/progress';
-import { Upcoming } from './upcoming/upcoming';
+import { Upcoming } from './upcoming/miniUpcoming';
 import {  Distribution } from './distribution/distribution';
 export const Dashboard = () =>{
   return(

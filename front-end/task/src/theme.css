@@ -14,6 +14,46 @@
     --status-bg:#4caf50;
     --search-bg:#fff;
     --border:rgb(228, 231, 236);
+    --color-todo-primary: #3b82f6;     /* bg-blue-500 */
+    --color-todo-hover:  #007bff;       /* bg-blue-600 */
+    --color-todo-light: #60a5fa;       /* bg-blue-400 */
+    --color-todo-lighter: #93c5fd;     /* bg-blue-300 */
+
+    /* In Progress Colors */
+    --color-inprogress-primary: #f59e0b;     /* bg-amber-500 */
+    --color-inprogress-hover: #d97706;       /* bg-amber-600 */
+    --color-inprogress-light: #fbbf24;       /* bg-amber-400 */
+    --color-inprogress-lighter: #fcd34d;     /* bg-amber-300 */
+
+    /* Complete Colors */
+    --color-complete-primary: #22c55e;     /* bg-green-500 */
+    --color-complete-hover: #16a34a;       /* bg-green-600 */
+    --color-complete-light: #4ade80;       /* bg-green-400 */
+    --color-complete-lighter: #86efac;  
+    --color-priority-urgent-dark: #a21caf;     /* fuchsia-700 */
+    --color-priority-urgent: #c026d3;          /* fuchsia-600 */
+    --color-priority-urgent-light: #d946ef;    /* fuchsia-500 */
+    --color-priority-urgent-lighter: #e879f9;  /* fuchsia-400 */
+  
+    /* High - red */
+    --color-priority-high-dark: #b91c1c;       /* red-700 */
+    --color-priority-high: #dc2626;            /* red-600 */
+    --color-priority-high-light: #ef4444;      /* red-500 */
+    --color-priority-high-lighter: #f87171;    /* red-400 */
+  
+    /* Medium - green */
+    --color-priority-medium-dark: #15803d;     /* green-700 */
+    --color-priority-medium: #16a34a;          /* green-600 */
+    --color-priority-medium-light: #22c55e;    /* green-500 */
+    --color-priority-medium-lighter: #4ade80;  /* green-400 */
+  
+    /* Low - blue */
+    --color-priority-low-dark: #1d4ed8;        /* blue-700 */
+    --color-priority-low: #2563eb;             /* blue-600 */
+    --color-priority-low-light: #3b82f6;       /* blue-500 */
+    --color-priority-low-lighter: #60a5fa;     /* blue-400 */
+    --today-task-header:#f2f4f7;
+    --tab-item:  #667085;
 }
 [data-theme="dark"] {
     /* Dark Mode */
@@ -34,4 +74,7 @@
     --status-bg:#4caf50;
     --search-bg:#1c2536;
     --border:rgb(29, 41, 57);
+    --today-task-header:rgb(31, 41, 55);
+    --tab-item:  #667085;
+
 }

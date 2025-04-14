@@ -31,6 +31,8 @@
     display: grid;
     grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr 1fr 1fr;
     align-items: center;
+    font-size: 14px;
+    font-weight: 400;
 }
 .list .status{
     background-color: var(--status-bg);

@@ -26,7 +26,7 @@
     background-color: var(--kanban-bg);
     margin-bottom: 1rem;
 }
-.kanbanItem .priority{
+.priority{
     padding: 0 1rem;
     display: inline-block;
     border-radius: 1rem;

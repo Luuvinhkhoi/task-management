@@ -1,7 +1,7 @@
 import './distribution.css';
 import {useState, useEffect} from 'react';
 import task from '../../../../util/task';
-import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 // Giả lập các ngày có task và trạng thái
 export const Distribution = () => {
   const [tasks, setTask]=useState([])
@@ -42,8 +42,8 @@ export const Distribution = () => {
   return(
     <div id='distribution'>
        <h3 style={{textAlign:'start'}}>Task Distribution</h3>
-       <div >
-        <PieChart width={400} height={300}>
+       <ResponsiveContainer width="100%" height='95%' maxHeight='300px'>
+        <PieChart>
           <Pie
             data={chartData}
             dataKey="value"
@@ -61,10 +61,7 @@ export const Distribution = () => {
           <Tooltip />
           <Legend />
         </PieChart>
-        <div style={{ textAlign: 'center', fontWeight: 'bold', fontSize: '18px' }}>
-          Total: {total}
-        </div>
-      </div>
+       </ResponsiveContainer>
     </div>
   )
 };

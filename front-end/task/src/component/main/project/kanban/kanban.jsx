@@ -35,7 +35,7 @@ export const Kanban = () => {
         }
       }
       fetchTask()
-    }, [])
+    }, [id])
     useEffect(() => {
             // Lưu URL hiện tại để theo dõi trang
             const currentPath = location.pathname;
@@ -88,7 +88,7 @@ export const Kanban = () => {
                     tasks={tasks}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
-                    borderColor="rgba(99, 153, 253, 0.8)" 
+                    borderColor=" #007bff" 
                 />
 
                 {/* In Progress Column */}
@@ -98,7 +98,7 @@ export const Kanban = () => {
                     tasks={tasks}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
-                    borderColor="rgba(243, 175, 115, 0.8)" 
+                    borderColor="rgb(255, 153, 89)" 
                 />
 
                 {/* Complete Column */}
@@ -173,7 +173,7 @@ const KanbanItem = ({ task }) => {
             className="kanbanItem" 
             style={{ opacity: isDragging ? 0.5 : 1 }}
         >
-            <div className="priority" style={{ backgroundColor: 'rgb(255, 142, 66)' }}>High</div>
+            <div className="priority" style={{ backgroundColor: 'rgb(255, 142, 66)' }}>{task.priority}</div>
             <p>{task.title}</p>
             <span>{task.description}</span>
             <div className="member" style={{display:'flex', gap:'1rem'}}>
