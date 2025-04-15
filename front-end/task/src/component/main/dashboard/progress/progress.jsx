@@ -1,8 +1,10 @@
 import task from '../../../../util/task'
 import './progress.css'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next';
 export const Progress = ()=>{
   const [progress, setProgress]=useState([])
+  const {t}=useTranslation()
   useEffect(()=>{
      const fetchProgress=async ()=>{
        try{
@@ -16,7 +18,7 @@ export const Progress = ()=>{
   }, [])
   return (
     <div id='progress'>
-      <h3 style={{textAlign:'start'}}>Progress</h3>
+      <h3 style={{textAlign:'start'}}>{t('dashboard.progress')}</h3>
       {progress.length > 0?progress.map(item=>
         <div className='progressItem'>
           <h4>{item.projectName}</h4>

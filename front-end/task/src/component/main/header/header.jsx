@@ -54,7 +54,7 @@ export const Header=()=>{
              <div style={{display:'inline-block'}}>
                 <div className='profile'  ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
                   <CircleUser></CircleUser>
-                  <p>Welcome <span>{userName}</span></p>
+                  <p>{t(`header.Welcome`)} <span>{userName}</span></p>
                 </div>
                 <AnimatePresence>
                     {OpenDropdown==true &&(

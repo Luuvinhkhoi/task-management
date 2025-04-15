@@ -5,8 +5,12 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { useTimezone } from '../../../timezoneContext.jsx';
+import { useSelector, useDispatch } from 'react-redux';
+import { toggleDarkMode } from '../../../store/setting.js';
 export const Setting = () => {
   const { i18n } = useTranslation();
+  const dispatch = useDispatch();
+  const darkMode = useSelector((state) => state.setting.darkMode);
   const changeLang = (event) => {
     const lang = event.target.value;
     i18n.changeLanguage(lang);
@@ -21,7 +25,6 @@ export const Setting = () => {
     'America/New_York',
     'UTC',
   ];
-  const [darkMode, setDarkMode] = useState(localStorage.getItem("theme") === "dark");
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
     localStorage.setItem("theme", darkMode ? "dark" : "light");
@@ -94,7 +97,10 @@ export const Setting = () => {
       <div className='darkMode'>
         <h2>Dark mode</h2>
         <FormControlLabel
-          control={<MaterialUISwitch onChange={() => setDarkMode(!darkMode)} sx={{ m: 1 }} checked={darkMode}  />}
+          control={<MaterialUISwitch 
+            checked={darkMode}
+            onChange={() => dispatch(toggleDarkMode())}
+            sx={{ m: 1 }}   />}
         />
       </div>
       <div className='timezone'>

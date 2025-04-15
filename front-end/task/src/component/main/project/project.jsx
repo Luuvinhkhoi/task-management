@@ -5,9 +5,11 @@ import {X} from 'lucide-react'
 import task from '../../../util/task'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
+import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next";
 export const Project = ()=>{
     const { t } = useTranslation();
+    const darkMode = useSelector((state) => state.setting.darkMode);
     const animatedComponents = makeAnimated();
     const [isActive, setActive]=useState()
     const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -15,8 +17,8 @@ export const Project = ()=>{
     const [taskFormOpen, setTaskFormOpen]=useState(false)
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [status, setStatus] = useState('');
-    const [priority, setPriority] = useState('');
+    const [status, setStatus] = useState('To do');
+    const [priority, setPriority] = useState('Medium');
     const [startDate, setStartDate] = useState("");
     const [dueDate, setDueDate] = useState("");
     const [assignedUserId, setAssignedUserId] = useState([]);
@@ -24,7 +26,6 @@ export const Project = ()=>{
     const [users, setUser]=useState([])
     const location=useLocation()
     const navigate=useNavigate()
-    console.log(users)
     let param=useParams()
     function listActive(){
       if(location.pathname.endsWith('list')){
@@ -33,6 +34,51 @@ export const Project = ()=>{
         return false
       }
     }
+    const options = [
+      { value: 'Low', label: 'Low' },
+      { value: 'Medium', label: 'Medium' },
+      { value: 'High', label: 'High' },
+      { value: 'Urgent', label: 'Urgent' }
+    ];
+    const statusOptions = [
+      { value: 'To do', label: 'To do' },
+      { value: 'In progress', label: 'In progress' },
+      { value: 'Complete', label: 'Complete' },
+    ];
+    const customStyles =(darkMode) =>({
+      control: (base, state) => ({
+        ...base,
+        backgroundColor: darkMode ? '#1c2536' : '#fff',
+        boxShadow: 'none',
+        color: darkMode ? '#ddd' : '#000',
+        border: darkMode?'3px solid rgb(29, 41, 57)': '3px solid rgb(228, 231, 236)',
+        padding: '8px',
+        fontSize: '14px',
+        '&:hover': {
+          border: darkMode?'3px solid rgb(29, 41, 57)': '3px solid rgb(228, 231, 236)',
+        },
+        borderRadius:'.5rem'
+      }),
+      option: (base, state) => ({
+        ...base,
+        backgroundColor: state.isFocused
+          ? (darkMode ? '#007bff' : '#eaeaea')
+          : (darkMode ? '#1c2536' : '#fff'),
+        color: darkMode ? '#fff' : '#000',
+        fontSize: '14px',
+        cursor: 'pointer',
+      }),
+      singleValue: (base) => ({
+        ...base,
+        color: darkMode ? '#ddd' : '#000',
+      }),
+      menu: (base) => ({
+        ...base,
+        backgroundColor: darkMode ? '#1c2536' : '#fff',
+        zIndex: 9999,
+      }),
+    });
+    const getCustomStyle=customStyles(darkMode)
     const handleTaskSubmit = async (e) => {
       e.preventDefault()
       await task.createTask(
@@ -96,7 +142,7 @@ export const Project = ()=>{
              </div>
              <div className='headerItem'>
                 <div className='create' onClick={()=>setProjectFormOpen(true)}>
-                  <p>New project</p>
+                  <p>{t('project.New project')}</p>
                 </div>
                 <div className={`overlay-${projectFormOpen?'active':'unActive'}`}>
                   <form className={`projectForm-${projectFormOpen?'active':'unActive'}`} onSubmit={handleProjectSubmit}>
@@ -113,7 +159,7 @@ export const Project = ()=>{
                       <button>Create Project</button>
                   </form>
                 </div>
-                <div className='create' onClick={()=>setTaskFormOpen(true)}>New task</div>
+                <div className='create' onClick={()=>setTaskFormOpen(true)}>{t('project.New task')}</div>
                 <div className={`overlay-${taskFormOpen?'active':'unActive'}`}>
                   <form className={`projectForm-${taskFormOpen?'active':'unActive'}`} onSubmit={handleTaskSubmit} >
                       <div className='close-button' onClick={()=>{setTaskFormOpen(!taskFormOpen)}}><X></X></div>
@@ -122,33 +168,58 @@ export const Project = ()=>{
                         <input placeholder='Title'  onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
                       </div>
                       <div className='option'>
-                        <div>
-                          <select onChange={(e)=>setStatus(e.target.value)}>
-                            <option value='To do'>To do</option>
-                            <option value='In progress'>In progress</option>
-                            <option value='Done'>Done</option>
-                          </select>
+                        <div className='select'>
+                          <Select
+                            options={statusOptions}
+                            styles={getCustomStyle}
+                            defaultValue={statusOptions[1]}
+                            onChange={(selectedOption) => setStatus(selectedOption.value)} // Medium
+                          />
                         </div>
-                        <div>
-                          <select onChange={(e)=>setPriority(e.target.value)} >
-                            <option value='Low'>Low</option>
-                            <option value='Medium'>Medium</option>
-                            <option value='High'>High</option>
-                            <option value='Urgent'>Urgent</option>
-                          </select>
+                        <div className='select'>
+                          <Select
+                            options={options}
+                            styles={getCustomStyle}
+                            defaultValue={options[1]}
+                            onChange={(selectedOption) => setPriority(selectedOption.value)} // Medium
+                          />
                         </div>
                       </div>
                       <div className='title'>
                         <input placeholder='Description' onChange={(e)=>setDescription(e.target.value)} minLength={2} maxLength={200}></input>
                       </div>
                       <div className='date'>
-                        <div><input type='date' onChange={(e)=>setStartDate(e.target.value)}></input></div>
-                        <div><input type='date' onChange={(e)=>setDueDate(e.target.value)}></input></div>
+                        <div>
+                          <input type='date' 
+                            onChange={(e) => {
+                              const newStart = e.target.value;
+                              if (!dueDate || newStart <= dueDate) {
+                                setStartDate(newStart);
+                              } else {
+                                alert('Start date cannot be after due date!');
+                              }
+                            }}>
+                          </input>
+                        </div>
+                        <div>
+                          <input type='date' 
+                            onChange={(e) => {
+                              const newDue = e.target.value;
+                              if (!startDate || newDue >= startDate) {
+                                setDueDate(newDue);
+                              } else {
+                                alert('Due date cannot be before start date!');
+                              }
+                            }}
+                          >
+                          </input>
+                        </div>
                       </div>
                       <Select 
                         closeMenuOnSelect={false}
                         components={animatedComponents}
                         isMulti
+                        styles={getCustomStyle}
                         options={users}
                         onChange={handleAssignUser}
                       ></Select>

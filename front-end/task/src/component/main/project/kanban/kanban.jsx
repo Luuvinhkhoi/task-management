@@ -159,6 +159,7 @@ const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor 
 
 // Định nghĩa KanbanItem bên ngoài Kanban nhưng vẫn trong cùng file
 const KanbanItem = ({ task }) => {
+    const { t } = useTranslation();
     const [{ isDragging }, drag] = useDrag({
         type: ItemType,
         item: { id: task.id },
@@ -173,7 +174,7 @@ const KanbanItem = ({ task }) => {
             className="kanbanItem" 
             style={{ opacity: isDragging ? 0.5 : 1 }}
         >
-            <div className={`priority-${task.priority.toLowerCase()}`} style={{display:'inline-block'}}>{task.priority}</div>
+            <div className={`priority-${task.priority.toLowerCase()}`} style={{display:'inline-block'}}>{t(`list.priority.${task.priority}`)}</div>
             <p>{task.title}</p>
             <span>{task.description}</span>
             <div className="member" style={{display:'flex', gap:'1rem'}}>

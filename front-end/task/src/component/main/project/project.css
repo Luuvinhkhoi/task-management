@@ -111,20 +111,17 @@
     display: flex;
     gap: 1rem;
 }
-.project  .projectForm-active .option div{
+.project  .projectForm-active .option .select{
     width: 100%;
     background-color: var(--search-bg);
-    border-radius: .5rem;
-    padding: 1rem;
-    border: 2px solid var(--border);
+    align-content: center;
 }
-.project  .projectForm-active .option div select{
+.project  .projectForm-active .option .select select{
     outline: none;
     width: 100%;
     background: none;
     border: none;
     color: var(--text-color);
-
 }
 .project button{
     background-color: var(--button-bg);
@@ -142,26 +139,17 @@
     border-radius: .5rem !important;
     color: black;
 }
-.css-hlgwow{
-    display: grid !important;
-    padding: unset !important;
+.css-1ve2y7x-control{
+    background: unset !important;
+    border: unset !important;
 }
-.css-1jqq78o-placeholder{
-    padding: unset !important;
+.css-1tkm9rf-control{
+    padding: 10px;
+    background-color: var(--search-bg) !important;
+    border: 2px solid var(--border) !important;
+    border-radius: .5rem !important;
+    color: black;
 }
-.css-19bb58m{
-    padding: unset !important;
-}
-.css-1wy0on6{
-    padding: unset !important;
-}
-.css-1nmdiq5-menu{
-    display: unset !important;
-}
-.css-qr46ko{
-    display: block !important;
-    overflow: scroll;
-}
-.css-1nmdiq5-menu div{
-    background-color: var(--search-bg);
+.css-1dimb5e-singleValue{
+    color: hsl(0, 0%, 50%) !important;
 }

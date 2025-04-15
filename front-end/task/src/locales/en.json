@@ -1,7 +1,8 @@
 {
     "header":{
       "Sign in":"Sign in",
-      "Create account":"Create account"
+      "Create account":"Create account",
+      "Welcome":"Welcome"
     },
     "project":{
       "Kanban board":"Kanban board",
@@ -9,6 +10,16 @@
       "New project":"New project",
       "New task":"New task"
     },
+    "createProject":{
+      "head":"Create new project",
+      "title":"Title"
+    },
+    "createTask":{
+      "head":"Create new task",
+      "title":"Title"
+      
+    }
+    ,
     "kanban": {
       "todo": "TO DO",
       "inProgress": "IN PROGRESS",
@@ -41,8 +52,10 @@
     ,
     "dashboard":{
         "todayTask":"Today Task",
-        "calendar":"Calendar",
-        "progress":"Progress"
+        "upcomingTask":"Upcoming Task",
+        "statusOverview":"Status Overview",
+        "progress":"Progress",
+        "seeAll":"See All"
     },
     "sideBar":{
         "dashboard":"Dashboard",

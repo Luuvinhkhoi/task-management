@@ -1,7 +1,8 @@
 {
     "header":{
       "Sign in":"Đăng nhập",
-      "Create account":"Tạo mới tài khoản"
+      "Create account":"Tạo mới tài khoản",
+      "Welcome":"Chào mừng"
     },
     "project":{
       "Kanban board":"Bảng Kanban",
@@ -41,8 +42,10 @@
     ,
     "dashboard":{
         "todayTask":"Nhiệm vụ hôm nay",
-        "calendar":"Lịch",
-        "progress":"Tiến độ"
+        "upcomingTask":"Nhiệm vụ sắp tới",
+        "statusOverview":"Tổng quan trạng thái",
+        "progress":"Tiến độ",
+        "seeAll":"Xem thêm"
     },
     "sideBar":{
         "dashboard":"Tổng quan",

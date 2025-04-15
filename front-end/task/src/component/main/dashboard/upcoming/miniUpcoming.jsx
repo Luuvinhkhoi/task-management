@@ -4,8 +4,10 @@ import task from '../../../../util/task';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 export const MiniUpcoming = () => {
   const [todayTask, setTodayTask]=useState([])
+  const {t}=useTranslation()
   const navigate=useNavigate()
   useEffect(()=>{
     async function getTask(){
@@ -23,11 +25,11 @@ export const MiniUpcoming = () => {
   return (
     <div id='mini-upcoming'>
         <div className='upcomingTask-header'>
-            <h3>Upcoming Tasks</h3>
+            <h3>{t('dashboard.upcomingTask')}</h3>
             <div onClick={()=>navigate('/upcoming-task',{
               state:todayTask
             })}>
-                See All 
+                {t('dashboard.seeAll')}
                 <ChevronRight></ChevronRight>
             </div>
         </div>

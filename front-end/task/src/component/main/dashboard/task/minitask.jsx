@@ -2,9 +2,11 @@ import { ChevronRight, CircleUser } from 'lucide-react'
 import './minitask.css'
 import task from '../../../../util/task'
 import { useNavigate} from 'react-router-dom'
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react'
 export const Task = () =>{
     const [todayTask, setTodayTask]=useState([])
+    const {t} = useTranslation()
     const navigate=useNavigate()
     useEffect(()=>{
       async function getTask(){
@@ -22,11 +24,11 @@ export const Task = () =>{
     return(
         <div id='task'>
           <div className='task-header'>
-            <h3>Today Tasks</h3>
+            <h3>{t('dashboard.todayTask')}</h3>
             <div onClick={()=>navigate('/today-task',{
               state:todayTask
             })}>
-                See All 
+                {t('dashboard.seeAll')}
                 <ChevronRight></ChevronRight>
             </div>
           </div>
@@ -35,7 +37,7 @@ export const Task = () =>{
               <div className='task-item'>
                   <div style={{display:'flex', gap:'1rem', alignContent:'center'}}>
                     <h4>{task.title}</h4>
-                    <div className={`priority-${task.priority.toLowerCase()}`}>{task.priority}</div>
+                    <div className={`priority-${task.priority.toLowerCase()}`}>{t(`list.priority.${task.priority}`)}</div>
                   </div>
                   <p>{task.description}</p>
                   <div className='task-member' style={{display:'flex', gap:'.5rem'}}>

@@ -1,10 +1,12 @@
 import './distribution.css';
 import {useState, useEffect} from 'react';
 import task from '../../../../util/task';
+import { useTranslation } from 'react-i18next';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 // Giả lập các ngày có task và trạng thái
 export const Distribution = () => {
   const [tasks, setTask]=useState([])
+  const {t}=useTranslation()
   const getStatusCounts = (data) => {
     const counts = data.reduce((acc, { status }) => {
       const key = status;
@@ -41,7 +43,7 @@ export const Distribution = () => {
   console.log(tasks)
   return(
     <div id='distribution'>
-       <h3 style={{textAlign:'start'}}>Task Distribution</h3>
+       <h3 style={{textAlign:'start'}}>{t('dashboard.statusOverview')}</h3>
        <ResponsiveContainer width="100%" height='95%' maxHeight='300px'>
         <PieChart>
           <Pie
