@@ -4,11 +4,18 @@ const bcrypt=require('bcryptjs');
 const createUser=async(email, password, firstname, lastname)=>{
   try{
     const hashedPassword = await bcrypt.hash(password, 10);
-    await db.User.create({
+    const result=await db.User.create({
         email: email,
         password:hashedPassword,
         firstname:firstname,
         lastname: lastname,
+    })
+    const plainResult=await result.get({plain:true})
+    await db.UserSetting.create({
+        language:'English',
+        theme:'dark',
+        timezone:'Asia/Ho_Chi_Minh',
+        userId:plainResult.id
     })
   } catch(error){
     throw new Error(`check error ${error}`, error)

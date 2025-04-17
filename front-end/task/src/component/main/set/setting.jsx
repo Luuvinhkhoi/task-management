@@ -1,12 +1,14 @@
 import './setting.css';
 import { useState, useEffect } from "react";
+import task from '../../../util/task.js';
 import { useTranslation } from 'react-i18next';
 import FormControlLabel from "@mui/material/FormControlLabel";
 import { styled } from '@mui/material/styles';
 import Switch from '@mui/material/Switch';
 import { useTimezone } from '../../../timezoneContext.jsx';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleDarkMode } from '../../../store/setting.js';
+import { toggleDarkMode, setLanguage } from '../../../store/setting.js';
+import { getAllSetting } from '../../../store/setting.js';
 export const Setting = () => {
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
@@ -14,17 +16,33 @@ export const Setting = () => {
   const changeLang = (event) => {
     const lang = event.target.value;
     i18n.changeLanguage(lang);
+    dispatch(setLanguage(lang))
     localStorage.setItem('lang', lang);
   };
-  const { timezone, setTimezone } = useTimezone();
-
+  const { timezone, changeTimezone } = useTimezone();
   const timezones = [
-    'Asia/Ho_Chi_Minh',
     'Asia/Tokyo',
+    'Asia/Saigon',
     'Europe/London',
     'America/New_York',
     'UTC',
   ];
+  async function handleSubmit(e){
+    try{
+      e.preventDefault()
+      await task.updateUserSetting({language:i18n.language, theme:darkMode?'dark':'light', timezone:timezone})
+    } catch(error){
+      throw new Error(`${error}`)
+    }
+  }
+  const language = useSelector(state => state.setting.language);
+
+// Khi component mount lần đầu
+  useEffect(() => {
+    if (language) {
+      i18n.changeLanguage(language);
+    }
+  }, [language]);
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
     localStorage.setItem("theme", darkMode ? "dark" : "light");
@@ -84,9 +102,18 @@ export const Setting = () => {
       }),
     },
   }));
-  
+  useEffect(()=>{
+    function getUserSetting(){
+      try{
+        dispatch(getAllSetting())
+      } catch(error){
+        console.log(error)
+      }
+    }
+    getUserSetting()
+  }, [dispatch])
   return (
-    <div id='setting'>
+    <form onSubmit={handleSubmit} id='setting'>
       <div className='language'>
         <h2>Language</h2>
         <select id="language-select" onChange={changeLang} value={i18n.language}>
@@ -105,7 +132,7 @@ export const Setting = () => {
       </div>
       <div className='timezone'>
         <h2>Timezone Setting</h2>
-        <select value={timezone} onChange={(e) => setTimezone(e.target.value)}>
+        <select value={timezone} onChange={(e) => changeTimezone(e.target.value)}>
           {timezones.map((tz) => (
             <option key={tz} value={tz}>
               {tz}
@@ -113,6 +140,7 @@ export const Setting = () => {
           ))}
         </select>
       </div>
-    </div>
+      <button style={{color:'#fff',marginLeft:'5rem', backgroundColor:'#007bff'}}>Save Setting</button>
+    </form>
   );
 };

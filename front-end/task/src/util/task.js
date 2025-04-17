@@ -332,7 +332,42 @@ let task={
             }
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
           });
-    }
+    },
+    getSetting(){
+        return fetch(`${baseUrl}/setting`,{
+            method:'GET',
+            credentials:'include'
+        }).then(response=>{
+            if(response.ok){
+               return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    updateUserSetting(updateData){
+        return fetch(`${baseUrl}/setting`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                updateData
+            })
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+          });
+    },
 
 }
 export default task

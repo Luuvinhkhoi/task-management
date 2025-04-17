@@ -153,8 +153,34 @@ export const Project = ()=>{
                         <small>{title.length}/20</small>
                       </div>
                       <div className='date'>
-                        <div><input type='date' onChange={(e)=>setStartDate(e.target.value)}></input></div>
-                        <div><input type='date' onChange={(e)=>setDueDate(e.target.value)}></input></div>
+                        <div>
+                          <p>Start date</p>
+                          <div><input type='date'  
+                                onChange={(e) => {
+                                  const newStart = e.target.value;
+                                  if (!dueDate || newStart <= dueDate) {
+                                    setStartDate(newStart);
+                                  } else {
+                                    alert('Start date cannot be after due date!');
+                                  }
+                            }}
+                          ></input></div>
+                        </div>
+                        <div>
+                          <p>Due date</p>
+                          <div>
+                            <input type='date'  
+                                onChange={(e) => {
+                                  const newDue = e.target.value;
+                                  if (!startDate || newDue >= startDate) {
+                                    setDueDate(newDue);
+                                  } else {
+                                    alert('Due date cannot be before start date!');
+                                  }
+                                }}
+                            >
+                          </input></div>
+                        </div>
                       </div>
                       <button>Create Project</button>
                   </form>
@@ -190,29 +216,32 @@ export const Project = ()=>{
                       </div>
                       <div className='date'>
                         <div>
-                          <input type='date' 
-                            onChange={(e) => {
-                              const newStart = e.target.value;
-                              if (!dueDate || newStart <= dueDate) {
-                                setStartDate(newStart);
-                              } else {
-                                alert('Start date cannot be after due date!');
-                              }
-                            }}>
-                          </input>
+                          <p>Start date</p>
+                          <div><input type='date'  
+                                onChange={(e) => {
+                                  const newStart = e.target.value;
+                                  if (!dueDate || newStart <= dueDate) {
+                                    setStartDate(newStart);
+                                  } else {
+                                    alert('Start date cannot be after due date!');
+                                  }
+                            }}
+                          ></input></div>
                         </div>
                         <div>
-                          <input type='date' 
-                            onChange={(e) => {
-                              const newDue = e.target.value;
-                              if (!startDate || newDue >= startDate) {
-                                setDueDate(newDue);
-                              } else {
-                                alert('Due date cannot be before start date!');
-                              }
-                            }}
-                          >
-                          </input>
+                          <p>Due date</p>
+                          <div>
+                            <input type='date'  
+                                onChange={(e) => {
+                                  const newDue = e.target.value;
+                                  if (!startDate || newDue >= startDate) {
+                                    setDueDate(newDue);
+                                  } else {
+                                    alert('Due date cannot be before start date!');
+                                  }
+                                }}
+                            >
+                          </input></div>
                         </div>
                       </div>
                       <Select 

@@ -8,6 +8,7 @@ const userRouter = require('./src/Routes/user');
 const projectRouter = require('./src/Routes/project');
 const taskRouter = require('./src/Routes/task');
 const uploadRouter = require('./src/Routes/upload');
+const settingRouter=require('./src/Routes/setting')
 const port=4001
 const app=express()
 const store = new session.MemoryStore();
@@ -41,6 +42,7 @@ app.use('/user',isAuthenticated,userRouter)
 app.use('/project',projectRouter)
 app.use('/task',isAuthenticated,taskRouter)
 app.use('/upload', isAuthenticated,uploadRouter)
+app.use('/setting', isAuthenticated, settingRouter)
 app.listen(port,()=>{
     console.log(`Sever is listening on port ${port}`)
 })

@@ -91,16 +91,16 @@
 .project  .projectForm-active .date {
     padding: unset;
     display: flex;
-    gap: 1rem;
+    gap: 4.2rem;
 }
-.project  .projectForm-active .date div{
+.project  .projectForm-active .date >div>div{
     width: 100%;
     background-color: var(--search-bg);
     border-radius: .5rem;
     padding: 1rem;
     border: 2px solid var(--border);
 }
-.project  .projectForm-active .date div input{
+.project  .projectForm-active .date >div>div input{
     outline: none;
     width: 100%;
     background: none;
