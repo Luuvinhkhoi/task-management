@@ -38,15 +38,7 @@ export const Setting = () => {
   const language = useSelector(state => state.setting.language);
 
 // Khi component mount lần đầu
-  useEffect(() => {
-    if (language) {
-      i18n.changeLanguage(language);
-    }
-  }, [language]);
-  useEffect(() => {
-    document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
-    localStorage.setItem("theme", darkMode ? "dark" : "light");
-  }, [darkMode]);
+  
   const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     width: 82,
     height: 34,
