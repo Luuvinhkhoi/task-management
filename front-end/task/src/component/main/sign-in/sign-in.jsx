@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { getAllSetting } from '../../../store/setting'
 import './sign-in.css'
 import task from '../../../util/task'
 import { ChevronLeft } from 'lucide-react'
@@ -9,6 +11,7 @@ export const SignIn = ()=>{
     const [error, setError] = useState("");
     const location=useLocation()
     const navigate=useNavigate()
+    const dispatch=useDispatch()
     function handleEmailInput(e){
         setEmailState(prev=>prev=e.target.value)    
     }
@@ -21,6 +24,7 @@ export const SignIn = ()=>{
             setError("Invalid credential");
         } else{
             setError("");
+            dispatch(getAllSetting())
             navigate(location.state?.previousUrl || '/')
         }
     }

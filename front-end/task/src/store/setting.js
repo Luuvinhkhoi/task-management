@@ -4,7 +4,6 @@ import task from '../util/task';
 
 const initialTheme = localStorage.getItem('theme') === 'dark';
 const userTimezone=Intl.DateTimeFormat().resolvedOptions().timeZone;
-const theme=localStorage.getItem('theme')
 const settingSlice = createSlice({
   name: 'setting',
   initialState: {
@@ -17,6 +16,8 @@ const settingSlice = createSlice({
       state.darkMode = !state.darkMode;
       localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark' : 'light');
+      console.log(state.darkMode)
+      console.log(localStorage.getItem('theme'))
     },
     setDarkMode: (state, action) => {
       state.darkMode = action.payload;
@@ -24,11 +25,14 @@ const settingSlice = createSlice({
       document.documentElement.setAttribute('data-theme', action.payload ? 'dark' : 'light');
     },
     setSetting:(state, action)=>{
-      if(theme!==action.payload.darkMode){
-        console.log(theme)
+      if(localStorage.getItem('theme')!==action.payload.darkMode){
+        console.log(localStorage.getItem('theme'))
+        console.log(state.darkMode)
         state.darkMode=!state.darkMode;
+        localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark' : 'light');
       }else{
-        console.log(theme)
+        console.log(localStorage.getItem('theme'))
       }
       console.log(action.payload )
       state.language=action.payload.language
@@ -47,6 +51,7 @@ export const getAllSetting=createAsyncThunk(
   'setting/getSetting',
   async(_,thunkAPI)=>{
     const result=await task.getSetting()
+    console.log(result)
     await thunkAPI.dispatch(setSetting({
       darkMode:result.theme,
       language:result.language,

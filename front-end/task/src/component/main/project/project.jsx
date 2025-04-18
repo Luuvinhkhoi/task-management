@@ -156,6 +156,7 @@ export const Project = ()=>{
                         <div>
                           <p>Start date</p>
                           <div><input type='date'  
+                                value={startDate}
                                 onChange={(e) => {
                                   const newStart = e.target.value;
                                   if (!dueDate || newStart <= dueDate) {
@@ -170,6 +171,7 @@ export const Project = ()=>{
                           <p>Due date</p>
                           <div>
                             <input type='date'  
+                                value={dueDate}
                                 onChange={(e) => {
                                   const newDue = e.target.value;
                                   if (!startDate || newDue >= startDate) {

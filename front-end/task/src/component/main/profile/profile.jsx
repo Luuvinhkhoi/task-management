@@ -37,8 +37,12 @@ export const Profile=()=>{
     async function handleEditProfileFormSubmit(e){
         e.preventDefault()
         try{
-            const updateData={firstname:firstNameChange, lastname:lastNameChange, phonenumber:phoneNumberChange}
-            await task.updateProfile(updateData)   
+            if (firstNameChange.length>0 && lastNameChange.length>0){
+                const updateData={firstname:firstNameChange, lastname:lastNameChange, phonenumber:phoneNumberChange}
+                await task.updateProfile(updateData)   
+            } else{
+                alert(`Firstname or Lastname can't be empty`)
+            }
         } catch(error){
             console.log(error)
         }

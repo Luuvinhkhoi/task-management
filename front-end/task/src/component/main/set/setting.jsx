@@ -8,7 +8,6 @@ import Switch from '@mui/material/Switch';
 import { useTimezone } from '../../../timezoneContext.jsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode, setLanguage } from '../../../store/setting.js';
-import { getAllSetting } from '../../../store/setting.js';
 export const Setting = () => {
   const { i18n } = useTranslation();
   const dispatch = useDispatch();
@@ -35,7 +34,6 @@ export const Setting = () => {
       throw new Error(`${error}`)
     }
   }
-  const language = useSelector(state => state.setting.language);
 
 // Khi component mount lần đầu
   
@@ -94,16 +92,6 @@ export const Setting = () => {
       }),
     },
   }));
-  useEffect(()=>{
-    function getUserSetting(){
-      try{
-        dispatch(getAllSetting())
-      } catch(error){
-        console.log(error)
-      }
-    }
-    getUserSetting()
-  }, [dispatch])
   return (
     <form onSubmit={handleSubmit} id='setting'>
       <div className='language'>
@@ -118,7 +106,10 @@ export const Setting = () => {
         <FormControlLabel
           control={<MaterialUISwitch 
             checked={darkMode}
-            onChange={() => dispatch(toggleDarkMode())}
+            onClick={() => {
+              console.log("Switch clicked by user");
+              dispatch(toggleDarkMode());
+            }}            
             sx={{ m: 1 }}   />}
         />
       </div>

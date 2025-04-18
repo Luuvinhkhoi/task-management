@@ -7,8 +7,6 @@ export const Upcoming= () => {
   const {t}=useTranslation()
   const location=useLocation()
   const tasks=location.state
-  console.log(tasks)
-  console.log(isOpenTab)
   const tabs = [
     { value: 'all', label: 'All' },
     { value: 'To do', label: 'To do' },

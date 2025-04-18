@@ -40,7 +40,6 @@ export const Distribution = () => {
     }
     getTask()
   },[])
-  console.log(tasks)
   return(
     <div id='distribution'>
        <h3 style={{textAlign:'start'}}>{t('dashboard.statusOverview')}</h3>

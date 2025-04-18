@@ -31,7 +31,6 @@ export const List = ()=>{
           }
           fetchTask()
     }, [dispatch,id])
-   console.log(mergeTask)
     return (
         <div className='list'>
            <h3>List</h3> 

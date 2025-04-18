@@ -16,7 +16,6 @@ export const Kanban = () => {
     const location=useLocation()
     const tasks=useSelector((state)=>state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
-    console.log(taskMembers)
     const hasUnsavedChanges = useSelector(state => state.tasks.hasUnsavedChanges);
     // Hàm di chuyển item khi kéo thả
     const moveItem = (id, newStatus) => {
@@ -43,9 +42,7 @@ export const Kanban = () => {
             // Function gửi cart lên server
             const saveTask = async () => {
                 if (hasUnsavedChanges) {
-                    console.log(tasks)
                     const updatedTasks = tasks.filter(task=>task.isModified)
-                    console.log(updatedTasks)
                     if (updatedTasks.length > 0) {
                        await dispatch(updateTaskStatus(updatedTasks)); 
                     }
@@ -124,8 +121,6 @@ const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor 
             isOver: monitor.isOver(),
         }),
     });
-    console.log(tasks)
-    console.log(taskMembers)
     const filteredTasks = tasks.filter(task => task.status === status);
     const mergeTask=filteredTasks.map((task)=>{
         const members = taskMembers.find(memberGroup => 
