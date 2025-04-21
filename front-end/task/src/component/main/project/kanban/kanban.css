@@ -4,14 +4,14 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
     padding: 1rem;
-    border-top:1px solid rgb(29, 41, 57)
+    border-top:1px solid rgb(29, 41, 57);
 }
 .kanbanColumn{
     min-height: 400px;
 }
 .kanbanHeader{
     border-radius: .5rem;
-    border: 1px solid rgb(29, 41, 57);
+    border: 1px solid var(--border);
     padding: .5rem 1rem;
     text-align: start;
     font-weight: 600;
@@ -20,7 +20,7 @@
 }
 .kanbanItem{
     border-radius: .5rem;
-    border: 1px solid rgb(29, 41, 57) ;
+    border: 1px solid var(--border) ;
     text-align: start;
     padding: .5rem;
     background-color: var(--kanban-bg);

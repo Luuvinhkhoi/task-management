@@ -10,8 +10,9 @@ import {X} from 'lucide-react'
 export const List = ()=>{
     const dispatch=useDispatch()
     const {timezone}=useTimezone()
+    const theme=useSelector((state)=>state.setting.darkMode)
     const { t } = useTranslation();
-      const [isOpenTab, setIsOpenTab] = useState('Detail');
+    const [isOpenTab, setIsOpenTab] = useState('Detail');
     const { id } = useParams()
     const [taskDetailOpen, setTaskDetailOpen]=useState(false)
     const [taskDetail, setTaskDetail]=useState()
@@ -161,6 +162,23 @@ export const List = ()=>{
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                            <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem'}}>
+                                <h4>Attachment</h4>
+                                <div>
+                                    {item.users.map(user=>
+                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                            <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
+                                            <div>
+                                                <span>{user.firstname}</span>
+                                                <span>{user.lastname}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className='taskDetail-footer'>
+                                <div></div>
                             </div>
                         </div>
                     </div>
