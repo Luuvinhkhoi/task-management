@@ -203,6 +203,25 @@ let task={
             console.log(networkError.message);
         });
     },
+    getTaskDetail(id){
+        return fetch(`${baseUrl}/task/${id}`,{
+            method:'GET',
+            credentials: 'include',
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    }
+    ,
     getTodayTask(){
         return fetch(`${baseUrl}/task/today`,{
             method:'GET',

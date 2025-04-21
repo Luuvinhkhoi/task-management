@@ -63,6 +63,14 @@ const getAllTaskByUserId=async(req, res)=>{
    } catch(error){
       res.status(500).json({error: error.message})
    }
+} 
+const getTaskDetail=async(req, res)=>{
+   try{
+      const result= await service.getTaskDetail(req.params.task_id)
+      res.status(201).json(result)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
 }
 module.exports={
     createTask, 
@@ -70,5 +78,6 @@ module.exports={
     updateTaskStatus,
     getTodayTask,
     getUpcomingTask,
-    getAllTaskByUserId
+    getAllTaskByUserId,
+    getTaskDetail
 }

@@ -152,7 +152,7 @@ export const Project = ()=>{
                         <input placeholder='Title' onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
                         <small>{title.length}/20</small>
                       </div>
-                      <div className='date'>
+                      <div className='date' style={{justifyContent:'space-between'}}>
                         <div>
                           <p>Start date</p>
                           <div><input type='date'  
@@ -219,7 +219,7 @@ export const Project = ()=>{
                       <div className='date'>
                         <div>
                           <p>Start date</p>
-                          <div><input type='date'  
+                          <div><input type='datetime-local'  
                                 onChange={(e) => {
                                   const newStart = e.target.value;
                                   if (!dueDate || newStart <= dueDate) {
@@ -233,7 +233,7 @@ export const Project = ()=>{
                         <div>
                           <p>Due date</p>
                           <div>
-                            <input type='date'  
+                            <input type='datetime-local'  
                                 onChange={(e) => {
                                   const newDue = e.target.value;
                                   if (!startDate || newDue >= startDate) {

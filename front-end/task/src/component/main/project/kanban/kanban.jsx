@@ -172,7 +172,7 @@ const KanbanItem = ({ task }) => {
             <div className={`priority-${task.priority.toLowerCase()}`} style={{display:'inline-block'}}>{t(`list.priority.${task.priority}`)}</div>
             <p>{task.title}</p>
             <span>{task.description}</span>
-            <div className="member" style={{display:'flex', gap:'1rem'}}>
+            <div className="member" style={{display:'flex', gap:'.5rem'}}>
                 {task.members.map(member=>
                      <div>
                         <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="Avatar" />

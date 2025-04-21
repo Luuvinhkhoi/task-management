@@ -8,7 +8,7 @@
     padding: 0rem 5rem;
 }
 .header .searchBar {
-    width: 400px;
+    width: 300px;
     background-color: var(--search-bg);
     padding: .5rem;
     border-radius: 5rem;

@@ -5,6 +5,7 @@ taskRouter.get('/project/:project_id', taskController.getAllTask)
 taskRouter.get('/today', taskController.getTodayTask)
 taskRouter.get('/upcoming',taskController.getUpcomingTask)
 taskRouter.get('/user',taskController.getAllTaskByUserId)
+taskRouter.get('/:task_id', taskController.getTaskDetail )
 taskRouter.post('/', taskController.createTask)
 taskRouter.put('/', taskController.updateTaskStatus)
 module.exports=taskRouter

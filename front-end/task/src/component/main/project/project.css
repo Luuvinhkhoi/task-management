@@ -91,10 +91,9 @@
 .project  .projectForm-active .date {
     padding: unset;
     display: flex;
-    gap: 4.2rem;
+    gap: .7rem;
 }
 .project  .projectForm-active .date >div>div{
-    width: 100%;
     background-color: var(--search-bg);
     border-radius: .5rem;
     padding: 1rem;

@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { getProfile } from '../../../store/userProfile'
 import { AnimatePresence, motion} from 'framer-motion'
 import { useTranslation } from "react-i18next";
+import { useTimezone } from '../../../timezoneContext'
 import { CircleUser, UserPen, LogOut } from 'lucide-react'
 export const Header=()=>{
     const dispatch=useDispatch()
@@ -16,6 +17,31 @@ export const Header=()=>{
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
     const dropdownRef = useRef(null);
+    const { timezone } = useTimezone();
+    const [date, setDate] = useState(new Date());
+  
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setDate(new Date());
+      }, 1000); // cập nhật mỗi giây
+  
+      return () => clearInterval(interval);
+    }, []);
+  
+    const dayFormat = new Intl.DateTimeFormat('en-CA', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: timezone,
+    }).format(date);
+  
+    const timeFormat = new Intl.DateTimeFormat('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+      timeZone: timezone,
+    }).format(date);
+  
     async function handleLogout(){
         try{
             const response = await task.logOut()
@@ -49,6 +75,10 @@ export const Header=()=>{
         <div className='header'>
             <div className='searchBar'>
                 <input placeholder='Search here'></input>
+            </div>
+            <div style={{display:'flex', gap:'1rem'}}>
+                <div>{dayFormat}</div>
+                <div>{timeFormat}</div>
             </div>
             {userName?
              <div style={{display:'inline-block'}}>

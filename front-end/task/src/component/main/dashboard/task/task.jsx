@@ -2,8 +2,10 @@ import './todayTask.css'
 import { useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useTimezone } from '../../../../timezoneContext';
 export const TodayTask = () => {
   const [isOpenTab, setIsOpenTab] = useState('all');
+  const { timezone } = useTimezone();
   const {t}=useTranslation()
   const location=useLocation()
   const tasks=location.state
@@ -17,6 +19,7 @@ export const TodayTask = () => {
     if (isOpenTab !== "all" && task.status !== isOpenTab) return false
     return true
   })
+ 
   return (
     <div id="todayTask">
       <div className="taskHeader">
@@ -42,7 +45,23 @@ export const TodayTask = () => {
                 </div>
                 <div>{item.description}</div>
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
-                  <div>Due date: {new Date(item.endedAt).toISOString().split('T')[0]}</div>
+                  <div style={{display:'flex', gap:'.5rem'}}>Due date: <div>
+                                    {new Intl.DateTimeFormat('en-CA', {
+                                      year: 'numeric',
+                                      month: '2-digit',
+                                      day: '2-digit',
+                                      timeZone: timezone,
+                                    }).format(new Date(item.endedAt))}
+                                 </div>
+                                 <div>
+                                    {new Intl.DateTimeFormat('en-US', {
+                                      hour: 'numeric',
+                                      minute: '2-digit',
+                                      hour12: true,
+                                      timeZone: timezone,
+                                    }).format(new Date(item.endedAt))}
+                                 </div>
+                  </div>
                   <div className='task-member' style={{display:'flex', gap:'.5rem'}}>
                         {item.user.map(member=>
                             <div>
