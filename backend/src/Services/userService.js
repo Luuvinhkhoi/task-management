@@ -50,7 +50,6 @@ const getAllUser= async()=>{
 }
 const updateUser=async(id,updateData)=>{
   try{
-    console.log(updateData)
     let result= await db.User.update(
       updateData,
       {
@@ -59,7 +58,6 @@ const updateUser=async(id,updateData)=>{
         }
       }
     )
-    console.log(result)
   } catch (error){
     throw new Error(`check error ${error}`, error)  
 

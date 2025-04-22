@@ -1,10 +1,15 @@
 import task from '../../../../util/task'
 import './list.css'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom';
 import { getAllTask, updateTaskStatus } from '../../../../store/task';
+import { FaFilePdf, FaDownload, FaGoogleDrive, FaPlus } from "react-icons/fa";
+import { Download, Paperclip } from 'lucide-react';
+import pdf from '../../../../assets/pdf.png'
+import word from '../../../../assets/word.png'
+import excel from '../../../../assets/excel.png'
 import { useTimezone } from '../../../../timezoneContext';
 import {X} from 'lucide-react'
 export const List = ()=>{
@@ -32,6 +37,23 @@ export const List = ()=>{
             })) || []   
         }
     })
+    const fileInputRef = useRef(null);
+
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+    const handleFileChange = (event, id) => {
+      const file = event.target.files[0]; // Lấy file người dùng chọn
+      if (file) {
+        console.log("Selected file: ", file);
+        try{
+           task.uploadAttachment(file, id)
+        } catch (error) {
+            console.error('Error uploading file:', error);
+        }
+      }
+    };
+    
     useEffect(()=>{
           async function fetchTask(){
             try{
@@ -51,7 +73,23 @@ export const List = ()=>{
             console.log(error)
         }
     }
-    
+    const extractS3KeyFromUrl = (url) => {
+        try {
+          const key = new URL(url).pathname.slice(1); // remove leading slash
+          return decodeURIComponent(key);
+        } catch {
+          return null;
+        }
+    };
+    async function handleDownload(s3UrlFromDB){
+        try{
+            const key = extractS3KeyFromUrl(s3UrlFromDB);
+            const result=await task.getPresignedUrl(key)
+            window.location.href = result.url;
+        }catch (error){
+            console.log(error)
+        }
+    }
     return (
         <div className='list'>
            <h3>List</h3> 
@@ -157,6 +195,7 @@ export const List = ()=>{
                                             <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
                                             <div>
                                                 <span>{user.firstname}</span>
+                                                <span> </span>
                                                 <span>{user.lastname}</span>
                                             </div>
                                         </div>
@@ -164,17 +203,46 @@ export const List = ()=>{
                                 </div>
                             </div>
                             <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem'}}>
-                                <h4>Attachment</h4>
-                                <div>
-                                    {item.users.map(user=>
-                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
-                                            <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
-                                            <div>
-                                                <span>{user.firstname}</span>
-                                                <span>{user.lastname}</span>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
+                                        <input type='file' ref={fileInputRef} 
+                                        onChange={(e)=>handleFileChange(e, item.id)} 
+                                        style={{ display: 'none' }}></input>Upload</div>
+                                </div>
+                                <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
+                                {item.attachment.map((file, index) => {
+                                    const isGoogleDrive = file.url.includes("drive.google.com");
+                                    const isPdf = file.url.endsWith(".pdf");
+                                    const isDoc = file.url.endsWith(".docx");
+                                    const isExcel=file.url.endsWith('.xlsx')
+                                    return (
+                                        <div key={index} className="attachment-box">
+                                        <div style={{ display: 'flex', alignItems:'center', gap: '8px' }}>
+                                            {isGoogleDrive ? (
+                                            <FaGoogleDrive size={24} />
+                                            ) : isPdf ? (
+                                            <img src={pdf} style={{height:'32px', width:'28px'}} />
+                                            ) : isDoc ? (
+                                            <img src={word} style={{height:'24px', width:'24px'}} />
+                                            ): isExcel?(
+                                                <img src={excel} style={{height:'24px', width:'24px'}} />
+                                            ):(
+                                                <Paperclip style={{height:'24px', width:'24px', color:'rgb(107, 114, 128)'}} />  
+                                            )}
+
+                                            <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
+                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <span>
+                                                <div onClick={()=>handleDownload(file.url)}>
+                                                <Download style={{color:'#007bff'}} />
+                                                </div>
+                                            </span>
                                             </div>
                                         </div>
-                                    )}
+                                        </div>
+                                    );
+                                })}
                                 </div>
                             </div>
                             <div className='taskDetail-footer'>

@@ -46,11 +46,8 @@ const getAllTaskByUserId=async(userId)=>{
                 }
             }
         )
-        console.log(result1)
         const plainResult1 = result1.map(task => task.get({ plain: true }))
-        console.log(plainResult1)
         const result2=await Promise.all(plainResult1.map(task=>db.Task.findByPk(task.task_id)))
-        console.log(result2)
         const plainResult2 = result2.map(task => task.get({ plain: true }))
         return plainResult2
     } catch(error){
@@ -234,6 +231,14 @@ const getTaskDetail=async (id)=>{
       const plainResult2=await result1.map(result=>result.get({plain:true}))
       const result3=await Promise.all(plainResult2.map(item=>db.User.findByPk(item.user_id)))
       const plainResult3=await result3.map(result=>result.get({plain:true}))
+      const result4=await db.Attachment.findAll(
+        {
+            where:{
+                taskId: id
+            }
+        }
+      )
+      const plainResult4=await result4.map(result=>result.get({plain:true}))
       const mergedResult= plainResult.map((task, index) => {
         return {
             ...task,
@@ -244,9 +249,17 @@ const getTaskDetail=async (id)=>{
                 avatar: user.avatar
             }))
         }
-    })
+      })
+      const mergedResult2=mergedResult.map(task=>{
+        return{
+            ...task,
+            attachment: plainResult4.map(file=>({
+                url: file.url
+            }))
+        }
+      })
 
-      return mergedResult
+      return mergedResult2
     } catch(error){
       throw new Error(`check error ${error}`)
     }

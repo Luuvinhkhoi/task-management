@@ -1,5 +1,5 @@
 const uploadService = require('../Services/uploadService');
-const {uploadFile}=require('../Services/awsS3Service')
+const awsS3Service=require('../Services/awsS3Service')
 const uploadImage = async (req, res) => {
   const userId = req.user.id;
   try {
@@ -12,19 +12,15 @@ const uploadImage = async (req, res) => {
 };
 const uploadToS3 = async (req, res) => {
   try {
-    const file = req.file;
-    if (!file) return res.status(400).json({ message: 'No file uploaded' });
-
-    const result = await uploadFile(file);
-    res.status(200).json({
-      message: 'File uploaded successfully!',
-      url: result.Location, // S3 public URL
-    });
-  } catch (error) {
-    console.error('Upload error:', error);
-    res.status(500).json({ message: 'Upload failed', error });
+    const taskId=req.body.task_id
+    const fileUrl = await awsS3Service.uploadFileToS3(req.file,taskId);
+    res.status(200).json({ success: true, fileUrl });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Upload failed" });
   }
 };
+
 module.exports = {
   uploadImage,
   uploadToS3

@@ -323,7 +323,7 @@ let task={
     uploadAvatar(file){
         const formData = new FormData();
         formData.append('image', file);
-        return fetch(`${baseUrl}/upload`, {
+        return fetch(`${baseUrl}/upload/image`, {
           method: 'POST',
           credentials: 'include',
           body: formData, // Gửi FormData với dữ liệu file
@@ -387,6 +387,32 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
           });
     },
-
+    getPresignedUrl(key){
+        return fetch(`${baseUrl}/s3/download/${key}`, {
+            method: 'GET',
+            credentials: 'include',
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); 
+          });
+    },
+    uploadAttachment(file, id){
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('task_id', id)
+        return fetch(`${baseUrl}/upload/file`, {
+          method: 'POST',
+          credentials: 'include',
+          body: formData, // Gửi FormData với dữ liệu file
+          
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error(`Request failed with status ${response.status}`);
+          }
+          return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
+    }
 }
 export default task

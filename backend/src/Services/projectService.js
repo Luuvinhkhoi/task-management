@@ -39,7 +39,6 @@ const getProjectProgress=async(projectId)=>{
         )
         let result3=await db.Project.findByPk(projectId)
         const plainResult =await result3.get({ plain: true })
-        console.log(plainResult)  
         return {projectId:projectId, projectName:plainResult.title ,totalTask:result1.count, completeTask:result2.count}
     } catch (error){
         throw new Error(`check error ${error}`)

@@ -1,0 +1,13 @@
+const awsS3Service=require('../Services/awsS3Service')
+const generatePresignedUrl = async (req, res) => {
+  const key = req.params[0];
+  console.log(key)
+  try {
+    const url = await awsS3Service.getPresignedUrlForDownload(key);
+    res.json({ url });
+  } catch (error) {
+    console.error('Error generating presigned URL:', error);
+    res.status(500).json({ error: 'Could not generate URL' });
+  }
+};
+module.exports={generatePresignedUrl}
