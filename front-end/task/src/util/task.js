@@ -398,6 +398,24 @@ let task={
             return response.json(); 
           });
     },
+    deleteAttachment(key, id){
+        return fetch(`${baseUrl}/s3/delete/${key}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                id: id
+            })
+        }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); 
+        });
+    }
+    ,
     uploadAttachment(file, id){
         const formData = new FormData();
         formData.append('file', file);

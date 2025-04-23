@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand, GetObjectCommand } = require("@aws-sdk/client-s3");
+const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const {getSignedUrl}=require('@aws-sdk/s3-request-presigner')
 const { v4: uuidv4 } = require("uuid");
 const dotenv = require("dotenv");
@@ -42,7 +42,22 @@ const getPresignedUrlForDownload = async (key) => {
     Key: key
   });
 
-  const url = await getSignedUrl(s3, command, { expiresIn: 300 }); // 5 phút
+  const url = await getSignedUrl(s3, command, { expiresIn: 60 }); // 5 phút
   return url;
 };
-module.exports = { uploadFileToS3, getPresignedUrlForDownload }
+const deleteFileFromS3=async(key, id)=>{
+  const command = new DeleteObjectCommand({
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: key,
+  });
+
+  await s3.send(command);
+  await db.Attachment.destroy(
+    {
+      where:{
+        id: id
+      }
+    }
+  )
+}
+module.exports = { uploadFileToS3, getPresignedUrlForDownload , deleteFileFromS3}

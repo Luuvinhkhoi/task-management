@@ -50,6 +50,8 @@
     padding: 20px;
     border-radius: 8px;
     width: 70%;
+    height: 90%;
+    overflow-y: scroll;
     max-width: 90%;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     position: relative;
@@ -63,4 +65,23 @@
 }
 .taskDetail-body .body-item{
     padding: 1rem;
+}
+.taskDetail-footer{
+    display: flex;
+    gap: 1rem;
+    justify-content: end;
+    margin-top: 2rem;
+}
+.taskDetail-footer >div{
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: .5rem;
+}
+.taskDetail-footer p{
+    font-weight: 500;
+}
+.taskDetail-footer .delete{
+    background-color:#dc2626 ;
 }

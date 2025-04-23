@@ -10,4 +10,15 @@ const generatePresignedUrl = async (req, res) => {
     res.status(500).json({ error: 'Could not generate URL' });
   }
 };
-module.exports={generatePresignedUrl}
+const deleteAttachment=async(req, res)=>{
+  try {
+    const id=req.body.id
+    const key = req.params[0];
+    await awsS3Service.deleteFileFromS3(key, id);
+    res.json({ message: 'success'});
+  } catch (error) {
+    console.error('Error generating presigned URL:', error);
+    res.status(500).json({ error: 'Could not generate URL' });
+  }
+}
+module.exports={generatePresignedUrl, deleteAttachment}

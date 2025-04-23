@@ -1,135 +1,8 @@
-import task from '../../../../util/task'
-import './list.css'
-import { useEffect, useState, useRef } from 'react'
-import { useTranslation } from "react-i18next";
-import { useSelector, useDispatch } from 'react-redux'
-import { useParams } from 'react-router-dom';
-import { getAllTask, updateTaskStatus } from '../../../../store/task';
-import { FaFilePdf, FaDownload, FaGoogleDrive, FaPlus } from "react-icons/fa";
-import { Download, Paperclip, Trash2, FilePenLine } from 'lucide-react';
-import pdf from '../../../../assets/pdf.png'
-import word from '../../../../assets/word.png'
-import excel from '../../../../assets/excel.png'
-import { useTimezone } from '../../../../timezoneContext';
-import {X} from 'lucide-react'
-export const List = ()=>{
-    const dispatch=useDispatch()
-    const {timezone}=useTimezone()
-    const theme=useSelector((state)=>state.setting.darkMode)
-    const { t } = useTranslation();
-    const [isOpenTab, setIsOpenTab] = useState('Detail');
-    const { id } = useParams()
-    const [taskDetailOpen, setTaskDetailOpen]=useState(false)
-    const [taskDetail, setTaskDetail]=useState()
-    const tasks=useSelector(state=> state.tasks.tasks)
-    const taskMembers=useSelector((state)=>state.tasks.members)
-    const tabs=[
-        { value: 'Detail', label: 'Detail' },
-        { value: 'Comment', label: 'Comment' },
-    ]
-    const mergeTask=tasks.map((task, index)=>{
-        return {
-            ...task,
-            members:taskMembers[index]?.map(mem => ({
-                firstname: mem.user.firstname,
-                lastname: mem.user.lastname,
-                avatar: mem.user.avatar,
-            })) || []   
-        }
-    })
-    const fileInputRef = useRef(null);
-
-    const handleUploadClick = () => {
-        fileInputRef.current.click();
-    };
-    const handleFileChange = (event, id) => {
-      const file = event.target.files[0]; // Lấy file người dùng chọn
-      if (file) {
-        console.log("Selected file: ", file);
-        try{
-           task.uploadAttachment(file, id)
-        } catch (error) {
-            console.error('Error uploading file:', error);
-        }
-      }
-    };
-    
-    useEffect(()=>{
-          async function fetchTask(){
-            try{
-              await dispatch(getAllTask(id))
-            } catch(error){
-              console.log(error)
-            }
-          }
-          fetchTask()
-    }, [dispatch,id])
-    async function getTaskDetail(task_id){
-        try{
-            const result=await task.getTaskDetail(task_id)
-            setTaskDetail(result)
-            setTaskDetailOpen(true)
-          } catch(error){
-            console.log(error)
-        }
-    }
-    const extractS3KeyFromUrl = (url) => {
-        try {
-          const key = new URL(url).pathname.slice(1); // remove leading slash
-          return decodeURIComponent(key);
-        } catch {
-          return null;
-        }
-    };
-    async function handleDownload(s3UrlFromDB){
-        try{
-            const key = extractS3KeyFromUrl(s3UrlFromDB);
-            const result=await task.getPresignedUrl(key)
-            window.location.href = result.url;
-        }catch (error){
-            console.log(error)
-        }
-    }
-    async function handleDelete(s3UrlFromDB, id){
-        try{
-            const key = extractS3KeyFromUrl(s3UrlFromDB);
-            const result=await task.deleteAttachment(key, id)
-        }catch (error){
-            console.log(error)
-        }
-    }
-    return (
-        <div className='list'>
-           <h3>List</h3> 
-           <div>
-            <div className='listHeader'>
-                <div style={{textAlign:'left'}}>{t('list.Title')}</div>
-                <div style={{textAlign:'left'}}>{t('list.Description')}</div>
-                <div>{t('list.Status')}</div>
-                <div>{t('list.Priority')}</div>
-                <div>{t('list.Assign')}</div>
-                <div>{t('list.Start Date')}</div>
-                <div>{t('list.Due Date')}</div>
-            </div>
-            <div className='listContent'>
-                {mergeTask.map(task=>
-                    <div className='listContentItem' key={task.id} onClick={()=>getTaskDetail(task.id)}>
-                        <div>{task.title}</div>                        
-                        <div>{task.description.length>50?task.description.slice(0,50)+'...':task.description}</div>
-                        <div style={{borderRadius:'1rem'}} className={`status-${task.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${task.status}`)}</div>
-                        <div style={{textAlign:'center'}}>{t(`list.priority.${task.priority}`)}</div>
-                        <div style={{display:'flex', gap:'5px', justifyContent:'center'}}>{task.members.map(member=>
-                            <div>
-                                <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
-                            </div>
-                        )}</div>
-                        <div>{new Date(task.createdAt).toISOString().split('T')[0]}</div>
-                        <div>{new Date(task.endedAt).toISOString().split('T')[0]}</div>
-                    </div>
-                )}
-            </div>
-            
-            <div className={`overlay-${taskDetailOpen?'active':'unActive'}`}>
+import './edit.css'
+export const EditTask=()=>{
+    const taskDetail=[]
+    return(
+        <div className={`overlay-${taskDetailOpen?'active':'unActive'}`}>
                 {taskDetail?taskDetail.map(item=>
                     <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
                         <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen)}}><X></X></div>
@@ -271,8 +144,6 @@ export const List = ()=>{
                     </div>
                 ):<div>Loading</div>
                 }
-            </div>
-           </div>
         </div>
     )
 }

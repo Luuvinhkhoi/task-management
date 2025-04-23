@@ -254,6 +254,7 @@ const getTaskDetail=async (id)=>{
         return{
             ...task,
             attachment: plainResult4.map(file=>({
+                id:file.id,
                 url: file.url
             }))
         }
