@@ -265,6 +265,44 @@ const getTaskDetail=async (id)=>{
       throw new Error(`check error ${error}`)
     }
 }
+const updateTaskDetail= async (id, title ,status, priority, description, project_id,startDate, endDate, assignedUserId)=>{
+    try{
+        const result= await db.Task.update(
+          { project_id:project_id,
+            title:title,
+            status: status,
+            priority:priority,
+            description:description,
+            createdAt:startDate, 
+            endedAt:endDate
+          },
+          {
+              where: {
+                  id: id,
+              },
+          }
+        )
+        await db.TaskMember.destroy({
+            where: {
+                task_id: id,
+                user_id: { [Op.notIn]: assignedUserId} 
+            }
+        })
+        const existing = await db.TaskMember.findAll({
+            where: { task_id: id }
+        });
+        const existingMemberIds = existing.map(row => row.user_id);
+        const newMembers = assignedUserId.filter(id => !existingMemberIds.includes(id));
+        await db.TaskMember.bulkCreate(
+            newMembers.map(user_id => ({
+              task_id: id,
+              user_id,
+            }))
+        );
+    } catch(error){
+        throw new Error(`check error ${error}`)
+    }
+}
 module.exports={
     createTask,
     getAllTaskByProjectId,
@@ -273,5 +311,6 @@ module.exports={
     getTodayTask, 
     getUpcomingTask,
     getAllTaskByUserId,
-    getTaskDetail
+    getTaskDetail,
+    updateTaskDetail
 }

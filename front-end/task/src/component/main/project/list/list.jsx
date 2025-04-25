@@ -6,15 +6,19 @@ import { useSelector, useDispatch } from 'react-redux'
 import { useParams } from 'react-router-dom';
 import { getAllTask, updateTaskStatus } from '../../../../store/task';
 import { FaFilePdf, FaDownload, FaGoogleDrive, FaPlus } from "react-icons/fa";
+import Select from 'react-select'
+import makeAnimated from 'react-select/animated';
 import { Download, Paperclip, Trash2, FilePenLine } from 'lucide-react';
 import pdf from '../../../../assets/pdf.png'
 import word from '../../../../assets/word.png'
 import excel from '../../../../assets/excel.png'
 import { useTimezone } from '../../../../timezoneContext';
 import {X} from 'lucide-react'
+import { Placeholder } from 'react-select/animated';
 export const List = ()=>{
     const dispatch=useDispatch()
     const {timezone}=useTimezone()
+    const animatedComponents = makeAnimated();
     const theme=useSelector((state)=>state.setting.darkMode)
     const { t } = useTranslation();
     const [isOpenTab, setIsOpenTab] = useState('Detail');
@@ -23,10 +27,123 @@ export const List = ()=>{
     const [taskDetail, setTaskDetail]=useState()
     const tasks=useSelector(state=> state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
+    const [taskId, setTaskId]=useState()
+    const [priority, setPriority] = useState();
+    const [title, setTitle] = useState("");
+    const [description, setDescription] = useState("");
+    const [status, setStatus] = useState();
+    const [startDate, setStartDate] = useState("");
+    const [dueDate, setDueDate] = useState("");
+    const [isSelecting, setIsSelecting] = useState(false);
+    const [users, setUser]=useState([])//list of user
+    const [formattedUsers, setFormatedUser]=useState([])
+    const [taskDetailMembers, setTaskDetailMember]=useState([])
+    const [assignedUserId, setAssignedUserId] = useState([]);
+    
     const tabs=[
         { value: 'Detail', label: 'Detail' },
         { value: 'Comment', label: 'Comment' },
     ]
+    const options = [
+        { value: 'Low', label: 'Low' },
+        { value: 'Medium', label: 'Medium' },
+        { value: 'High', label: 'High' },
+        { value: 'Urgent', label: 'Urgent' }
+    ];
+    const statusOptions = [
+        { value: 'To do', label: 'To do' },
+        { value: 'In progress', label: 'In progress' },
+        { value: 'Complete', label: 'Complete' },
+    ];
+    const customStyles =(darkMode) =>({
+        control: (base, state) => ({
+          ...base,
+          backgroundColor: darkMode ? '#1c2536' : '#fff',
+          boxShadow: 'none',
+          color: 'inherit',
+          border: 'inherit',
+          fontSize: '12px',
+          '&:hover': {
+            border: 'inherit'
+          },
+          borderRadius:'10rem'
+        }),
+        option: (base, state) => ({
+          ...base,
+          backgroundColor: state.isFocused
+            ? (darkMode ? '#007bff' : '#eaeaea')
+            : (darkMode ? '#1c2536' : '#fff'),
+          color: darkMode ? '#fff' : '#000',
+          fontSize: '12px',
+          cursor: 'pointer',
+        }),
+        singleValue: (base) => ({
+          ...base,
+          color: 'inherit'
+        }),
+        multiValue: (base) => ({
+            ...base,
+            backgroundColor:'none'
+        }),
+        menu: (base) => ({
+          ...base,
+          backgroundColor: darkMode ? '#1c2536' : '#fff',
+          zIndex: 9999,
+        }),
+        dropdownIndicator:(base)=>({
+            ...base,
+            padding:'unset'
+        }),
+        placeholder:(base)=>({
+            ...base,
+            padding:'unset',
+            fontSize:'12px'
+        }),
+    });
+    const statusCustomStyles =(darkMode) =>({
+        control: (base, state) => ({
+          ...base,
+          backgroundColor: 'inherit',
+          boxShadow: 'none',
+          color: 'inherit',
+          border: 'inherit',
+          fontSize: '12px',
+          '&:hover': {
+            border: 'inherit'
+          },
+          borderRadius:'10rem'
+        }),
+        option: (base, state) => ({
+          ...base,
+          backgroundColor: state.isFocused
+            ? (darkMode ? '#007bff' : '#eaeaea')
+            : (darkMode ? '#1c2536' : '#fff'),
+          color: darkMode ? '#fff' : '#000',
+          fontSize: '12px',
+          cursor: 'pointer',
+        }),
+        singleValue: (base) => ({
+          ...base,
+          backgroundColor:'none',
+          color: 'inherit'
+        }),
+        menu: (base) => ({
+          ...base,
+          backgroundColor: darkMode ? '#1c2536' : '#fff',
+          zIndex: 9999,
+        }),
+        dropdownIndicator:(base)=>({
+            ...base,
+            padding:'unset'
+        }),
+        placeholder:(base)=>({
+            ...base,
+            padding:'unset',
+            fontSize:'12px'
+        }),
+    });
+    const getCustomStyle=customStyles(theme)
+    const getStatusCustomStyle=statusCustomStyles(theme)
     const mergeTask=tasks.map((task, index)=>{
         return {
             ...task,
@@ -64,11 +181,42 @@ export const List = ()=>{
           }
           fetchTask()
     }, [dispatch,id])
+    useEffect(()=>{
+          async function getAllUser(){
+            try{
+              const result = await task.getAllUser()
+              const formattedUsers = result.map(user => ({
+                value: user.id, // Dùng ID làm giá trị
+                label: (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+                    <span>{user.firstname}</span>
+                    <span>{user.lastname}</span>
+                  </div>
+                )// Dùng username làm tên hiển thị
+              }));
+              setUser(result)
+              setFormatedUser(formattedUsers)
+            } catch(error){
+              console.log(error)
+            }
+          }
+          getAllUser()
+    },[])
     async function getTaskDetail(task_id){
         try{
             const result=await task.getTaskDetail(task_id)
+            setTaskId(task_id)
             setTaskDetail(result)
+            setStatus(result[0].status)
+            setPriority(result[0].priority)
+            setTitle(result[0].title)
+            setDueDate(result[0].endedAt)
+            setStartDate(result[0].createdAt)
+            setDescription(result[0].description)
+            setTaskDetailMember(result[0].users)
             setTaskDetailOpen(true)
+            
           } catch(error){
             console.log(error)
         }
@@ -80,6 +228,30 @@ export const List = ()=>{
         } catch {
           return null;
         }
+    };
+    const toDateTimeLocal = (date) => {
+        const d = new Date(date);
+
+        const formatter = new Intl.DateTimeFormat('en-CA', {
+          timeZone: timezone,
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: false,
+        });
+      
+        const parts = formatter.formatToParts(d);
+        const getPart = (type) => parts.find((part) => part.type === type)?.value;
+      
+        const year = getPart('year');
+        const month = getPart('month');
+        const day = getPart('day');
+        const hour = getPart('hour');
+        const minute = getPart('minute');
+      
+        return `${year}-${month}-${day}T${hour}:${minute}`;
     };
     async function handleDownload(s3UrlFromDB){
         try{
@@ -98,6 +270,59 @@ export const List = ()=>{
             console.log(error)
         }
     }
+    const handleSelect = (selectedUsers) => {
+        console.log(selectedUsers)
+        if (!selectedUsers || selectedUsers.length === 0) {
+            return;
+        }else if(selectedUsers) {
+            const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
+            const userMap = new Map(users.map(user => [user.id, user]));
+            const selected= assignedIds.map(id => userMap.get(id));
+            console.log(selectedUsers)
+            setAssignedUserId(selectedUsers);
+            setTaskDetailMember(selected)
+        } else {
+            console.log('❌ selectedUsers is null or empty');
+            // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
+            setAssignedUserId([]);
+        }
+    };
+    const handleSaveEdit=async(e)=>{
+        try{
+            const formattedUsersId=assignedUserId.map(user=>user.value)
+            console.log(formattedUsersId)
+            await task.updateTaskDetail(
+                {id:taskId,
+                 title:title,
+                 status:status,
+                 priority:priority,
+                 description:description,
+                 assignedUserId:formattedUsersId,
+                 projectId:id,
+                 startDate:startDate,
+                 dueDate: dueDate
+                }
+            )
+        }catch(error){
+            console.log(error)
+        }
+    }
+    useEffect(() => {
+        if (taskDetailMembers.length > 0 && users.length > 0) {
+          const preselectedUsers = formattedUsers.filter(option =>
+            taskDetailMembers.some(user => user.id === option.value)
+          );
+          console.log('❌ selectedUsers is null or empty');
+
+          setAssignedUserId(preselectedUsers);
+        }
+    }, [taskDetailMembers, formattedUsers]);
+    useEffect(() => {
+        console.log("✅ assignedUserId updated:", assignedUserId);
+    }, [assignedUserId]);
+    console.log(users)
+    console.log(taskDetailMembers)
+    console.log(assignedUserId)
     return (
         <div className='list'>
            <h3>List</h3> 
@@ -130,51 +355,61 @@ export const List = ()=>{
             </div>
             
             <div className={`overlay-${taskDetailOpen?'active':'unActive'}`}>
-                {taskDetail?taskDetail.map(item=>
+                {taskDetail&&status&&priority?taskDetail.map(item=>
                     <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
                         <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen)}}><X></X></div>
-                        <div className='status-priority' style={{width: '200px'}}>
-                            <div className={`priority-${item.priority.toLowerCase()}`}>{t(`list.priority.${item.priority}`)}</div>
-                            <div className={`status-${item.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${item.status}`)}</div>
+                        <div className='status-priority' style={{width: '250px'}}>
+                            <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
+                                <Select
+                                options={options}
+                                styles={getCustomStyle}
+                                defaultValue={options.find(option => option.value == item.priority)}
+                                onChange={(selectedOption) => setPriority(selectedOption.value)} // Medium
+                                />
+                            </div>
+                            <div className={`status-${status.toLowerCase().replace(/\s/g, '')}`} style={{padding:'unset'}}>
+                                <Select
+                                    options={statusOptions}
+                                    styles={getStatusCustomStyle}
+                                    defaultValue={statusOptions.find(option => option.value == item.status)}
+                                    onChange={(selectedOption) => setStatus(selectedOption.value)} // Medium
+                                />
+                            </div>
                         </div>
-                        <h2>
-                            {item.title}
-                        </h2>
+                        <div className='title'>
+                            <input value={title} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none'}}></input>
+                        </div>
                         <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
-                            <div style={{display:'flex', gap:'.5rem'}}>Start date: <div>
-                                    {new Intl.DateTimeFormat('en-CA', {
-                                      year: 'numeric',
-                                      month: '2-digit',
-                                      day: '2-digit',
-                                      timeZone: timezone,
-                                    }).format(new Date(item.createdAt))}
-                                 </div>
-                                 <div>
-                                    {new Intl.DateTimeFormat('en-US', {
-                                      hour: 'numeric',
-                                      minute: '2-digit',
-                                      hour12: true,
-                                      timeZone: timezone,
-                                    }).format(new Date(item.createdAt))}
-                                 </div>
+                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                                <input type='datetime-local'
+                                       value={toDateTimeLocal(startDate)}
+                                       onChange={(e) => {
+                                        const newStart = e.target.value;
+                                        if (!dueDate || newStart <= dueDate) {
+                                          setStartDate(newStart);
+                                        } else {
+                                          alert('Start date cannot be after due date!');
+                                        }
+                                       }}
+                                       style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                >  
+                                </input>
                             </div>
 
-                            <div style={{display:'flex', gap:'.5rem'}}>Due date: <div>
-                                    {new Intl.DateTimeFormat('en-CA', {
-                                      year: 'numeric',
-                                      month: '2-digit',
-                                      day: '2-digit',
-                                      timeZone: timezone,
-                                    }).format(new Date(item.endedAt))}
-                                 </div>
-                                 <div>
-                                    {new Intl.DateTimeFormat('en-US', {
-                                      hour: 'numeric',
-                                      minute: '2-digit',
-                                      hour12: true,
-                                      timeZone: timezone,
-                                    }).format(new Date(item.endedAt))}
-                                 </div>
+                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                                <input type='datetime-local'
+                                       value={toDateTimeLocal(dueDate)}
+                                       onChange={(e) => {
+                                        const newDue = e.target.value;
+                                        if (!startDate || newDue >= startDate) {
+                                          setDueDate(newDue);
+                                        } else {
+                                          alert('Due date cannot be before start date!');
+                                        }
+                                      }}
+                                       style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                >  
+                                </input>
                             </div>
                         </div>
                         <div className="taskHeader" style={{width:'165px'}}>
@@ -192,13 +427,41 @@ export const List = ()=>{
                             <div className='body-item'>
                                 <h4>Description</h4>
                                 <div>
-                                    <p>{item.description}</p>
+                                    <input value={description} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
                                 </div>
                             </div>
                             <div className='body-item'>
-                                <h4>Assign</h4>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                    {isSelecting ?(<span
+                                        onClick={() => setIsSelecting(false)}
+                                        style={{color:'#007bff', fontWeight:'600'}}
+                                        >
+                                        Done
+                                        </span>
+                                    ): (
+                                        <span
+                                        onClick={() => setIsSelecting(true)}
+                                        style={{color:'#007bff', fontWeight:'600'}}
+                                        >
+                                        Add
+                                        </span>
+                                    )}
+                                </div>
+                                {isSelecting ? (
+                                    <Select
+                                    options={formattedUsers}
+                                    value={assignedUserId}
+                                    onChange={handleSelect}
+                                    required
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    styles={getCustomStyle}
+                                    />
+                                ):(
                                 <div>
-                                    {item.users.map(user=>
+                                    {taskDetailMembers.map(user=>
                                         <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
                                             <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
                                             <div>
@@ -208,7 +471,7 @@ export const List = ()=>{
                                             </div>
                                         </div>
                                     )}
-                                </div>
+                                </div>)}
                             </div>
                             <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
                                 <div style={{display:'flex', gap:'1rem'}}>
@@ -259,9 +522,9 @@ export const List = ()=>{
                 
                         </div>
                         <div className='taskDetail-footer'>
-                                <div className='edit'>
+                                <div className='edit' onClick={handleSaveEdit}>
                                    <FilePenLine></FilePenLine>
-                                   <p>Edit</p>
+                                   <p>Save</p>
                                 </div>
                                 <div className='delete'>
                                     <Trash2 color='white'></Trash2>

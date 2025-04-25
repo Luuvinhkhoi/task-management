@@ -60,6 +60,21 @@
     flex-direction: column;
     gap: 1rem;
 }
+.taskDetail-active .status-priority input::placeholder{
+    color: red;
+}
+.taskDetail-active .status-priority input{
+    display: inline;
+}
+.taskDetail-active .title input{
+    border: none;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+.taskDetail-active .title input:active{
+    border: none;
+    outline: none; 
+}
 .taskDetail-body h4{
     margin-bottom: 1rem;
 }

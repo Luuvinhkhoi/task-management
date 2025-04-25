@@ -126,29 +126,3 @@
     background-color: var(--button-bg);
     color: #fff;
 }
-.css-b62m3t-container{
-    padding: unset !important;
-    background-color:var(--search-bg);
-    border-radius: 1rem !important;
-}
-.css-13cymwt-control{
-    padding: 10px !important;
-    background-color: var(--search-bg) !important;
-    border: 2px solid var(--border) !important;
-    border-radius: .5rem !important;
-    color: black;
-}
-.css-1ve2y7x-control{
-    background: unset !important;
-    border: unset !important;
-}
-.css-1tkm9rf-control{
-    padding: 10px;
-    background-color: var(--search-bg) !important;
-    border: 2px solid var(--border) !important;
-    border-radius: .5rem !important;
-    color: black;
-}
-.css-1dimb5e-singleValue{
-    color: hsl(0, 0%, 50%) !important;
-}

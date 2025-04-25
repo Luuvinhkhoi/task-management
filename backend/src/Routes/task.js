@@ -8,4 +8,5 @@ taskRouter.get('/user',taskController.getAllTaskByUserId)
 taskRouter.get('/:task_id', taskController.getTaskDetail )
 taskRouter.post('/', taskController.createTask)
 taskRouter.put('/', taskController.updateTaskStatus)
+taskRouter.patch('/', taskController.updateTaskDetail)
 module.exports=taskRouter
