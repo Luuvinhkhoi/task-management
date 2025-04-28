@@ -3,16 +3,32 @@ const express=require('express');
 const authRouter=require('./src/Routes/auth')
 const session = require("express-session")
 const passport=require('./src/config/passport')
+const http=require('http')
+const { Server } = require('socket.io')
 const cors = require('cors');
 const userRouter = require('./src/Routes/user');
 const projectRouter = require('./src/Routes/project');
 const taskRouter = require('./src/Routes/task');
 const uploadRouter = require('./src/Routes/upload');
+const commentRouter=require('./src/Routes/comment')
 const settingRouter=require('./src/Routes/setting')
+const Socket=require('./src/Controller/socketController')
 const s3Router=require('./src/Routes/s3')
+const db=require('./src/Model/models')
 const port=4001
 const app=express()
 const store = new session.MemoryStore();
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ['GET', 'POST'],
+    credentials: true,
+  }
+});
+global._io=io
+global._io.on('connection',Socket.connection)
 connection()
 app.use(express.json())
 app.use(
@@ -45,6 +61,8 @@ app.use('/task',isAuthenticated,taskRouter)
 app.use('/upload',uploadRouter)
 app.use('/s3', s3Router)
 app.use('/setting', isAuthenticated, settingRouter)
-app.listen(port,()=>{
-    console.log(`Sever is listening on port ${port}`)
-})
+app.use('/comment', commentRouter)
+db.sequelize.sync().then(() => {
+  server.listen(port, () => console.log(`Server listening on port ${port}`));
+});
+module.exports={io}

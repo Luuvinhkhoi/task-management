@@ -13,6 +13,7 @@ import pdf from '../../../../assets/pdf.png'
 import word from '../../../../assets/word.png'
 import excel from '../../../../assets/excel.png'
 import { useTimezone } from '../../../../timezoneContext';
+import { Comment } from '../comment/comment';
 import {X} from 'lucide-react'
 import { Placeholder } from 'react-select/animated';
 export const List = ()=>{
@@ -39,7 +40,6 @@ export const List = ()=>{
     const [formattedUsers, setFormatedUser]=useState([])
     const [taskDetailMembers, setTaskDetailMember]=useState([])
     const [assignedUserId, setAssignedUserId] = useState([]);
-    
     const tabs=[
         { value: 'Detail', label: 'Detail' },
         { value: 'Comment', label: 'Comment' },
@@ -357,7 +357,7 @@ export const List = ()=>{
             <div className={`overlay-${taskDetailOpen?'active':'unActive'}`}>
                 {taskDetail&&status&&priority?taskDetail.map(item=>
                     <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
-                        <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen)}}><X></X></div>
+                        <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail')}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
                                 <Select
@@ -423,7 +423,7 @@ export const List = ()=>{
                             </div>
                             ))}
                         </div>
-                        <div className='taskDetail-body'>
+                        {isOpenTab==='Detail'?<div className='taskDetail-body'>
                             <div className='body-item'>
                                 <h4>Description</h4>
                                 <div>
@@ -520,7 +520,7 @@ export const List = ()=>{
                                 </div>
                             </div>
                 
-                        </div>
+                        </div>:<Comment taskId={item.id}></Comment>}
                         <div className='taskDetail-footer'>
                                 <div className='edit' onClick={handleSaveEdit}>
                                    <FilePenLine></FilePenLine>

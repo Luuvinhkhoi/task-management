@@ -442,12 +442,22 @@ let task={
             body:JSON.stringify({
                 updateData
             })
+        }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
+    },
+    getComment(taskId){
+        return fetch(`${baseUrl}/task/:taskId`, {
+            method: 'GET',
           }).then(response => {
             if (!response.ok) {
               throw new Error(`Request failed with status ${response.status}`);
             }
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
-          });
-    },
+        });
+    }
 }
 export default task
