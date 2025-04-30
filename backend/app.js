@@ -28,18 +28,17 @@ const io = new Server(server, {
   }
 });
 global._io=io
-global._io.on('connection',Socket.connection)
 connection()
 app.use(express.json())
-app.use(
-    session({
+
+const sessionMiddleware=session({
       secret: "f4z4gs$Gcg",
       cookie: { maxAge: 1000 * 60 *60 * 24, secure: false, sameSite: "lax" },
       saveUninitialized: false,
       resave: false,
       store,
-    })
-);
+})
+app.use(sessionMiddleware)
 app.use(cors({
   origin: "http://localhost:5173",
   methods: ['GET', 'POST','PATCH', 'PUT', 'DELETE'], // Chỉ cho phép các phương thức này
@@ -47,6 +46,18 @@ app.use(cors({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, () => {
+    if (!socket.request.session.passport.user) {
+      console.log('unauthorized')
+      return next(new Error("Unauthorized"));
+    }
+    socket.user = socket.request.session.passport.user;
+    next();
+  });
+}); 
+global._io.on('connection',Socket.connection)
+
 const isAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
@@ -65,4 +76,3 @@ app.use('/comment', commentRouter)
 db.sequelize.sync().then(() => {
   server.listen(port, () => console.log(`Server listening on port ${port}`));
 });
-module.exports={io}
