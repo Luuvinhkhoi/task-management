@@ -450,7 +450,7 @@ let task={
         });
     },
     getComment(taskId){
-        return fetch(`${baseUrl}/task/:taskId`, {
+        return fetch(`${baseUrl}/comment/${taskId}`, {
             method: 'GET',
           }).then(response => {
             if (!response.ok) {

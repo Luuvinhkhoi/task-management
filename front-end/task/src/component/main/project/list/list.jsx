@@ -363,7 +363,9 @@ export const List = ()=>{
                                 <Select
                                 options={options}
                                 styles={getCustomStyle}
-                                defaultValue={options.find(option => option.value == item.priority)}
+                                value={options.find(option => {
+                                    return option.value == priority
+                                })}
                                 onChange={(selectedOption) => setPriority(selectedOption.value)} // Medium
                                 />
                             </div>
@@ -371,7 +373,7 @@ export const List = ()=>{
                                 <Select
                                     options={statusOptions}
                                     styles={getStatusCustomStyle}
-                                    defaultValue={statusOptions.find(option => option.value == item.status)}
+                                    value={statusOptions.find(option => option.value == status)}
                                     onChange={(selectedOption) => setStatus(selectedOption.value)} // Medium
                                 />
                             </div>

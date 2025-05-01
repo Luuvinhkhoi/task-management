@@ -1,9 +1,14 @@
 import { useEffect, useState, useRef } from "react"
+import { useSelector } from "react-redux";
 import task from "../../../../util/task";
 import {io} from 'socket.io-client'
+import './comment.css'
 export const Comment=({taskId})=>{
     const [comments, setComments] = useState([]);
     const [newComment, setNewComment] = useState('');
+    const avatar=useSelector(state=>state.userProfile.avatar)
+    const lastname=useSelector(state=>state.userProfile.lastname)
+    const firstname=useSelector(state=>state.userProfile.firstname)
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const commentsEndRef = useRef(null);
@@ -66,7 +71,12 @@ export const Comment=({taskId})=>{
           console.log('hihi')
           const data={
             taskId:taskId,
-            content:newComment
+            content:newComment, 
+            user:{
+              avatar:avatar,
+              firstname:firstname,
+              lastname:lastname
+            }
           }
           task.createNewComment(data)
           socketRef.current.emit('new-comment', data)
@@ -75,15 +85,35 @@ export const Comment=({taskId})=>{
           console.log(error)
         }
       }
+      
     
       return(
           <div className="comment">
-            {comments.map(item=>
-            <div>{item.content}</div>
-           )}
+            <div style={{maxHeight:'200px', overflowY:'scroll', marginBottom:'1rem'}}>
+              {comments.map((comment, index) => (
+                <div key={index} className="comment-item" >
+                  <div className="avatar">
+                    <img src={comment.user.avatar? comment.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                  </div>
+                  <div className="comment-content">
+                    <div style={{fontSize:'14px', fontWeight:'600'}}>
+                      <span>{comment.user.firstname}</span>
+                      <span> </span>
+                      <span>{comment.user.lastname}</span>
+                    </div>
+                    <p className="comment-text">{comment.content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
            <form onSubmit={submit}>
-             <input  value={newComment} onChange={(e) => setNewComment(e.target.value)}></input>
-             <button type="submit">Upload</button>
+              <textarea
+                  placeholder="Thêm bình luận..."
+                  value={newComment}
+                  onChange={(e) => setNewComment(e.target.value)}
+              />
+              
+              <button style={{justifySelf:'end'}} className="send-button" type="submit">Submit</button>
            </form>
         </div>
     )

@@ -1,0 +1,25 @@
+@import url('../../../../theme.css');
+.comment{
+    width: 90%;
+    margin: 0 auto;
+}
+.comment-item{
+    display: flex;
+    gap:1rem;
+    margin-bottom: 1rem;
+}
+.comment-content{
+    background-color: var(--card-bg);
+    width: 100%;
+    padding: 1rem;
+}
+
+.comment form  textarea{
+    width: 95%;
+    height:50px;
+    border-radius: 1rem;
+    margin: 0 auto;
+    display: block;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}

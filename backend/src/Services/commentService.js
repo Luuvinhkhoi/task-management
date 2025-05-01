@@ -1,3 +1,4 @@
+const { where } = require('sequelize');
 const db= require('../Model/models');
 
 class CommentService {
@@ -6,9 +7,9 @@ class CommentService {
       console.log(taskId, content, userId)
 
       const newComment = await db.Comment.create({
-        taskId,
-        userId,
-        content,
+        task_id:taskId,
+        user_id:userId,
+        content:content,
       });
       return newComment
     } catch(error){
@@ -17,7 +18,30 @@ class CommentService {
   }
 
   static async getCommentsByTaskId(taskId) {
-    return db.Comment.find({ taskId }).sort({ createdAt: 1 });
+    const result=await db.Comment.findAll(
+      {
+        where:{task_id:taskId},
+        order: [['createdAt', 'ASC']],
+      }
+    );
+    console.log(result)
+    const plainResult=await Promise.all(result.map(item=>item.get({plain:true})))
+    const result2=await Promise.all(plainResult.map(item=>db.User.findByPk(item.user_id)))
+    console.log(result2)
+    const plainResult2=await Promise.all(result2.map(item=>item.get({plain:true})))
+    const mergedResult=plainResult.map((item, index)=>{
+        return{
+          ...item,
+          user:{
+            id:plainResult[index].id,
+            firstname: plainResult2[index].firstname,
+            lastname: plainResult2[index].lastname,
+            avatar: plainResult2[index].avatar          
+          }
+        }
+    }
+    )
+    return mergedResult
   }
 }
 
