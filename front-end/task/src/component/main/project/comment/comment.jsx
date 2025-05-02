@@ -85,11 +85,15 @@ export const Comment=({taskId})=>{
           console.log(error)
         }
       }
-      
+      useEffect(() => {
+        if (commentsEndRef.current) {
+          commentsEndRef.current.scrollTop = commentsEndRef.current.scrollHeight;
+        }
+      }, [comments])
     
       return(
           <div className="comment">
-            <div style={{maxHeight:'200px', overflowY:'scroll', marginBottom:'1rem'}}>
+            <div style={{maxHeight:'200px', overflowY:'scroll', marginBottom:'1rem'}}   ref={commentsEndRef}>
               {comments.map((comment, index) => (
                 <div key={index} className="comment-item" >
                   <div className="avatar">
@@ -107,13 +111,20 @@ export const Comment=({taskId})=>{
               ))}
             </div>
            <form onSubmit={submit}>
+              <div>
+                <img src={avatar? avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}}></img>
+              </div>
               <textarea
                   placeholder="Thêm bình luận..."
                   value={newComment}
                   onChange={(e) => setNewComment(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();   
+                      submit(e);          
+                    }
+                  }}
               />
-              
-              <button style={{justifySelf:'end'}} className="send-button" type="submit">Submit</button>
            </form>
         </div>
     )
