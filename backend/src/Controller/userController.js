@@ -16,6 +16,15 @@ const getAllUser=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
+const getUserByProjectId=async(req,res)=>{
+   try{
+      const {projectId}=req.params
+      const user= await service.getUserByProjectId(projectId)
+      res.status(201).json(user)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
 const updateUser=async(req, res)=>{
    try{
       const {updateData}=req.body      
@@ -28,5 +37,6 @@ const updateUser=async(req, res)=>{
 module.exports={
     createUser,
     getAllUser,
-    updateUser
+    updateUser,
+    getUserByProjectId
 }

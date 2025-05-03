@@ -1,12 +1,17 @@
 const { where } = require('sequelize')
 const db =require('../Model/models')
-const createProject=async(title, startDate, dueDate)=>{
+const createProject=async(title, startDate, dueDate, assignedUserId)=>{
     try{
-        await db.Project.create({
+        const result=await db.Project.create({
             title:title,
             createdAt:startDate,
             endedAt:dueDate
         })
+        const taskMembers = assignedUserId.map(memberId => ({
+            projectId: result.id,
+            userId:memberId
+        }));
+        await db.ProjectMember.bulkCreate(taskMembers);
     } catch (error){
         throw new Error(`check error ${error}`)
     }

@@ -48,6 +48,22 @@ const getAllUser= async()=>{
     throw new Error(`check error ${error}`, error)  
   }
 }
+const getUserByProjectId= async(projectId)=>{
+  try {
+    let result= await db.ProjectMember.findAll(
+      {where:{
+        projectId:projectId
+      }}
+    )
+    const plainResult =await result.map(user => user.get({ plain: true }))
+    console.log(plainResult)
+    const result2= await Promise.all(plainResult.map(item=>db.User.findByPk(item.userId)))
+    const plainResult2 =await result2.map(user => user.get({ plain: true }))
+    return plainResult2
+  } catch (error) {
+    throw new Error(`check error ${error}`, error)  
+  }
+}
 const updateUser=async(id,updateData)=>{
   try{
     let result= await db.User.update(
@@ -67,5 +83,6 @@ module.exports={
     createUser,
     loginUser,
     getAllUser,
-    updateUser
+    updateUser,
+    getUserByProjectId
 }

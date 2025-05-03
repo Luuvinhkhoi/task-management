@@ -1,7 +1,7 @@
 const service=require('../Services/projectService')
 const createProject= async(req, res)=>{
   try{
-     const {title, startDate, endDate}=req.body
+     const {title, startDate, endDate, assignedUserId}=req.body
      console.log(req.body)
      const startTimestamp = new Date(startDate).toISOString(); 
      const endTimestamp = new Date(endDate).toISOString();
@@ -10,7 +10,7 @@ const createProject= async(req, res)=>{
      if (!startDate || !endDate || isNaN(new Date(startDate).getTime()) || isNaN(new Date(endDate).getTime())) {
         return res.status(400).json({error: "Invalid date format"});
      }
-     const project= await service.createProject(title, startTimestamp, endTimestamp)
+     const project= await service.createProject(title, startTimestamp, endTimestamp, assignedUserId)
      res.status(201).json(project)
   } catch(error){
      res.status(500).json({error: error.message})

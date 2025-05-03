@@ -7,6 +7,7 @@
     --task-footer:#ffffff;
     --task-footer-bg:#000;
     --card-bg: #f8f9fa;
+    --kanban-column:#f8f8f8;
     --sidebar-bg: #f4f4f4;
     --button-bg: #007bff;
     --button-text: #ffffff;
@@ -68,6 +69,7 @@
     --task-footer:#000000;
     --task-footer-bg:#fff;
     --card-bg: #181818;
+    --kanban-column:#263341;
     --sidebar-bg: #161616;
     --button-text: #000000;
     --progress-bar: #ff9800;

@@ -12,6 +12,7 @@ export const Project = ()=>{
     const darkMode = useSelector((state) => state.setting.darkMode);
     const animatedComponents = makeAnimated();
     const [isActive, setActive]=useState()
+    const [members,setMember]=useState([])
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [projectFormOpen, setProjectFormOpen]=useState(false)
     const [taskFormOpen, setTaskFormOpen]=useState(false)
@@ -24,6 +25,9 @@ export const Project = ()=>{
     const [assignedUserId, setAssignedUserId] = useState([]);
     const [projectId, setProjectId] = useState("");
     const [users, setUser]=useState([])
+    const [projectUsers, setProjectUser]=useState([])
+    const [formattedUser, setFormatedUser]=useState([])
+    const [formattedProjectUser, setFormatedProjectUser]=useState([])
     const location=useLocation()
     const navigate=useNavigate()
     let param=useParams()
@@ -51,11 +55,11 @@ export const Project = ()=>{
         backgroundColor: darkMode ? '#1c2536' : '#fff',
         boxShadow: 'none',
         color: darkMode ? '#ddd' : '#000',
-        border: darkMode?'3px solid rgb(29, 41, 57)': '3px solid rgb(228, 231, 236)',
+        border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
         padding: '8px',
         fontSize: '14px',
         '&:hover': {
-          border: darkMode?'3px solid rgb(29, 41, 57)': '3px solid rgb(228, 231, 236)',
+          border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
         },
         borderRadius:'.5rem'
       }),
@@ -95,14 +99,16 @@ export const Project = ()=>{
     const handleProjectSubmit = async(e)=>{
       try{
         e.preventDefault()
-        await task.createProject(title, startDate, dueDate)
+        await task.createProject(title, startDate, dueDate, assignedUserId)
+        setProjectFormOpen(!projectFormOpen)
       } catch(error){
         console.log(error)
       }
     }
     const handleAssignUser = (selectedUsers) => {
       if (selectedUsers) {
-        const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
+        const assignedIds = selectedUsers.map((user) => user.value);
+        members.push(selectedUsers)
         setAssignedUserId(assignedIds);
       } else {
         // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
@@ -110,6 +116,24 @@ export const Project = ()=>{
       }
     };
     
+    const handleSelect = (selectedUsers) => {
+      console.log(selectedUsers)
+      if (!selectedUsers || selectedUsers.length === 0) {
+          setMember([]);
+          return;
+      }else if(selectedUsers) {
+          const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
+          const userMap = new Map(users.map(user => [user.id, user]));
+          const selected= assignedIds.map(id => userMap.get(id));
+          console.log(selected)
+          setAssignedUserId(assignedIds);
+          setMember(selected);
+      } else {
+          console.log('❌ selectedUsers is null or empty');
+          // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
+          setAssignedUserId([]);
+      }
+  };
     useEffect(()=>{
       setProjectId(param.id)
     },[param])
@@ -122,17 +146,40 @@ export const Project = ()=>{
             label: (
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
-                <span>{user.firstname}</span>
+                <span>{user.firstname} {user.lastname}</span>
               </div>
             )// Dùng username làm tên hiển thị
           }));
-          setUser(formattedUsers)
+          setUser(result)
+          setFormatedUser(formattedUsers)
         } catch(error){
           console.log(error)
         }
       }
       getAllUser()
-    },[])
+    },[param.id])
+    useEffect(()=>{
+      async function getUserByProjectId(){
+        try{
+          const result = await task.getUserByProjectId(param.id)
+          const formattedUsers = result.map(user => ({
+            value: user.id, // Dùng ID làm giá trị
+            label: (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+                <span>{user.firstname} {user.lastname}</span>
+              </div>
+            )// Dùng username làm tên hiển thị
+          }));
+          setProjectUser(result)
+          setFormatedProjectUser(formattedUsers)
+        } catch(error){
+          console.log(error)
+        }
+      }
+      getUserByProjectId()
+    },[param.id])
+    console.log(formattedProjectUser)
     return (
         <div className="project">
            <div className='projectHeader'>
@@ -183,6 +230,31 @@ export const Project = ()=>{
                             >
                           </input></div>
                         </div>
+                      </div>
+                      <div className='select'>
+                        <Select 
+                          closeMenuOnSelect={false}
+                          components={animatedComponents}
+                          isMulti
+                          styles={getCustomStyle}
+                          options={formattedUser}
+                          onChange={handleSelect}
+                        ></Select>
+                      </div>
+                      <div className='member'>
+                          <div>
+                              {members.length>0?members.map(user=>
+                                  <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                      <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
+                                      <div>
+                                          <span>{user.firstname}</span>
+                                          <span> </span>
+                                          <span>{user.lastname}</span>
+                                          <p>{user.email}</p>
+                                      </div>
+                                  </div>
+                              ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>Not any member yet</span>)}
+                          </div>
                       </div>
                       <button>Create Project</button>
                   </form>
@@ -251,7 +323,7 @@ export const Project = ()=>{
                         components={animatedComponents}
                         isMulti
                         styles={getCustomStyle}
-                        options={users}
+                        options={formattedProjectUser}
                         onChange={handleAssignUser}
                       ></Select>
                       

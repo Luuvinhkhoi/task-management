@@ -90,7 +90,7 @@ let task={
             console.log(networkError.message);
         });
     },
-    createProject(title, startDate, endDate){
+    createProject(title, startDate, endDate, assignedUserId){
         return fetch(`${baseUrl}/project`,{
             method:'POST',
             credentials:'include',
@@ -100,7 +100,8 @@ let task={
             body:JSON.stringify({
                 title,
                 startDate,
-                endDate
+                endDate, 
+                assignedUserId
             })
         }).then(response=>{
             if(response.ok){
@@ -304,6 +305,24 @@ let task={
     ,
     getAllUser(){
         return fetch(`${baseUrl}/user`,{
+            method:'GET',
+            credentials: 'include',
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    getUserByProjectId(projectId){
+        return fetch(`${baseUrl}/user/${projectId}`,{
             method:'GET',
             credentials: 'include',
         }).then(response => {
