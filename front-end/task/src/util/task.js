@@ -136,6 +136,24 @@ let task={
             console.log(networkError.message);
         });
     },
+    getProjectById(id){
+        return fetch(`${baseUrl}/project/${id}`,{
+            method:'GET',
+            credentials:'include',
+        }).then(response=>{
+            if(response.ok){
+                return response.json()
+            }
+            throw new Error (`Request failed with ${response.status}`)
+        }).then(jsonResponse=>{
+            if (!jsonResponse) {
+                console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
     getProjectProgress(){
         return fetch(`${baseUrl}/project/progress`,{
             method:'GET',

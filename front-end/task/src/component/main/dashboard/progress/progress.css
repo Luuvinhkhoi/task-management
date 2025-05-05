@@ -9,6 +9,8 @@
     gap: 1rem;
     flex-direction: column;
     align-items: stretch;
+    max-height: 300px;
+    overflow-y: scroll;
 }
 .progressItem{
     border-radius: .5rem;

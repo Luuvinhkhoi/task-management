@@ -16,6 +16,22 @@ const createProject=async(title, startDate, dueDate, assignedUserId)=>{
         throw new Error(`check error ${error}`)
     }
 }
+const updateProject=async(title, startDate, dueDate, assignedUserId)=>{
+    try{
+        const result=await db.Project.create({
+            title:title,
+            createdAt:startDate,
+            endedAt:dueDate
+        })
+        const taskMembers = assignedUserId.map(memberId => ({
+            projectId: result.id,
+            userId:memberId
+        }));
+        await db.ProjectMember.bulkCreate(taskMembers);
+    } catch (error){
+        throw new Error(`check error ${error}`)
+    }
+}
 const getAllProject=async()=>{
     try{
       let result= await db.Project.findAll()
@@ -24,6 +40,15 @@ const getAllProject=async()=>{
     } catch (error){
       throw new Error(`check error ${error}`)
     }
+}
+const getProjectById=async(id)=>{
+    try{
+        let result= await db.Project.findByPk(id)
+        const plainResult =await result.get({ plain: true })  
+        return plainResult
+      } catch (error){
+        throw new Error(`check error ${error}`)
+      }
 }
 const getProjectProgress=async(projectId)=>{
     try{
@@ -52,5 +77,6 @@ const getProjectProgress=async(projectId)=>{
 module.exports={
     createProject,
     getAllProject,
-    getProjectProgress
+    getProjectProgress,
+    getProjectById
 }

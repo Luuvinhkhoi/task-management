@@ -24,6 +24,15 @@ const getAllProject=async(req, res)=>{
         res.status(500).json({error: error.message})
     }
 }
+const getProjectById=async(req,res)=>{
+    try{
+        const {id}=req.params
+        const project= await service.getProjectById(id)
+        res.status(201).json(project)
+    } catch(error){
+        res.status(500).json({error: error.message})
+    }
+}
 const getProjectProgress=async(req, res)=>{
     try{
         const project1= await service.getAllProject()
@@ -36,5 +45,6 @@ const getProjectProgress=async(req, res)=>{
 module.exports={
     createProject,
     getAllProject,
-    getProjectProgress
+    getProjectProgress,
+    getProjectById
 }

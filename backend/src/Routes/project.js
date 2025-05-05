@@ -4,4 +4,5 @@ const projectController=require('../Controller/projectController')
 projectRouter.post('/', projectController.createProject)
 projectRouter.get('/', projectController.getAllProject)
 projectRouter.get('/progress',projectController.getProjectProgress)
+projectRouter.get('/:id',projectController.getProjectById)
 module.exports=projectRouter

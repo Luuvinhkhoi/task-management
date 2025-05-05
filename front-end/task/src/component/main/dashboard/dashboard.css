@@ -10,8 +10,10 @@
 .dashboard #row1{
     display: grid;
     grid-template-columns: 1.5fr 1fr;
+    max-height: 300px;
 }
 .dashboard #row2{
     display: grid;
     grid-template-columns: 1fr 1fr;
+    max-height: 300px;
 }

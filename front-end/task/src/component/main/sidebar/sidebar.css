@@ -15,7 +15,7 @@
     width: 90%;
     margin: 1rem auto;
 }
-.sideBar .menuItem div:first-child{
+.sideBar .menuItem >div:first-child{
     padding: 1rem;
     border-radius: 1rem;
 }
@@ -28,9 +28,7 @@
     align-items: center;
     gap: 1rem;
 }
-.sideBar .menuItem div>div{
-    justify-content: space-between;
-}
+
 .sideBar .projectList{
     padding-left: 1rem;
 }
@@ -39,10 +37,147 @@
     text-align: start;
 }
 .sideBar .projectList li{
-    padding: .5rem;
+    padding: .5rem 1.5rem;
 }
 .sideBar .sub-active{
     background-color: #526cff;  
-    color: #ffffff;
     border-radius: 1rem;
+}
+.sideBar .sub-active>div:first-child{
+    color: #ffffff;
+}
+.sideBar .overlay-unActive{
+    display: none;
+}
+.sideBar .option-unActive{
+    display: none;
+}
+.sideBar .projectForm-unActive{
+    display: none;
+}
+.sideBar .option-active{
+    position: absolute ;
+    background-color: var(--background-color);
+    z-index: 100;
+    padding: 1rem;
+    border-radius: .5rem;
+    right: -140px;
+    width: 150px;
+    box-shadow: 5px 5px 5px 5px var(--box-shadow);
+    display:flex;
+    flex-direction:column;
+    gap:1rem
+}
+.sideBar .overlay-active{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: unset !important;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+.sideBar .overlay-unActive{
+    display: none !important;
+}
+
+.sideBar  .projectForm-unActive{
+    display: none;
+}
+.sideBar  .projectForm-active{
+    position: absolute;
+    z-index: 10;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    padding: 20px;
+    border-radius: 8px;
+    width: 450px;
+    max-width: 90%;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+    position: relative;
+    text-align: start;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: scroll;
+    max-height: 400px;
+}
+.sideBar  .projectForm-active .close-button{
+    display: inline-block;
+    padding: unset;
+    border: unset;
+    color: var(--text-color);
+}
+.sideBar  .projectForm-active .title{
+    background-color: var(--search-bg);
+    border-radius: .5rem;
+    display: flex;
+    border: 1px solid var(--border);
+    padding: 1rem;
+}
+.sideBar  .projectForm-active .title input{
+    outline: none;
+    width: 100%;
+    color: var(--text-color);
+    background: none;
+    border: none;
+}
+.sideBar  .projectForm-active .date {
+    padding: unset;
+    display: flex;
+    justify-content: space-between;
+}
+.sideBar  .projectForm-active .date >div>div{
+    background-color: var(--search-bg);
+    border-radius: .5rem;
+    padding: 1rem;
+    border: 1px solid var(--border);
+}
+.sideBar  .projectForm-active .date >div>div input{
+    outline: none;
+    width: 100%;
+    background: none;
+    color: var(--text-color);
+    border: none;
+}
+.sideBar  .projectForm-active .option {
+    display: flex;
+    gap: 1rem;
+}
+.sideBar  .projectForm-active .option .select{
+    width: 100%;
+    background-color: var(--search-bg);
+    align-content: center;
+}
+.sideBar  .projectForm-active .option .select select{
+    outline: none;
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--text-color);
+}
+.sideBar .projectForm-active .member >div:first-child{
+    border: 1px solid var(--border);
+    padding: 1rem;
+    border-radius: .5rem;
+    font-size: 14px;
+    height: 100px;
+    overflow-y: scroll;
+}
+.sideBar .projectForm-active .member span{
+    font-weight: 600;
+}
+.sideBar .projectForm-active .member p{
+    font-weight: 500;
+    font-size: 12px;
+    color: #747b88;
+}
+
+.sideBar button{
+    background-color: var(--button-bg);
+    color: #fff;
 }

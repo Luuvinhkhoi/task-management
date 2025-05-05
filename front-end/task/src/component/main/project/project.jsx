@@ -98,7 +98,6 @@ export const Project = ()=>{
     };
     const handleProjectSubmit = async(e)=>{
       try{
-        e.preventDefault()
         await task.createProject(title, startDate, dueDate, assignedUserId)
         setProjectFormOpen(!projectFormOpen)
       } catch(error){
@@ -332,7 +331,7 @@ export const Project = ()=>{
                 </div>
              </div>
            </div>
-           <Outlet></Outlet>
+           <Outlet></Outlet>  
         </div>
     )
 }
