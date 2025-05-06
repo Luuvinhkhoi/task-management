@@ -173,6 +173,23 @@ let task={
         });
     }
     ,
+    updateProject(updateData){
+        return fetch(`${baseUrl}/project`, {
+            method: 'PATCH',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                updateData
+            })
+        }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
+    },
     createTask(title, description, status, priority, startDate, dueDate, assignedUserId, projectId){
         return fetch(`${baseUrl}/task`,{
             method:'POST',

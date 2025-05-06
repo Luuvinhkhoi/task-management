@@ -77,9 +77,18 @@ export const SideBar = ()=>{
    const isSubActive = (subPath) => {
       return location.pathname === subPath
     }
-   const handleProjectSubmit = async(e)=>{
+   const handleProjectSubmit = async(e, id)=>{
+      e.preventDefault()
+      console.log(id)
       try{
-        await task.createProject(title, startDate, dueDate, assignedUserId)
+        await task.updateProject(
+              {id:id,
+               title:title,
+               assignedUserId:assignedUserId,
+               startDate:startDate,
+               dueDate: dueDate
+              }
+        )
         setProjectFormOpen(!projectFormOpen)
       } catch(error){
         console.log(error)
@@ -101,7 +110,11 @@ export const SideBar = ()=>{
             avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
           }));
           console.log(formattedUser)
+          console.log(assignedIds)
           setFormatedProjectUser(formattedUsers)
+          setAssignedUserId(assignedIds)
+
+
       } else {
           console.log('❌ selectedUsers is null or empty');
           // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
@@ -130,7 +143,8 @@ export const SideBar = ()=>{
       setUser(result)
       setFormatedUser(formattedUsers)
       setFormatedProjectUser(formattedProjectUser)
-
+      const assignedIds = formattedProjectUser.map((user) => user.value);
+      setAssignedUserId(assignedIds)
     } catch(error){
       console.log(error)
     }
@@ -141,6 +155,8 @@ export const SideBar = ()=>{
         const select=projectUsers.filter(user=>user.id!==id)
         setFormatedProjectUser(formattedSelect)
         setProjectUser(select)
+        const select2=assignedUserId.filter(userId=>userId!==id)
+        setAssignedUserId(select2)
       } catch(error){
           console.log(error)
       }
@@ -180,15 +196,16 @@ export const SideBar = ()=>{
              setUser(result)
              setFormatedUser(formattedUsers)
              setFormatedProjectUser(formattedProjectUser)
-
+             const assignedIds = formattedProjectUser.map((user) => user.value);
+             setAssignedUserId(assignedIds)
            } catch(error){
              console.log(error)
            }
          }
          getAllUser()
     },[param.id])
-    console.log(formattedProjectUser)
-    console.log(dueDate)
+    console.log(assignedUserId)
+    console.log(projectUsers)
    return (
         <div className="sideBar">
            <div className='brand'>
@@ -260,7 +277,7 @@ export const SideBar = ()=>{
                                       </div>
                                     </div>
                                  <div className={`overlay-${projectFormOpen===project.id?'active':'unActive'}`} onClick={(e)=>e.stopPropagation()} >
-                                    <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={handleProjectSubmit}>
+                                    <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={(e)=>handleProjectSubmit(e, project.id)}>
                                             <div className='close-button' onClick={(e)=>{e.stopPropagation(),setEditFormOpen(null), setProjectFormOpen(null)}}><X></X></div>
                                             <h3>Edit project</h3>
                                             <div className='title'>
