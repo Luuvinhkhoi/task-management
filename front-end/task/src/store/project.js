@@ -15,7 +15,9 @@ export const fetchProjects = createAsyncThunk(
       'project/getProject',
       async(_,thunkAPI) =>{
         const result = await task.getAllProject();
-        await thunkAPI.dispatch(getProject(result)); // Chỉ setProject nếu component vẫn còn mounted
+        if(result){
+            await thunkAPI.dispatch(getProject(result)); // Chỉ setProject nếu component vẫn còn mounted
+        }
       }
 );
 

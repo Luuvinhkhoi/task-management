@@ -23,8 +23,6 @@
     border-radius: 10rem;
     overflow: hidden;
 }
-.profileHeader .avatar{
-}
 .profileBody{
     display: flex;
     justify-content: space-between;

@@ -54,9 +54,24 @@ const updateProject=async(id,title, startDate, dueDate, assignedUserId)=>{
         throw new Error(`check error ${error}`)
     }
 }
-const getAllProject=async()=>{
+const getAllProject=async(userId)=>{
     try{
-      let result= await db.Project.findAll()
+      const result1=await db.ProjectMember.findAll(
+        {
+            where:{
+                userId:userId
+            }
+        }
+      )
+      const plainResult1=result1.map(project=>project.get({plain:true}))
+      let result= await Promise.all(plainResult1.map(item=>db.Project.findOne(
+        {
+            where:{
+                id:item.projectId
+            }
+        }
+      )))
+      console.log(result)
       const plainResult =await result.map(project => project.get({ plain: true }))    
       return plainResult
     } catch (error){

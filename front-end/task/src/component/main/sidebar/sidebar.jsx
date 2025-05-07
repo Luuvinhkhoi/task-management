@@ -208,8 +208,10 @@ export const SideBar = ()=>{
          }
          getAllUser()
     },[param.id])
-    console.log(assignedUserId)
-    console.log(projectUsers)
+    useEffect(()=>{
+          dispatch(fetchProjects())
+    },[])
+   console.log(projects)
    return (
         <div className="sideBar">
            <div className='brand'>

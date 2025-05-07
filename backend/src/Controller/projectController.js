@@ -18,7 +18,7 @@ const createProject= async(req, res)=>{
 }
 const getAllProject=async(req, res)=>{
     try{
-        const project= await service.getAllProject()
+        const project= await service.getAllProject(req.user.id)
         res.status(201).json(project)
     } catch(error){
         res.status(500).json({error: error.message})
@@ -35,7 +35,7 @@ const getProjectById=async(req,res)=>{
 }
 const getProjectProgress=async(req, res)=>{
     try{
-        const project1= await service.getAllProject()
+        const project1= await service.getAllProject(req.user.id)
         const project2= await Promise.all (project1.map(project=>service.getProjectProgress(project.id)))
         res.status(201).json(project2)
     } catch(error){
