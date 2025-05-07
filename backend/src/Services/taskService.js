@@ -303,6 +303,19 @@ const updateTaskDetail= async (id, title ,status, priority, description, project
         throw new Error(`check error ${error}`)
     }
 }
+const deleteTask=async(id)=>{
+    try{
+        const result=await db.Task.destroy(
+            {
+                where:{
+                    id: id
+                }
+            }
+        )
+    } catch (error){
+        throw new Error(`check error ${error}`)
+    }
+}
 module.exports={
     createTask,
     getAllTaskByProjectId,
@@ -312,5 +325,6 @@ module.exports={
     getUpcomingTask,
     getAllTaskByUserId,
     getTaskDetail,
-    updateTaskDetail
+    updateTaskDetail,
+    deleteTask
 }

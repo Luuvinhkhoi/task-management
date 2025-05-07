@@ -96,10 +96,22 @@ const getProjectProgress=async(projectId)=>{
         throw new Error(`check error ${error}`)
     }
 }
+const deleteProject=async(projectId)=>{
+    try{
+       await db.Project.destroy({
+        where:{
+            id:projectId
+        }
+       })
+    } catch (error){
+        throw new Error(`check error ${error}`)
+    }
+}
 module.exports={
     createProject,
     getAllProject,
     getProjectProgress,
     getProjectById, 
-    updateProject
+    updateProject,
+    deleteProject
 }

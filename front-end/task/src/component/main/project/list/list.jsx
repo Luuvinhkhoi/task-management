@@ -25,7 +25,9 @@ export const List = ()=>{
     const [isOpenTab, setIsOpenTab] = useState('Detail');
     const { id } = useParams()
     const [taskDetailOpen, setTaskDetailOpen]=useState(false)
+    const [overlay, setOverlay]=useState(false)
     const [taskDetail, setTaskDetail]=useState()
+    const [deleteTask,setDeleteTask]=useState(false)
     const tasks=useSelector(state=> state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
     const [taskId, setTaskId]=useState()
@@ -216,7 +218,7 @@ export const List = ()=>{
             setDescription(result[0].description)
             setTaskDetailMember(result[0].users)
             setTaskDetailOpen(true)
-            
+            setOverlay(true)
           } catch(error){
             console.log(error)
         }
@@ -307,6 +309,16 @@ export const List = ()=>{
             console.log(error)
         }
     }
+    const handleDeleteTask=async(e,taskId)=>{        
+        try{
+            await task.deleteTask(taskId)
+            dispatch(getAllTask(id))
+            setDeleteTask(false)
+            setOverlay(false)
+        }catch(error){
+            console.log(error)
+        }
+    }
     useEffect(() => {
         if (taskDetailMembers.length > 0 && users.length > 0) {
           const preselectedUsers = formattedUsers.filter(option =>
@@ -320,9 +332,8 @@ export const List = ()=>{
     useEffect(() => {
         console.log("✅ assignedUserId updated:", assignedUserId);
     }, [assignedUserId]);
-    console.log(users)
-    console.log(taskDetailMembers)
-    console.log(assignedUserId)
+    console.log(taskDetail)
+    console.log(deleteTask)
     return (
         <div className='list'>
            <h3>List</h3> 
@@ -354,10 +365,24 @@ export const List = ()=>{
                 )}
             </div>
             
-            <div className={`overlay-${taskDetailOpen?'active':'unActive'}`}>
-                {taskDetail&&status&&priority?taskDetail.map(item=>
+            <div className={`overlay-${overlay?'active':'unActive'}`}>
+                {deleteTask?(
+                    <div className='delete-warning'>
+                        <h2>Xác nhận xóa</h2>
+                        <span>Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác.</span>
+                        <div className='delete-warning-footer'>
+                            <div className='edit' onClick={()=>{setOverlay(null), setDeleteTask(null)}}>
+                            <p>Cancel</p>
+                            </div>
+                            <div className='delete' onClick={(e)=>handleDeleteTask(e, taskId)}>
+                                <Trash2 color='white'></Trash2>
+                                <p style={{color:'white'}}>Delete</p>
+                            </div>
+                        </div>
+                    </div>
+                ):(taskDetail&&status&&priority?taskDetail.map(item=>
                     <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
-                        <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail')}}><X></X></div>
+                        <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail'), setOverlay(false)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
                                 <Select
@@ -528,14 +553,14 @@ export const List = ()=>{
                                    <FilePenLine></FilePenLine>
                                    <p>Save</p>
                                 </div>
-                                <div className='delete'>
+                                <div className='delete' onClick={()=>{setDeleteTask(true), setTaskDetail(false)}}>
                                     <Trash2 color='white'></Trash2>
                                     <p style={{color:'white'}}>Delete</p>
                                 </div>
                         </div>
                     </div>
                 ):<div>Loading</div>
-                }
+                )}
             </div>
            </div>
         </div>

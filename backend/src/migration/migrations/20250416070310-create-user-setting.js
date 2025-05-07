@@ -23,10 +23,10 @@ module.exports = {
         references:{
             model:{
               tableName:'Users',
-              key:'id'
             },
-            onDelete:'CASADE'
-        }
+            key:'id'
+        },
+        onDelete:'CASCADE'
       },
       createdAt: {
         allowNull: false,

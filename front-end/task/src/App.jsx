@@ -19,12 +19,14 @@ import './i18n'
 import './App.css'
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements} from 'react-router-dom'
 import { TimezoneProvider } from './timezoneContext.jsx';
+import { fetchProjects } from './store/project.js';
 function App() {
   const dispatch=useDispatch()
   const { i18n } = useTranslation();
   const darkMode = useSelector((state) => state.setting.darkMode);
   const language = useSelector(state => state.setting.language);
   const user=useSelector(state=>state.userProfile.email)
+  const project=useSelector(state=>state.projects.projects)
   useEffect(() => {
       if (language) {
         i18n.changeLanguage(language);
@@ -34,7 +36,9 @@ function App() {
       document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
       localStorage.setItem("theme", darkMode ? "dark" : "light");
   }, [darkMode]);
-  
+  useEffect(()=>{
+      dispatch(fetchProjects())
+  },[])
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
   }, [darkMode]);

@@ -190,6 +190,20 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
+    deleteProject(id){
+        return fetch(`${baseUrl}/project/${id}`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+        }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
+    },
     createTask(title, description, status, priority, startDate, dueDate, assignedUserId, projectId){
         return fetch(`${baseUrl}/task`,{
             method:'POST',
@@ -323,6 +337,24 @@ let task={
             body: JSON.stringify({
                 task
             }),
+        }).then(response => {
+            if (response.ok) {
+              return response.json();
+            }
+            throw new Error(`Request failed with ${response.status}`);
+        }).then(jsonResponse => {
+            if (!jsonResponse) {
+              console.error('Response error');
+            }
+            return jsonResponse;
+        }).catch(networkError => {
+            console.log(networkError.message);
+        });
+    },
+    deleteTask(id){
+        return fetch(`${baseUrl}/task/${id}`,{
+            method:'DELETE',
+            credentials: 'include',
         }).then(response => {
             if (response.ok) {
               return response.json();

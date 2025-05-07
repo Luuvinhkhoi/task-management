@@ -2,13 +2,17 @@ import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams, Outlet } from 'react-router-dom'
 import './project.css'
 import {X} from 'lucide-react'
+import { useDispatch } from 'react-redux'
 import task from '../../../util/task'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next";
+import { fetchProjects } from '../../../store/project'
+import { getAllTask } from '../../../store/task'
 export const Project = ()=>{
     const { t } = useTranslation();
+    const dispatch=useDispatch()
     const darkMode = useSelector((state) => state.setting.darkMode);
     const animatedComponents = makeAnimated();
     const [isActive, setActive]=useState()
@@ -95,11 +99,25 @@ export const Project = ()=>{
         assignedUserId,
         projectId
       );
+      dispatch(getAllTask(projectId))
+      setTaskFormOpen(false)
+      setTitle("")
+      setStartDate("")
+      setDueDate("")
+      setAssignedUserId([])
+      setDescription("")
     };
     const handleProjectSubmit = async(e)=>{
+      e.preventDefault()
       try{
         await task.createProject(title, startDate, dueDate, assignedUserId)
-        setProjectFormOpen(!projectFormOpen)
+        dispatch(fetchProjects())
+        setProjectFormOpen(null)
+        setTitle("")
+        setStartDate("")
+        setDueDate("")
+        setAssignedUserId([])
+        setDescription("")  
       } catch(error){
         console.log(error)
       }
@@ -195,7 +213,7 @@ export const Project = ()=>{
                       <div className='close-button' onClick={()=>{setProjectFormOpen(!projectFormOpen)}}><X></X></div>
                       <h3>Create new project</h3>
                       <div className='title'>
-                        <input placeholder='Title' onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
+                        <input placeholder='Title' value={title} onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
                         <small>{title.length}/20</small>
                       </div>
                       <div className='date' style={{justifyContent:'space-between'}}>
@@ -264,7 +282,7 @@ export const Project = ()=>{
                       <div className='close-button' onClick={()=>{setTaskFormOpen(!taskFormOpen)}}><X></X></div>
                       <h3>Create new task</h3>
                       <div className='title'>
-                        <input placeholder='Title'  onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
+                        <input value={title} placeholder='title'  onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
                       </div>
                       <div className='option'>
                         <div className='select'>
@@ -285,12 +303,13 @@ export const Project = ()=>{
                         </div>
                       </div>
                       <div className='title'>
-                        <input placeholder='Description' onChange={(e)=>setDescription(e.target.value)} minLength={2} maxLength={200}></input>
+                        <input placeholder='Description' value={description} onChange={(e)=>setDescription(e.target.value)} minLength={2} maxLength={200}></input>
                       </div>
                       <div className='date'>
                         <div>
                           <p>Start date</p>
                           <div><input type='datetime-local'  
+                                value={startDate}
                                 onChange={(e) => {
                                   const newStart = e.target.value;
                                   if (!dueDate || newStart <= dueDate) {
@@ -305,6 +324,7 @@ export const Project = ()=>{
                           <p>Due date</p>
                           <div>
                             <input type='datetime-local'  
+                                value={dueDate}
                                 onChange={(e) => {
                                   const newDue = e.target.value;
                                   if (!startDate || newDue >= startDate) {

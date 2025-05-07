@@ -10,18 +10,22 @@ import app from '../../../assets/app.png'
 import { useSelector } from 'react-redux'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
+import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next';
+import { fetchProjects } from '../../../store/project'
 export const SideBar = ()=>{
    let location=useLocation()
    const darkMode = useSelector((state) => state.setting.darkMode);
    const {t}=useTranslation()
    const animatedComponents = makeAnimated();
    let param=useParams()
-   const [projects, setProject]=useState([])
+   const dispatch=useDispatch()
+   const projects=useSelector(state=>state.projects.projects)
    const [projectDetail, setProjectDetail]=useState([])
    const [projectFormOpen, setProjectFormOpen]=useState(null)
    const [optionFormOpen, setOptionFormOpen]=useState(null)
    const [editFormOpen, setEditFormOpen]=useState(null)
+   const [deleteProject,setDeleteProject]=useState(false)
    const [title, setTitle] = useState("");
    const [startDate, setStartDate] = useState("");
    const [dueDate, setDueDate] = useState("");
@@ -79,7 +83,6 @@ export const SideBar = ()=>{
     }
    const handleProjectSubmit = async(e, id)=>{
       e.preventDefault()
-      console.log(id)
       try{
         await task.updateProject(
               {id:id,
@@ -89,6 +92,7 @@ export const SideBar = ()=>{
                dueDate: dueDate
               }
         )
+        await fetchProjects()
         setProjectFormOpen(!projectFormOpen)
       } catch(error){
         console.log(error)
@@ -161,22 +165,22 @@ export const SideBar = ()=>{
           console.log(error)
       }
    }
+   const handleDeleteProject=async(e, id)=>{
+      try{
+        await task.deleteProject(id)
+        navigate('/')
+        dispatch(fetchProjects())
+        setProjectFormOpen(!projectFormOpen)
+      } catch(error){
+        console.log(error)
+      }
+   }
    useEffect(() => {
       if (location.pathname.startsWith('/project')) {
         setIsOpen('active')
       }
     }, [location.pathname])
-   useEffect(()=>{
-      const fetchProjects = async () => {
-         try {
-           const result = await task.getAllProject();
-           setProject(result); // Chỉ setProject nếu component vẫn còn mounted
-         } catch (error) {
-           console.error("Error fetching projects:", error);
-         }
-       };
-      fetchProjects()
-   },[])
+   
    useEffect(()=>{
          async function getAllUser(){
            try{
@@ -269,7 +273,7 @@ export const SideBar = ()=>{
                                           <ChevronRight style={{width:'16px', height:'16px'}}>
                                           </ChevronRight>
                                       </div>
-                                      <div style={{display:'flex', justifyContent:'space-between'}}>
+                                      <div style={{display:'flex', justifyContent:'space-between'}} onClick={()=>{setProjectFormOpen(project.id),setDeleteProject(true)}}>
                                           <div style={{display:'flex', gap:'.5rem', alignItems:'center'}}>
                                             <Trash2 style={{width:'16px', height:'16px', color:'red'}}></Trash2>
                                             <p style={{color:'red'}}>Delete</p>
@@ -277,7 +281,22 @@ export const SideBar = ()=>{
                                       </div>
                                     </div>
                                  <div className={`overlay-${projectFormOpen===project.id?'active':'unActive'}`} onClick={(e)=>e.stopPropagation()} >
-                                    <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={(e)=>handleProjectSubmit(e, project.id)}>
+                                    {deleteProject?(
+                                      <div className='delete-warning'>
+                                        <h2>Xác nhận xóa</h2>
+                                        <span>Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác.</span>
+                                        <div className='delete-warning-footer'>
+                                            <div className='edit' onClick={()=>{setProjectFormOpen(null),setDeleteProject(null)}}>
+                                              <p>Cancel</p>
+                                            </div>
+                                            <div className='delete' onClick={(e)=>handleDeleteProject(e, project.id)}>
+                                                <Trash2 color='white'></Trash2>
+                                                <p style={{color:'white'}}>Delete</p>
+                                            </div>
+                                        </div>
+                                      </div>
+                                    ):(
+                                      <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={(e)=>handleProjectSubmit(e, project.id)}>
                                             <div className='close-button' onClick={(e)=>{e.stopPropagation(),setEditFormOpen(null), setProjectFormOpen(null)}}><X></X></div>
                                             <h3>Edit project</h3>
                                             <div className='title'>
@@ -357,6 +376,7 @@ export const SideBar = ()=>{
                                             </div>
                                             <button>Save</button>
                                       </form>
+                                    )}
                                   </div>
                              </div>
                            )}

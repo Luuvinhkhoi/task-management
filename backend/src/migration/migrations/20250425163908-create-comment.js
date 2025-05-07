@@ -16,7 +16,9 @@ module.exports = {
             tableName:'Tasks',
           },
           key:'id',
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       user_id: {
         type: Sequelize.INTEGER,
@@ -25,7 +27,9 @@ module.exports = {
             tableName:'Users',
           },
           key:'id',
-        }
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
       content: {
         type: Sequelize.TEXT

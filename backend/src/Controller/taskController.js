@@ -89,6 +89,15 @@ const updateTaskDetail=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
+const deleteTask=async(req, res)=>{
+   try{
+      const {id}=req.params
+      const task= await service.deleteTask(id)
+      res.status(201).json('success')
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
 module.exports={
     createTask, 
     getAllTask, 
@@ -97,5 +106,6 @@ module.exports={
     getUpcomingTask,
     getAllTaskByUserId,
     getTaskDetail,
-    updateTaskDetail
+    updateTaskDetail,
+    deleteTask
 }

@@ -59,10 +59,20 @@ const updateProject=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
+const deleteProject=async(req, res)=>{
+    try{
+        const {id}=req.params
+        const project1= await service.deleteProject(id)
+        res.status(201).json({message:'success'})
+    } catch(error){
+        res.status(500).json({error: error.message})
+    }
+}
 module.exports={
     createProject,
     getAllProject,
     getProjectProgress,
     getProjectById,
-    updateProject
+    updateProject,
+    deleteProject
 }

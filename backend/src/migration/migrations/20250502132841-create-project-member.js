@@ -10,8 +10,8 @@ module.exports = {
             tableName:'Projects',
             key:'id'
           },
-          onDelete:'CASADE'
-        }
+        },
+        onDelete:'CASCADE'
       },
       userId: {
         type: Sequelize.INTEGER,
@@ -20,8 +20,9 @@ module.exports = {
             tableName:'Users',
             key:'id'
           },
-          onDelete:'CASADE'
-        }
+        },
+        onDelete:'CASCADE'
+
       },
       createdAt: {
         allowNull: false,

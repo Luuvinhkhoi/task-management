@@ -19,7 +19,8 @@ module.exports = {
             tableName:'Tasks',
           },
           key:'id',
-        }
+        },
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,

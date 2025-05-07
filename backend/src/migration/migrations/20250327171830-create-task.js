@@ -16,7 +16,8 @@ module.exports = {
             tableName:'Projects',
           },
           key:'id',
-        }
+        },
+        onDelete:'CASCADE'
       },
       title: {
         type: Sequelize.STRING
@@ -37,10 +38,10 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       },
-      updatedAt: {
+      endedAt: {
         allowNull: false,
         type: Sequelize.DATE
-      }
+      },
     });
   },
   async down(queryInterface, Sequelize) {

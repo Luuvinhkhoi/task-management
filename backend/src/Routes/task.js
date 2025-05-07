@@ -9,4 +9,5 @@ taskRouter.get('/:task_id', taskController.getTaskDetail )
 taskRouter.post('/', taskController.createTask)
 taskRouter.put('/', taskController.updateTaskStatus)
 taskRouter.patch('/', taskController.updateTaskDetail)
+taskRouter.delete('/:id', taskController.deleteTask)
 module.exports=taskRouter

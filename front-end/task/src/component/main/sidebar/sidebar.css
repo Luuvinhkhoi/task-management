@@ -181,3 +181,36 @@
     background-color: var(--button-bg);
     color: #fff;
 }
+.delete-warning{
+    background-color: var(--background-color);
+    padding: 1rem 1.5rem;
+    width: 400px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: start;
+}
+.delete-warning h2{
+    margin-bottom: 1.5rem;
+}
+.delete-warning span{
+    margin-bottom: 1rem;
+}
+.delete-warning>div{
+    display:flex; 
+    gap:1rem;
+    justify-content: right ;
+}
+.delete-warning-footer >div{
+    padding: .5rem 1rem;
+    border-radius: .5rem;
+    border: 1px solid var(--border);
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+}
+
+.delete-warning .delete{
+    background-color:#dc2626 ;
+}

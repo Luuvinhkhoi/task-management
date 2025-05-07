@@ -6,4 +6,5 @@ projectRouter.get('/', projectController.getAllProject)
 projectRouter.get('/progress',projectController.getProjectProgress)
 projectRouter.get('/:id',projectController.getProjectById)
 projectRouter.patch('/', projectController.updateProject)
+projectRouter.delete('/:id', projectController.deleteProject)
 module.exports=projectRouter
