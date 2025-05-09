@@ -559,6 +559,15 @@ let task={
             }
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
+    },
+    search(query){
+        return fetch(`${baseUrl}/search?${query}`, {
+            method: 'GET',
+            credentials: 'include'
+          }).then(response => {
+            
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
     }
 }
 export default task

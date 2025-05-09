@@ -14,6 +14,7 @@ const commentRouter=require('./src/Routes/comment')
 const settingRouter=require('./src/Routes/setting')
 const Socket=require('./src/Controller/socketController')
 const s3Router=require('./src/Routes/s3')
+const searchRouter=require('./src/Routes/search')
 const db=require('./src/Model/models')
 const port=4001
 const app=express()
@@ -73,6 +74,7 @@ app.use('/upload',uploadRouter)
 app.use('/s3', s3Router)
 app.use('/setting', isAuthenticated, settingRouter)
 app.use('/comment', commentRouter)
+app.use('/search',isAuthenticated,searchRouter)
 db.sequelize.sync().then(() => {
   server.listen(port, () => console.log(`Server listening on port ${port}`));
 });

@@ -8,15 +8,22 @@ import { getProfile } from '../../../store/userProfile'
 import { AnimatePresence, motion} from 'framer-motion'
 import { useTranslation } from "react-i18next";
 import { useTimezone } from '../../../timezoneContext'
-import { CircleUser, UserPen, LogOut } from 'lucide-react'
+import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck } from 'lucide-react'
 export const Header=()=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const { t } = useTranslation();
     const [OpenDropdown, setOpenDropDown]=useState(false)
+    const [openSearchBar, setOpenSearchBar]=useState(false)
+    const [timeoutId, setTimeoutId] = useState(null);
+    const [results, setResults]=useState([])
+    const [loading, setLoading] = useState(true);
+    const [searchString, setSearchString]=useState('')
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
     const dropdownRef = useRef(null);
+    const searchBarRef=useRef(null)
+    const dropsearchRef=useRef(null)
     const { timezone } = useTimezone();
     const [date, setDate] = useState(new Date());
   
@@ -54,6 +61,28 @@ export const Header=()=>{
             console.log(error);
         };
     }
+    async function search(parameter){
+        const name=parameter
+        const result = await task.search(new URLSearchParams({name}).toString())
+        setResults(result)
+        setLoading(false)
+    }
+    function handleActive(event){
+        setLoading(true)
+        setOpenSearchBar(true)
+    }
+    function handleInputChange(event) {
+        const newQuery = event.target.value;
+        setSearchString(newQuery)
+        if (timeoutId) {
+            clearTimeout(timeoutId);
+        }
+        const id = setTimeout(() => {
+            search(newQuery);
+            setOpenSearchBar(true)
+        }, 500);
+        setTimeoutId(id);
+    }
     useEffect(()=>{
         const fetchUserProfile = async () => {
             try {
@@ -71,10 +100,85 @@ export const Header=()=>{
             dropdownRef.current.style.width = `${profileRef.current.clientWidth}px`;
         }
     }, [OpenDropdown]);
+    useEffect(() => {
+        if (searchBarRef.current && dropsearchRef.current) {
+            dropsearchRef.current.style.width = `${searchBarRef.current.clientWidth}px`;
+        }
+    }, [openSearchBar]);
+    useEffect(() => {
+            const handleScroll = () => {
+              setOpenDropDown(false);
+            };
+            window.addEventListener("scroll", handleScroll);
+            const handleClickOutside = (event) => {
+                if (profileRef.current && !profileRef.current.contains(event.target)) {
+                  setOpenDropDown(false); // Đóng thanh tìm kiếm
+                }
+            };
+          
+            document.addEventListener("mousedown", handleClickOutside);
+    
+            return () => {
+              document.removeEventListener("mousedown", handleClickOutside);
+              window.removeEventListener("scroll", handleScroll);
+            };
+    }, []);
+    useEffect(() => {
+        const handleScroll = () => {
+          setOpenSearchBar(false);
+        };
+        window.addEventListener("scroll", handleScroll);
+        const handleClickOutside = (event) => {
+            if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
+              setOpenSearchBar(false); // Đóng thanh tìm kiếm
+            }
+        };
+      
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+          document.removeEventListener("mousedown", handleClickOutside);
+          window.removeEventListener("scroll", handleScroll);
+        };
+    }, []);
+    console.log(searchString)
     return (
         <div className='header'>
-            <div className='searchBar'>
-                <input placeholder='Search here'></input>
+            <div className='searchBar' onClick={handleActive} ref={searchBarRef}>
+                <input placeholder='Search here' onChange={handleInputChange}></input>
+                <AnimatePresence>
+                    {openSearchBar==true &&(
+                        <motion.div 
+                            ref={dropsearchRef} 
+                           initial={{ height: 0, opacity: 0 }} 
+                           animate={{ height: "auto", opacity: 1 }} 
+                           exit={{ opacity: 0, height: 0 }}
+                           transition={{ duration: 0.3, ease: "easeOut" }}
+                           className='searchDropDown'
+                        >
+                            <div>
+                                <div style={{display:'flex',gap:'.5rem', marginBottom:'1rem'}} >
+                                    <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
+                                    <p>Project</p>
+                                </div>
+                                {results.project?results.project.map(item=>
+                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                ):null}
+                            </div>
+                            <div >
+                                <div style={{display:'flex',gap:'.5rem', marginBottom:'1rem'}} >
+                                    <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
+                                    <p>Task</p>
+                                </div>
+                                {results.task?results.task.map(item=>
+                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                ):null}
+                            </div>
+                        </motion.div>
+    
+                    )
+                    }
+                </AnimatePresence>
             </div>
             <div style={{display:'flex', gap:'1rem'}}>
                 <div>{dayFormat}</div>
@@ -94,7 +198,7 @@ export const Header=()=>{
                            animate={{ height: "auto", opacity: 1 }} 
                            exit={{ opacity: 0, height: 0 }}
                            transition={{ duration: 0.3, ease: "easeOut" }}
-                           className='profileDropdrown'
+                           className='profileDropDown'
                         >
                             <div style={{display:'flex',gap:'.5rem'}} onClick={()=>navigate('/profile')}>
                                 <UserPen></UserPen>
