@@ -6,7 +6,7 @@ export const Main = () =>{
   return(
     <div className="main">
       <SideBar></SideBar>
-      <div>
+      <div style={{height:'100%'}}>
         <Header></Header>
         <Outlet></Outlet>
       </div>

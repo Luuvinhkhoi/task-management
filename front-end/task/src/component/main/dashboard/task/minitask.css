@@ -1,7 +1,7 @@
 @import url('../../../../theme.css');
 #task{
     background-color: var(--task-bg);
-    margin: 0.5rem;
+    margin: 1rem 1rem 0.5rem 1rem;
     padding: 1rem .5rem;
     border-radius: 1rem;
 }

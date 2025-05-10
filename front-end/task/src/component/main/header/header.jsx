@@ -157,21 +157,46 @@ export const Header=()=>{
                            className='searchDropDown'
                         >
                             <div>
-                                <div style={{display:'flex',gap:'.5rem', marginBottom:'1rem'}} >
+                                <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                     <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
                                     <p>Project</p>
                                 </div>
                                 {results.project?results.project.map(item=>
-                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem'}}>
+                                        <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                        <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                                    </div>
                                 ):null}
                             </div>
                             <div >
-                                <div style={{display:'flex',gap:'.5rem', marginBottom:'1rem'}} >
+                                <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                     <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
                                     <p>Task</p>
                                 </div>
                                 {results.task?results.task.map(item=>
-                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem'}}>
+                                        <div style={{display:'flex', justifyContent:'space-between'}}>
+                                            <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                            <div className={`priority-${item.priority.toLowerCase()}`}>{item.priority}</div>
+                                        </div>
+                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
+                                                            {new Intl.DateTimeFormat('en-CA', {
+                                                            year: 'numeric',
+                                                            month: '2-digit',
+                                                            day: '2-digit',
+                                                            timeZone: timezone,
+                                                            }).format(new Date(item.endedAt))}
+                                                        </div>
+                                                        <div>
+                                                            {new Intl.DateTimeFormat('en-US', {
+                                                            hour: 'numeric',
+                                                            minute: '2-digit',
+                                                            hour12: true,
+                                                            timeZone: timezone,
+                                                            }).format(new Date(item.endedAt))}
+                                                        </div>
+                                        </div>
+                                    </div>
                                 ):null}
                             </div>
                         </motion.div>

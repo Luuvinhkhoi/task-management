@@ -17,6 +17,7 @@
     --search-bg:#fff;
     --box-shadow:rgb(227, 221, 221);
     --border:rgb(229, 229, 229);
+    --dropdown: #fff;
     --color-todo-primary: #3b82f6;     /* bg-blue-500 */
     --color-todo-hover:  #007bff;       /* bg-blue-600 */
     --color-todo-light: #60a5fa;       /* bg-blue-400 */
@@ -81,4 +82,5 @@
     --today-task-header:rgb(31, 41, 55);
     --tab-item:  #667085;
     --box-shadow:rgb(40, 45, 52);
+    --dropdown:rgb(44, 55, 69);
 }

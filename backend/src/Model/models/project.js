@@ -11,6 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Project.hasMany(models.ProjectMember, {
+        foreignKey: 'projectId',
+        as: 'projectMembers' // tên alias sẽ dùng trong `include`
+      });
     }
   }
   Project.init({

@@ -1,7 +1,5 @@
 @import url('../../../theme.css');
-.project{
-    border-left:3px solid rgb(29, 41, 57);
-}
+
 .project .projectHeader{
     display: flex;
     width: 90%;

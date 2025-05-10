@@ -11,6 +11,11 @@
     align-items: center;
     gap:1rem
 }
+.sideBar .menu{
+    height: calc(100% - 100px);
+    border-right:2px solid var(--border);
+
+}
 .sideBar .menuItem{
     width: 90%;
     margin: 1rem auto;

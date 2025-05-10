@@ -6,6 +6,7 @@
     border-radius: 1rem;
     align-self: flex-end;
     background-color: var(--dashboard-bg);  
+    margin-left: 1rem;
 }
 .dashboard #row1{
     display: grid;
