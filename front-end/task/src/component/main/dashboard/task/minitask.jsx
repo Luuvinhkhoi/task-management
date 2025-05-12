@@ -35,11 +35,11 @@ export const Task = () =>{
           <div className='task-list' style={{ display: todayTask.length > 0 ? 'grid' : 'block' }} >
             {todayTask.length>0 ? todayTask.slice(0,2).map(task=>
               <div className='task-item'>
-                  <div style={{display:'flex', gap:'1rem', alignContent:'center'}}>
-                    <h4>{task.title}</h4>
+                  <div style={{display:'flex', gap:'1rem', alignContent:'center', justifyContent:'space-between'}}>
+                    <h4>{task.title.length>20?task.title.slice(0,20)+'...':task.title}</h4>
                     <div className={`priority-${task.priority.toLowerCase()}`}>{t(`list.priority.${task.priority}`)}</div>
                   </div>
-                  <p>{task.description}</p>
+                  <p>{task.description.length>70?task.description.slice(0,70)+'...':task.description}</p>
                   <div className='task-member' style={{display:'flex', gap:'.5rem'}}>
                       {task.user.map(member=>
                           <div>

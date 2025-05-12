@@ -107,21 +107,7 @@ export const Project = ()=>{
       setAssignedUserId([])
       setDescription("")
     };
-    const handleProjectSubmit = async(e)=>{
-      e.preventDefault()
-      try{
-        await task.createProject(title, startDate, dueDate, assignedUserId)
-        dispatch(fetchProjects())
-        setProjectFormOpen(null)
-        setTitle("")
-        setStartDate("")
-        setDueDate("")
-        setAssignedUserId([])
-        setDescription("")  
-      } catch(error){
-        console.log(error)
-      }
-    }
+    
     const handleAssignUser = (selectedUsers) => {
       if (selectedUsers) {
         const assignedIds = selectedUsers.map((user) => user.value);
@@ -204,78 +190,7 @@ export const Project = ()=>{
                 <div className={`projectHeader-${listActive()?'unActive':'active'}`} onClick={()=>navigate(`/project/${param.id}`)}>{t('project.Kanban board')}</div>
                 <div className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>{t('project.List')}</div>
              </div>
-             <div className='headerItem'>
-                <div className='create' onClick={()=>setProjectFormOpen(true)}>
-                  <p>{t('project.New project')}</p>
-                </div>
-                <div className={`overlay-${projectFormOpen?'active':'unActive'}`}>
-                  <form className={`projectForm-${projectFormOpen?'active':'unActive'}`} onSubmit={handleProjectSubmit}>
-                      <div className='close-button' onClick={()=>{setProjectFormOpen(!projectFormOpen)}}><X></X></div>
-                      <h3>Create new project</h3>
-                      <div className='title'>
-                        <input placeholder='Title' value={title} onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
-                        <small>{title.length}/20</small>
-                      </div>
-                      <div className='date' style={{justifyContent:'space-between'}}>
-                        <div>
-                          <p>Start date</p>
-                          <div><input type='date'  
-                                value={startDate}
-                                onChange={(e) => {
-                                  const newStart = e.target.value;
-                                  if (!dueDate || newStart <= dueDate) {
-                                    setStartDate(newStart);
-                                  } else {
-                                    alert('Start date cannot be after due date!');
-                                  }
-                            }}
-                          ></input></div>
-                        </div>
-                        <div>
-                          <p>Due date</p>
-                          <div>
-                            <input type='date'  
-                                value={dueDate}
-                                onChange={(e) => {
-                                  const newDue = e.target.value;
-                                  if (!startDate || newDue >= startDate) {
-                                    setDueDate(newDue);
-                                  } else {
-                                    alert('Due date cannot be before start date!');
-                                  }
-                                }}
-                            >
-                          </input></div>
-                        </div>
-                      </div>
-                      <div className='select'>
-                        <Select 
-                          closeMenuOnSelect={false}
-                          components={animatedComponents}
-                          isMulti
-                          styles={getCustomStyle}
-                          options={formattedUser}
-                          onChange={handleSelect}
-                        ></Select>
-                      </div>
-                      <div className='member'>
-                          <div>
-                              {members.length>0?members.map(user=>
-                                  <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
-                                      <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
-                                      <div>
-                                          <span>{user.firstname}</span>
-                                          <span> </span>
-                                          <span>{user.lastname}</span>
-                                          <p>{user.email}</p>
-                                      </div>
-                                  </div>
-                              ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>Not any member yet</span>)}
-                          </div>
-                      </div>
-                      <button>Create Project</button>
-                  </form>
-                </div>
+             <div className='headerItem'>  
                 <div className='create' onClick={()=>setTaskFormOpen(true)}>{t('project.New task')}</div>
                 <div className={`overlay-${taskFormOpen?'active':'unActive'}`}>
                   <form className={`projectForm-${taskFormOpen?'active':'unActive'}`} onSubmit={handleTaskSubmit} >

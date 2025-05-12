@@ -35,6 +35,7 @@ const uploadFileToS3 = async (file, taskId) => {
   await db.Attachment.create(
     {url: url, taskId:taskId}
   )
+  return url
 };
 const getPresignedUrlForDownload = async (key) => {
   const command = new GetObjectCommand({

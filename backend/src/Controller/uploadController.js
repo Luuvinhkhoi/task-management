@@ -14,7 +14,7 @@ const uploadToS3 = async (req, res) => {
   try {
     const taskId=req.body.task_id
     const fileUrl = await awsS3Service.uploadFileToS3(req.file,taskId);
-    res.status(200).json({ success: true, fileUrl });
+    res.status(200).json({ success: true, url:fileUrl });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Upload failed" });

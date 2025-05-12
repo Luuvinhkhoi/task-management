@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from 'react'
 import task from '../../../util/task'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import notFound from '../../../assets/notFound.png'
 import { Link } from 'react-router-dom'
 import { getProfile } from '../../../store/userProfile'
 import { AnimatePresence, motion} from 'framer-motion'
@@ -30,7 +31,7 @@ export const Header=()=>{
     useEffect(() => {
       const interval = setInterval(() => {
         setDate(new Date());
-      }, 1000); // cập nhật mỗi giây
+      }, 60000); // cập nhật mỗi giây
   
       return () => clearInterval(interval);
     }, []);
@@ -67,7 +68,10 @@ export const Header=()=>{
         setResults(result)
         setLoading(false)
     }
-    function handleActive(event){
+    async function handleActive(event){
+        const name=searchString
+        const result = await task.search(new URLSearchParams({name}).toString())
+        setResults(result)
         setLoading(true)
         setOpenSearchBar(true)
     }
@@ -141,11 +145,16 @@ export const Header=()=>{
           window.removeEventListener("scroll", handleScroll);
         };
     }, []);
+    useEffect(() => {
+        return () => {
+          if (timeoutId) clearTimeout(timeoutId);
+        };
+      }, [timeoutId]);
     console.log(searchString)
     return (
         <div className='header'>
             <div className='searchBar' onClick={handleActive} ref={searchBarRef}>
-                <input placeholder='Search here' onChange={handleInputChange}></input>
+                <input placeholder='Search here' value={searchString} onChange={handleInputChange}></input>
                 <AnimatePresence>
                     {openSearchBar==true &&(
                         <motion.div 
@@ -156,49 +165,62 @@ export const Header=()=>{
                            transition={{ duration: 0.3, ease: "easeOut" }}
                            className='searchDropDown'
                         >
-                            <div>
-                                <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
-                                    <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
-                                    <p>Project</p>
+                            {results.project.length<1 && results.task.length<1?(
+                                <div style={{display:'flex', alignContent:'center', flexDirection:'column', flexWrap:'wrap'}}>
+                                    <img src={notFound} style={{height:'64px', width:'64px', margin:'0 auto'}}></img>
+                                    <p style={{display:'inline-block'}}>We couldn't find anything</p>
                                 </div>
-                                {results.project?results.project.map(item=>
-                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem'}}>
-                                        <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
-                                        <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                            ):(
+                                <div>
+                                    {results.project.length>=1?(
+                                        <div>
+                                            <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
+                                                <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
+                                                <p>Project</p>
+                                            </div>
+                                            {results.project?results.project.map(item=>
+                                                <div style={{marginBottom:'.5rem', marginLeft:'1rem'}}>
+                                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                                    <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                                                </div>
+                                            ):null}
+                                        </div>
+                                    ):null}
+                                    {results.task.length>=1?(
+                                        <div >
+                                        <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
+                                            <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
+                                            <p>Task</p>
+                                        </div>
+                                        {results.task?results.task.map(item=>
+                                            <div style={{marginBottom:'.5rem', marginLeft:'1rem'}}>
+                                                <div style={{display:'flex', justifyContent:'space-between'}}>
+                                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                                    <div className={`priority-${item.priority.toLowerCase()}`}>{item.priority}</div>
+                                                </div>
+                                                <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
+                                                                    {new Intl.DateTimeFormat('en-CA', {
+                                                                    year: 'numeric',
+                                                                    month: '2-digit',
+                                                                    day: '2-digit',
+                                                                    timeZone: timezone,
+                                                                    }).format(new Date(item.endedAt))}
+                                                                </div>
+                                                                <div>
+                                                                    {new Intl.DateTimeFormat('en-US', {
+                                                                    hour: 'numeric',
+                                                                    minute: '2-digit',
+                                                                    hour12: true,
+                                                                    timeZone: timezone,
+                                                                    }).format(new Date(item.endedAt))}
+                                                                </div>
+                                                </div>
+                                            </div>
+                                        ):null}
                                     </div>
-                                ):null}
-                            </div>
-                            <div >
-                                <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
-                                    <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
-                                    <p>Task</p>
+                                    ):null}
                                 </div>
-                                {results.task?results.task.map(item=>
-                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem'}}>
-                                        <div style={{display:'flex', justifyContent:'space-between'}}>
-                                            <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
-                                            <div className={`priority-${item.priority.toLowerCase()}`}>{item.priority}</div>
-                                        </div>
-                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
-                                                            {new Intl.DateTimeFormat('en-CA', {
-                                                            year: 'numeric',
-                                                            month: '2-digit',
-                                                            day: '2-digit',
-                                                            timeZone: timezone,
-                                                            }).format(new Date(item.endedAt))}
-                                                        </div>
-                                                        <div>
-                                                            {new Intl.DateTimeFormat('en-US', {
-                                                            hour: 'numeric',
-                                                            minute: '2-digit',
-                                                            hour12: true,
-                                                            timeZone: timezone,
-                                                            }).format(new Date(item.endedAt))}
-                                                        </div>
-                                        </div>
-                                    </div>
-                                ):null}
-                            </div>
+                            )}
                         </motion.div>
     
                     )

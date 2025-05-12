@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {Settings, LayoutDashboard, FolderGit2, ChevronDown, Ellipsis, ChevronRight} from 'lucide-react'
 import { AnimatePresence, motion} from 'framer-motion'
 import {X} from 'lucide-react'
-import { Trash2, FilePenLine } from 'lucide-react';
+import { Trash2, FilePenLine, Plus } from 'lucide-react';
 import task from '../../../util/task'
 import './sidebar.css'
 import app from '../../../assets/app.png'
@@ -22,6 +22,7 @@ export const SideBar = ()=>{
    const dispatch=useDispatch()
    const projects=useSelector(state=>state.projects.projects)
    const [projectDetail, setProjectDetail]=useState([])
+   const [createProjectFormOpen, setCreateProjectFormOpen]=useState(false)
    const [projectFormOpen, setProjectFormOpen]=useState(null)
    const [optionFormOpen, setOptionFormOpen]=useState(null)
    const [editFormOpen, setEditFormOpen]=useState(null)
@@ -81,6 +82,22 @@ export const SideBar = ()=>{
    const isSubActive = (subPath) => {
       return location.pathname === subPath
     }
+    const handleCreateProjectSubmit = async(e)=>{
+      e.preventDefault()
+      try{
+        await task.createProject(title, startDate, dueDate, assignedUserId)
+        dispatch(fetchProjects())
+        setProjectFormOpen(null)
+        setCreateProjectFormOpen(null)
+        setTitle("")
+        setStartDate("")
+        setDueDate("")
+        setAssignedUserId([])
+        setDescription("")  
+      } catch(error){
+        console.log(error)
+      }
+    } 
    const handleProjectSubmit = async(e, id)=>{
       e.preventDefault()
       try{
@@ -124,6 +141,20 @@ export const SideBar = ()=>{
           // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
           setAssignedUserId([]);
       }
+   }
+   const handleCreateProject=async()=>{
+      const result = await task.getAllUser()
+      const formattedUsers = result.map(user => ({
+        value: user.id, // Dùng ID làm giá trị
+        label: `${user.firstname} ${user.lastname}`,// Dùng username làm tên hiển thị
+        avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
+      }));
+      setFormatedUser(formattedUsers)
+      setProjectUser([])
+      setTitle("")
+      setDueDate()
+      setStartDate()
+
    }
    const handleEditProject= async (id)=>{
     try{
@@ -211,7 +242,7 @@ export const SideBar = ()=>{
     useEffect(()=>{
           dispatch(fetchProjects())
     },[])
-   console.log(projects)
+   console.log(formattedUser)
    return (
         <div className="sideBar">
            <div className='brand'>
@@ -226,12 +257,17 @@ export const SideBar = ()=>{
                   </div>
                </div>
                <div  className={`menuItem ${isActive('/project')?'active':''}`} onClick={()=>isOpen==='unActive'?setIsOpen('active'):setIsOpen('unActive')}>
-                  <div style={{justifyContent:'space-between'}}>
+                  <div style={{justifyContent:'space-between', alignItems:'center'}}>
                      <div style={{padding:'0', display:'flex', alignItems:'center', gap:'1rem'}}>
                         <FolderGit2></FolderGit2>
                         {t('sideBar.project')}
                      </div>
-                     <ChevronDown style={{justifySelf:'end'}}></ChevronDown>
+                     <div style={{display:'flex', gap:'1rem',alignItems:'baseline'}}>
+                      <div onClick={(e)=>{handleCreateProject(),setCreateProjectFormOpen(true), setProjectFormOpen(true) ,e.stopPropagation()}}>
+                        <Plus style={{justifySelf:'end',height:'16px', width:'16px'}}></Plus>
+                      </div>
+                      <ChevronDown style={{justifySelf:'end',height:'16px', width:'16px'}}></ChevronDown>
+                     </div>
                   </div>
                   <AnimatePresence>
                      {isOpen === 'active'&& formattedProjectUser && (
@@ -275,7 +311,7 @@ export const SideBar = ()=>{
                                           <ChevronRight style={{width:'16px', height:'16px'}}>
                                           </ChevronRight>
                                       </div>
-                                      <div style={{display:'flex', justifyContent:'space-between'}} onClick={()=>{setProjectFormOpen(project.id),setDeleteProject(true)}}>
+                                      <div style={{display:'flex', justifyContent:'space-between'}} onClick={(e)=>{setProjectFormOpen(project.id),setDeleteProject(true),setOptionFormOpen(false), e.stopPropagation()}}>
                                           <div style={{display:'flex', gap:'.5rem', alignItems:'center'}}>
                                             <Trash2 style={{width:'16px', height:'16px', color:'red'}}></Trash2>
                                             <p style={{color:'red'}}>Delete</p>
@@ -394,6 +430,84 @@ export const SideBar = ()=>{
                      {t('sideBar.setting')}
                   </div>
                </div>
+              <div className={`overlay-${createProjectFormOpen?'active':'unActive'}`}>
+                                <form className={`projectForm-${projectFormOpen?'active':'unActive'}`} onSubmit={handleCreateProjectSubmit}>
+                                    <div className='close-button' onClick={()=>{setProjectFormOpen(!projectFormOpen), setCreateProjectFormOpen(false)}}><X></X></div>
+                                    <h3>Create new project</h3>
+                                    <div className='title'>
+                                      <input placeholder='Title' value={title} onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
+                                      <small>{title.length}/20</small>
+                                    </div>
+                                    <div className='date' style={{justifyContent:'space-between'}}>
+                                      <div>
+                                        <p>Start date</p>
+                                        <div><input type='date'  
+                                              value={startDate}
+                                              onChange={(e) => {
+                                                const newStart = e.target.value;
+                                                if (!dueDate || newStart <= dueDate) {
+                                                  setStartDate(newStart);
+                                                } else {
+                                                  alert('Start date cannot be after due date!');
+                                                }
+                                          }}
+                                        ></input></div>
+                                      </div>
+                                      <div>
+                                        <p>Due date</p>
+                                        <div>
+                                          <input type='date'  
+                                              value={dueDate}
+                                              onChange={(e) => {
+                                                const newDue = e.target.value;
+                                                if (!startDate || newDue >= startDate) {
+                                                  setDueDate(newDue);
+                                                } else {
+                                                  alert('Due date cannot be before start date!');
+                                                }
+                                              }}
+                                          >
+                                        </input></div>
+                                      </div>
+                                    </div>
+                                    <div className='select'>
+                                      <Select 
+                                        closeMenuOnSelect={false}
+                                        components={animatedComponents}
+                                        isMulti
+                                        styles={getCustomStyle}
+                                        options={formattedUser}
+                                        onChange={handleSelect}
+                                        formatOptionLabel={(option) => (
+                                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                            <img 
+                                              src={option.avatar} 
+                                              alt="avatar" 
+                                              style={{ borderRadius: '50%', height: '32px', width: '32px' }} 
+                                            />
+                                            <span>{option.label}</span>
+                                          </div>
+                                        )}
+                                      ></Select>
+                                    </div>
+                                    <div className='member'>
+                                        <div>
+                                            {projectUsers.length>0?projectUsers.map(user=>
+                                                <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                                    <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
+                                                    <div>
+                                                        <span>{user.firstname}</span>
+                                                        <span> </span>
+                                                        <span>{user.lastname}</span>
+                                                        <p>{user.email}</p>
+                                                    </div>
+                                                </div>
+                                            ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>Not any member yet</span>)}
+                                        </div>
+                                    </div>
+                                    <button>Create Project</button>
+                                </form>
+                </div>
            </div>
         </div>
    )

@@ -189,6 +189,8 @@ const KanbanItem = ({ taskItem }) => {
         const tasks=useSelector(state=> state.tasks.tasks)
         const taskMembers=useSelector((state)=>state.tasks.members)
         const [taskId, setTaskId]=useState()
+        const [attachmentId, setAttachmentId]=useState()
+        const [attachmentUrl, setAttachmentUrl]=useState()
         const [priority, setPriority] = useState();
         const [title, setTitle] = useState("");
         const [description, setDescription] = useState("");
@@ -200,6 +202,7 @@ const KanbanItem = ({ taskItem }) => {
         const [formattedUsers, setFormatedUser]=useState([])
         const [taskDetailMembers, setTaskDetailMember]=useState([])
         const [assignedUserId, setAssignedUserId] = useState([]);
+        const [deleteAttachment, setDeleteAttachment]=useState(false)
         const tabs=[
             { value: 'Detail', label: 'Detail' },
             { value: 'Comment', label: 'Comment' },
@@ -319,19 +322,20 @@ const KanbanItem = ({ taskItem }) => {
         const handleUploadClick = () => {
             fileInputRef.current.click();
         };
-        const handleFileChange = (event, id) => {
+        const handleFileChange = async (event, id) => {
           const file = event.target.files[0]; // Lấy file người dùng chọn
           if (file) {
             console.log("Selected file: ", file);
             try{
-               task.uploadAttachment(file, id)
+               const result=await task.uploadAttachment(file, id)
+               getTaskDetail(id)
             } catch (error) {
                 console.error('Error uploading file:', error);
             }
           }
         };
         
-        
+        console.log(taskDetail)
         useEffect(()=>{
               async function getAllUser(){
                 try{
@@ -414,10 +418,12 @@ const KanbanItem = ({ taskItem }) => {
                 console.log(error)
             }
         }
-        async function handleDelete(s3UrlFromDB, id){
+        async function handleDeleteAttachment(s3UrlFromDB, id, task_id){
             try{
                 const key = extractS3KeyFromUrl(s3UrlFromDB);
                 const result=await task.deleteAttachment(key, id)
+                getTaskDetail(task_id)
+                setDeleteAttachment(false)
             }catch (error){
                 console.log(error)
             }
@@ -675,7 +681,7 @@ const KanbanItem = ({ taskItem }) => {
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
                                                 </div>
-                                                <div onClick={()=>handleDelete(file.url, file.id)}>
+                                                <div onClick={()=>{setDeleteAttachment(true), setAttachmentId(file.id), setAttachmentUrl(file.url)}}>
                                                     <Trash2 style={{color:'#dc2626'}}></Trash2>
                                                 </div>
                                             </div>
@@ -697,6 +703,21 @@ const KanbanItem = ({ taskItem }) => {
                                     <Trash2 color='white'></Trash2>
                                     <p style={{color:'white'}}>Delete</p>
                                 </div>
+                        </div>
+                        <div className={`overlay-${deleteAttachment?'active':'unActive'}`}>
+                            <div className='delete-warning'>
+                                <h2>Xác nhận xóa</h2>
+                                <span>Bạn có chắc chắn muốn xóa file này? Hành động này không thể hoàn tác.</span>
+                                <div className='delete-warning-footer'>
+                                    <div className='edit' onClick={()=>{ setDeleteAttachment(false)}}>
+                                    <p>Cancel</p>
+                                    </div>
+                                    <div className='delete' onClick={(e)=>handleDeleteAttachment(attachmentUrl, attachmentId, taskId)}>
+                                        <Trash2 color='white'></Trash2>
+                                        <p style={{color:'white'}}>Delete</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 ):<div>Loading</div>

@@ -2,8 +2,11 @@ import './profile.css'
 import { useState, useEffect } from 'react'
 import { PenLine, X } from 'lucide-react'
 import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import task from '../../../util/task'
+import { getProfile } from '../../../store/userProfile'
 export const Profile=()=>{
+    const dispatch=useDispatch()
     const [selectedFile, setSelectedFile] = useState(null);
     const [editProfileFormOpen, setEditProfileFormOpen]=useState(false)
     const [editAvaFormOpen, setEditAvaFormOpen]=useState(false)
@@ -40,6 +43,8 @@ export const Profile=()=>{
             if (firstNameChange.length>0 && lastNameChange.length>0){
                 const updateData={firstname:firstNameChange, lastname:lastNameChange, phonenumber:phoneNumberChange}
                 await task.updateProfile(updateData)   
+                setEditProfileFormOpen(false)
+                dispatch(getProfile())
             } else{
                 alert(`Firstname or Lastname can't be empty`)
             }
@@ -61,6 +66,8 @@ export const Profile=()=>{
       if (!selectedFile) return;
       try {
         await task.uploadAvatar(selectedFile);
+        setEditAvaFormOpen(false)
+        dispatch(getProfile())
       } catch (error) {
         alert(`Có lỗi xảy ra khi upload. ${error}`);
       }

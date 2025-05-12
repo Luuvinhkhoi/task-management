@@ -31,6 +31,8 @@ export const List = ()=>{
     const tasks=useSelector(state=> state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
     const [taskId, setTaskId]=useState()
+    const [attachmentId, setAttachmentId]=useState()
+    const [attachmentUrl, setAttachmentUrl]=useState()
     const [priority, setPriority] = useState();
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -42,6 +44,7 @@ export const List = ()=>{
     const [formattedUsers, setFormatedUser]=useState([])
     const [taskDetailMembers, setTaskDetailMember]=useState([])
     const [assignedUserId, setAssignedUserId] = useState([]);
+    const [deleteAttachment, setDeleteAttachment]=useState(false)
     const tabs=[
         { value: 'Detail', label: 'Detail' },
         { value: 'Comment', label: 'Comment' },
@@ -264,13 +267,15 @@ export const List = ()=>{
             console.log(error)
         }
     }
-    async function handleDelete(s3UrlFromDB, id){
-        try{
-            const key = extractS3KeyFromUrl(s3UrlFromDB);
-            const result=await task.deleteAttachment(key, id)
-        }catch (error){
-            console.log(error)
-        }
+    async function handleDeleteAttachment(s3UrlFromDB, id, task_id){
+            try{
+                const key = extractS3KeyFromUrl(s3UrlFromDB);
+                const result=await task.deleteAttachment(key, id)
+                getTaskDetail(task_id)
+                setDeleteAttachment(false)
+            }catch (error){
+                    console.log(error)
+            }
     }
     const handleSelect = (selectedUsers) => {
         console.log(selectedUsers)
@@ -535,7 +540,7 @@ export const List = ()=>{
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
                                                 </div>
-                                                <div onClick={()=>handleDelete(file.url, file.id)}>
+                                                <div onClick={()=>{setDeleteAttachment(true), setAttachmentId(file.id), setAttachmentUrl(file.url)}}>
                                                     <Trash2 style={{color:'#dc2626'}}></Trash2>
                                                 </div>
                                             </div>
@@ -557,6 +562,21 @@ export const List = ()=>{
                                     <Trash2 color='white'></Trash2>
                                     <p style={{color:'white'}}>Delete</p>
                                 </div>
+                        </div>
+                        <div className={`overlay-${deleteAttachment?'active':'unActive'}`}>
+                                    <div className='delete-warning'>
+                                        <h2>Xác nhận xóa</h2>
+                                        <span>Bạn có chắc chắn muốn xóa file này? Hành động này không thể hoàn tác.</span>
+                                        <div className='delete-warning-footer'>
+                                            <div className='edit' onClick={()=>{ setDeleteAttachment(false)}}>
+                                                <p>Cancel</p>
+                                            </div>
+                                            <div className='delete' onClick={(e)=>handleDeleteAttachment(attachmentUrl, attachmentId, taskId)}>
+                                                <Trash2 color='white'></Trash2>
+                                                <p style={{color:'white'}}>Delete</p>
+                                            </div>
+                                        </div>
+                                    </div>
                         </div>
                     </div>
                 ):<div>Loading</div>

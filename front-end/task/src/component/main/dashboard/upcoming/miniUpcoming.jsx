@@ -36,8 +36,8 @@ export const MiniUpcoming = () => {
         <div className='upcomingTask-list'>
             {todayTask.length>0 ? todayTask.slice(0,2).map(task=>
               <div className='upcomingTask-item'>
-                  <div style={{display:'flex', gap:'1rem', alignContent:'center'}}>
-                    <h4>{task.title}</h4>
+                  <div style={{display:'flex', gap:'1rem', alignContent:'center', justifyContent:'space-between'}}>
+                    <h4>{task.title.length>30?task.title.slice(0,30)+'...':task.title}</h4>
                     <div className={`priority-${task.priority.toLowerCase()}`}>{task.priority}</div>
                   </div>
                   <p>{task.description}</p>
