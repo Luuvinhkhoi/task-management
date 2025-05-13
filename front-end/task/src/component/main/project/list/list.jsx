@@ -190,7 +190,7 @@ export const List = ()=>{
           async function getAllUser(){
             try{
               const result = await task.getAllUser()
-              const formattedUsers = result.map(user => ({
+              const formatted = result.map(user => ({
                 value: user.id, // Dùng ID làm giá trị
                 label: (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -201,13 +201,17 @@ export const List = ()=>{
                 )// Dùng username làm tên hiển thị
               }));
               setUser(result)
-              setFormatedUser(formattedUsers)
+              const result2 = await task.getUserByProjectId(id)
+              const formattedProjectUser = result2.map(user =>
+                formatted.find(u => u.value === user.id)
+              ).filter(Boolean); // Loại bỏ phần tử undefined nếu không tìm thấy
+              setFormatedUser(formattedProjectUser)
             } catch(error){
               console.log(error)
             }
           }
           getAllUser()
-    },[])
+    },[id])
     async function getTaskDetail(task_id){
         try{
             const result=await task.getTaskDetail(task_id)
@@ -337,8 +341,8 @@ export const List = ()=>{
     useEffect(() => {
         console.log("✅ assignedUserId updated:", assignedUserId);
     }, [assignedUserId]);
-    console.log(taskDetail)
-    console.log(deleteTask)
+    console.log(mergeTask)
+    console.log(formattedUsers)
     return (
         <div className='list'>
            <h3>List</h3> 
@@ -359,11 +363,38 @@ export const List = ()=>{
                         <div>{task.description.length>50?task.description.slice(0,50)+'...':task.description}</div>
                         <div style={{borderRadius:'1rem'}} className={`status-${task.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${task.status}`)}</div>
                         <div style={{textAlign:'center'}}>{t(`list.priority.${task.priority}`)}</div>
-                        <div style={{display:'flex', gap:'5px', justifyContent:'center'}}>{task.members.map(member=>
-                            <div>
-                                <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
-                            </div>
-                        )}</div>
+                        <div style={{display:'flex', gap:'5px', justifyContent:'center'}}>
+                            {task.members.length>3?(
+                                <>
+                                    {task.members.slice(2).map(member=>
+                                        <div>
+                                            <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                        </div>
+                                    )}
+                                    <div
+                                        style={{
+                                            borderRadius: '50%',
+                                            height: '32px',
+                                            width: '32px',
+                                            backgroundColor: '#fff',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            fontSize: '14px',
+                                            fontWeight: 'bold',
+                                            color:'black'
+                                        }}
+                                        >
+                                        +{task.members.length - 2}
+                                    </div>
+                                </>
+                            ):(task.members.map(member=>
+                                <div>
+                                    <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                </div>
+                            ))
+                            }
+                        </div>
                         <div>{new Date(task.createdAt).toISOString().split('T')[0]}</div>
                         <div>{new Date(task.endedAt).toISOString().split('T')[0]}</div>
                     </div>

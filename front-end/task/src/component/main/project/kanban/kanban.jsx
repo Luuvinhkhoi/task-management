@@ -94,6 +94,7 @@ export const Kanban = () => {
                 <KanbanColumn 
                     status="To do" 
                     title={t('kanban.todo')} 
+                    projectId={id}
                     tasks={tasks}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
@@ -105,6 +106,7 @@ export const Kanban = () => {
                     status="In progress" 
                     title={t('kanban.inProgress')} 
                     tasks={tasks}
+                    projectId={id}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
                     borderColor="#f59e0b" 
@@ -115,6 +117,7 @@ export const Kanban = () => {
                     status="Complete" 
                     title={t('kanban.complete')} 
                     tasks={tasks}
+                    projectId={id}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
                     borderColor="rgb(50, 213, 131)" 
@@ -125,7 +128,7 @@ export const Kanban = () => {
 };
 
 // Định nghĩa KanbanColumn bên ngoài Kanban nhưng vẫn trong cùng file
-const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor }) => {
+const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor, projectId }) => {
     const [{ isOver }, drop] = useDrop({
         accept: ItemType,
         drop: (item) => moveItem(item.id, status),
@@ -159,7 +162,7 @@ const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor 
             </div>
             <div className='kanbanItemList'>
                 {mergeTask.map((task) => (
-                    <KanbanItem key={task.id} taskItem={task} />
+                    <KanbanItem key={task.id} taskItem={task} projectId={projectId} />
                 ))}
             </div>
         </div>
@@ -167,7 +170,7 @@ const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor 
 };
 
 // Định nghĩa KanbanItem bên ngoài Kanban nhưng vẫn trong cùng file
-const KanbanItem = ({ taskItem }) => {
+const KanbanItem = ({ taskItem, projectId }) => {
     const { t } = useTranslation();
     const [{ isDragging }, drag] = useDrag({
         type: ItemType,
@@ -340,7 +343,7 @@ const KanbanItem = ({ taskItem }) => {
               async function getAllUser(){
                 try{
                   const result = await task.getAllUser()
-                  const formattedUsers = result.map(user => ({
+                  const formatted = result.map(user => ({
                     value: user.id, // Dùng ID làm giá trị
                     label: (
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -351,13 +354,18 @@ const KanbanItem = ({ taskItem }) => {
                     )// Dùng username làm tên hiển thị
                   }));
                   setUser(result)
-                  setFormatedUser(formattedUsers)
+                  const result2 = await task.getUserByProjectId(projectId)
+                  const formattedProjectUser = result2.map(user =>
+                        formatted.find(u => u.value === user.id)
+                  ).filter(Boolean); // Loại bỏ phần tử undefined nếu không tìm thấy
+                  setFormatedUser(formattedProjectUser)
+                  
                 } catch(error){
                   console.log(error)
                 }
               }
               getAllUser()
-        },[])
+        },[projectId])
         async function getTaskDetail(task_id){
             try{
                 const result=await task.getTaskDetail(task_id)
@@ -504,11 +512,36 @@ const KanbanItem = ({ taskItem }) => {
             <p>{taskItem.title}</p>
             <span>{taskItem.description}</span>
             <div className="member" style={{display:'flex', gap:'.5rem'}}>
-                {taskItem.members.map(member=>
-                     <div>
-                        <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="Avatar" />
-                    </div>
-                )}
+                {taskItem.members.length>3?(
+                    <>
+                        {taskItem.members.slice(2).map(member=>
+                            <div>
+                                <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                             </div>
+                        )}
+                            <div
+                                style={{
+                                    borderRadius: '50%',
+                                    height: '32px',
+                                    width: '32px',
+                                    backgroundColor: '#fff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '14px',
+                                    fontWeight: 'bold',
+                                    color:'black'
+                                }}
+                            >
+                                +{taskItem.members.length - 2}
+                            </div>
+                    </>
+                    ):(taskItem.members.map(member=>
+                        <div>
+                            <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                        </div>
+                    ))
+                    }
             </div>
         </div>
         <div className={`overlay-${overlay?'active':'unActive'}`}>
@@ -633,7 +666,7 @@ const KanbanItem = ({ taskItem }) => {
                                     styles={getCustomStyle}
                                     />
                                 ):(
-                                <div>
+                                <div style={{maxHeight:'150px', overflowY:'scroll'}}>
                                     {taskDetailMembers.map(user=>
                                         <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
                                             <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>

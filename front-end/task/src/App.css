@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('./theme.css');
 #root {
   text-align: center;
   width: 100%;
@@ -18,7 +19,10 @@ h1, h2, h3, h4, h5, p{
   margin: 0;
   padding: 0;
 }
-
+input{
+  background: none;
+  color: var(--text-color);
+}
 ul{
   padding: 0;
   margin: 0;

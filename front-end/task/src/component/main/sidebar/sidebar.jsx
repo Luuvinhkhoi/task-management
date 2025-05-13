@@ -120,7 +120,10 @@ export const SideBar = ()=>{
       if(selectedUsers) {
           console.log(selectedUsers)
           const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
+          console.log(assignedIds)
+          console.log(users)
           const userMap = new Map(users.map(user => [user.id, user]));
+          console.log(userMap)
           const selected= assignedIds.map(id => userMap.get(id));
           console.log(selected) 
           setAssignedUserId(assignedIds);
@@ -240,9 +243,30 @@ export const SideBar = ()=>{
          getAllUser()
     },[param.id])
     useEffect(()=>{
+      async function getAllUser(){
+        try{
+          const result = await task.getAllUser()
+          const formattedUsers = result.map(user => ({
+            value: user.id, // Dùng ID làm giá trị
+            label: `${user.firstname} ${user.lastname}`,// Dùng username làm tên hiển thị
+            avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
+          }));
+          setUser(result)
+          setFormatedUser(formattedUsers)
+          setFormatedProjectUser(formattedProjectUser)
+          const assignedIds = formattedProjectUser.map((user) => user.value);
+          setAssignedUserId(assignedIds)
+        } catch(error){
+          console.log(error)
+        }
+      }
+      getAllUser()
+ },[])
+    useEffect(()=>{
           dispatch(fetchProjects())
     },[])
    console.log(formattedUser)
+   console.log(projectUsers)
    return (
         <div className="sideBar">
            <div className='brand'>

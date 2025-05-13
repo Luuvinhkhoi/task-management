@@ -52,6 +52,7 @@
 .kanbanItem .member{
     border-top: 1px solid;
     padding-top: .5rem;
+    justify-content: right;
 }
 .kanbanItem .member div{
     border-radius: 10rem;
