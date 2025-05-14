@@ -12,6 +12,7 @@
     background-color: var(--today-task-header);
     padding:.5rem;
     border-radius: 1rem;
+    cursor: pointer;
 }
 .tabItem{
     padding: .5rem;
@@ -39,6 +40,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    cursor: pointer;
 }
 .todayTaskListItem .itemHeader{
     display: flex;
@@ -53,7 +55,7 @@
     background-color: var(--color-todo-primary);
     color: white;
     text-align: center;
-    padding: 0.25rem 0.5rem;
+    padding: 2px 10px;
     border-radius: 1rem;
     font-weight: 600;
     font-size: 12px;
@@ -63,7 +65,7 @@
     background-color: var(--color-inprogress-primary);
     color: white;
     text-align: center;
-    padding: 0.25rem 0.5rem;
+    padding: 2px 10px;
     border-radius: 1rem;
     font-weight: 600;
     font-size: 12px;
@@ -72,7 +74,7 @@
 .status-complete {
     background-color: var(--color-complete-primary);
     color: white;
-    padding: 0.25rem 0.5rem;
+    padding: 2px 10px;
     border-radius: 1rem;
     font-weight: 600;
     text-align: center;
@@ -82,48 +84,44 @@
 .priority-urgent {
     color: var(--color-priority-urgent);
     border: 1px solid var(--color-priority-urgent);
-    padding: 0.25rem 0.5rem;
+    padding: 2px 10px;
     border-radius: 1rem;
     text-align: center;
     font-weight: 600;
     font-size: 12px;
-
 }
   
   /* High */
 .priority-high {
     color: var(--color-priority-high);
     border: 1px solid var(--color-priority-high);
-    padding: 0.25rem 0.5rem;
+    padding: 2px 10px;
     text-align: center;
     border-radius: 1rem;
     font-weight: 600;
     font-size: 12px;
-
 }
   
   /* Medium */
 .priority-medium {
     color: var(--color-priority-medium);
     border: 1px solid var(--color-priority-medium);
-    padding: 0.25rem 0.5rem;
+    padding: 2px 10px;
     text-align: center;
     border-radius: 1rem;
     font-weight: 600;
     font-size: 12px;
-
 }
   
   /* Low */
 .priority-low {
     color: var(--color-priority-low);
     border: 1px solid var(--color-priority-low);
-    padding: 0.25rem 0.5rem;
+    padding: 2px 10px;
     border-radius: 1rem;
     text-align: center;
     font-weight: 600;
     font-size: 12px;
-
 }
   
   

@@ -193,11 +193,10 @@ export const List = ()=>{
               const formatted = result.map(user => ({
                 value: user.id, // Dùng ID làm giá trị
                 label: (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
-                    <span>{user.firstname}</span>
-                    <span>{user.lastname}</span>
-                  </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
+                      <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+                      <span>{user.firstname} {user.lastname}</span>
+                    </div>
                 )// Dùng username làm tên hiển thị
               }));
               setUser(result)
@@ -314,6 +313,8 @@ export const List = ()=>{
                  dueDate: dueDate
                 }
             )
+            await dispatch(getAllTask(id))
+            
         }catch(error){
             console.log(error)
         }
@@ -359,7 +360,7 @@ export const List = ()=>{
             <div className='listContent'>
                 {mergeTask.map(task=>
                     <div className='listContentItem' key={task.id} onClick={()=>getTaskDetail(task.id)}>
-                        <div>{task.title}</div>                        
+                        <div style={{textAlign:'left', fontWeight:'600'}}>{task.title}</div>                        
                         <div>{task.description.length>50?task.description.slice(0,50)+'...':task.description}</div>
                         <div style={{borderRadius:'1rem'}} className={`status-${task.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${task.status}`)}</div>
                         <div style={{textAlign:'center'}}>{t(`list.priority.${task.priority}`)}</div>
@@ -395,8 +396,8 @@ export const List = ()=>{
                             ))
                             }
                         </div>
-                        <div>{new Date(task.createdAt).toISOString().split('T')[0]}</div>
-                        <div>{new Date(task.endedAt).toISOString().split('T')[0]}</div>
+                        <div style={{textAlign:'center'}}>{new Date(task.createdAt).toISOString().split('T')[0]}</div>
+                        <div style={{textAlign:'center'}}>{new Date(task.endedAt).toISOString().split('T')[0]}</div>
                     </div>
                 )}
             </div>

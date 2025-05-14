@@ -33,6 +33,7 @@
     padding: 1rem .5rem;
     border-radius: 1rem;
     background-color: var(--task-item-bg);
+    cursor: pointer;
 }
 .task-item p{
     font-size: 12px;
@@ -55,5 +56,13 @@
     width: 97%;
     margin: 2rem auto 0 auto;
     padding: 8px;
+    border-radius: 1rem;
+}
+.due{
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    background-color: var(--task-bg);
+    padding: 4px 8px;
     border-radius: 1rem;
 }

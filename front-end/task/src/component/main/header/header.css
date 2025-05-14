@@ -55,7 +55,7 @@
 .header #authOption >div{
     padding: .5rem;
     border-radius: .5rem;
-    background-color: #526cff;
+    background-color: var(--button-bg);
 }
 
 .header div a{
@@ -77,4 +77,20 @@
     width: 95% !important;
     max-height: 200px;
     overflow-y:scroll ;
+}
+.header .overlay-active{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* Màu nền mờ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    border-radius: unset !important;
+}
+.header .overlay-unActive{
+    display: none !important;
 }

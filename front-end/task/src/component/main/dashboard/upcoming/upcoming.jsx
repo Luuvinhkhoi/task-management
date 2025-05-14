@@ -1,12 +1,17 @@
 import './upcoming.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { TaskDetail } from '../../taskDetail/taskDetail';
+import { useSelector, useDispatch } from 'react-redux';
+import { getAllUpcomingTask } from '../../../../store/upcomingTask';
 export const Upcoming= () => {
   const [isOpenTab, setIsOpenTab] = useState('all');
   const {t}=useTranslation()
+  const dispatch=useDispatch()
   const location=useLocation()
-  const tasks=location.state
+  const tasks=useSelector(state=>state.upcomingTasks.tasks||[])
+  const[isClick, setIsClick]=useState(null)
   const tabs = [
     { value: 'all', label: 'All' },
     { value: 'To do', label: 'To do' },
@@ -17,6 +22,9 @@ export const Upcoming= () => {
     if (isOpenTab !== "all" && task.status !== isOpenTab) return false
     return true
   })
+  useEffect(()=>{
+    dispatch(getAllUpcomingTask())
+  },[])
   return (
     <div id="upcomingTask">
       <div className="taskHeader">
@@ -32,7 +40,7 @@ export const Upcoming= () => {
       </div>
       <div className='todayTaskList'>
          {filterTask.map(item=>
-            <div className='todayTaskListItem'>
+            <div className='todayTaskListItem' onClick={()=>setIsClick(item.id)}>
                 <div className='itemHeader'>
                     <div style={{fontWeight:'600'}}>{item.title}</div>
                     <div className='status-priority'>
@@ -44,15 +52,48 @@ export const Upcoming= () => {
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center', fontSize:'14px'}}>
                   <div>Start date: {new Date(item.createdAt).toISOString().split('T')[0]}</div>
                   <div className='task-member' style={{display:'flex', gap:'.5rem'}}>
-                        {item.user.map(member=>
-                            <div>
-                                <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{height:'32px', width:'32px', borderRadius:'10rem'}} alt="Avatar" />
-                            </div>
-                        )}
-                  </div>
+                        {item.user.length>3?(
+                                  <>
+                                      {item.user.slice(2).map(member=>
+                                          <div>
+                                              <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                          </div>
+                                      )}
+                                      <div
+                                          style={{
+                                              borderRadius: '50%',
+                                              height: '32px',
+                                              width: '32px',
+                                              backgroundColor: '#fff',
+                                              display: 'flex',
+                                              alignItems: 'center',
+                                              justifyContent: 'center',
+                                              fontSize: '14px',
+                                              fontWeight: 'bold',
+                                              color:'black'
+                                          }}
+                                          >
+                                          +{item.user.length - 2}
+                                      </div>
+                                  </>
+                              ):(item.user.map(member=>
+                                  <div>
+                                      <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                  </div>
+                              ))
+                            }
+                    </div>
                 </div>
             </div>
          )}
+         {isClick !== null && filterTask && (
+              <TaskDetail 
+                  overlayId={isClick} 
+                  setOverlayId={setIsClick}
+                  taskId={isClick} 
+                  projectId={filterTask.find(item => item.id === isClick)?.project_id}
+              />
+        )}
       </div>
     </div>
   );

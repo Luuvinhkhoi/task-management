@@ -28,6 +28,9 @@ function App() {
   const user=useSelector(state=>state.userProfile.email)
   const project=useSelector(state=>state.projects.projects)
   useEffect(() => {
+    dispatch(getAllSetting())
+}, []);
+  useEffect(() => {
       if (language) {
         i18n.changeLanguage(language);
       }

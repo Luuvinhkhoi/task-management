@@ -346,13 +346,12 @@ const KanbanItem = ({ taskItem, projectId }) => {
                   const formatted = result.map(user => ({
                     value: user.id, // Dùng ID làm giá trị
                     label: (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
-                        <span>{user.firstname}</span>
-                        <span>{user.lastname}</span>
-                      </div>
-                    )// Dùng username làm tên hiển thị
-                  }));
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
+                          <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+                          <span>{user.firstname} {user.lastname}</span>
+                        </div>
+                      )// Dùng username làm tên hiển thị
+                    }));
                   setUser(result)
                   const result2 = await task.getUserByProjectId(projectId)
                   const formattedProjectUser = result2.map(user =>
@@ -456,7 +455,6 @@ const KanbanItem = ({ taskItem, projectId }) => {
         const handleSaveEdit=async(e)=>{
             try{
                 const formattedUsersId=assignedUserId.map(user=>user.value)
-                console.log(formattedUsersId)
                 await task.updateTaskDetail(
                     {id:taskId,
                      title:title,
@@ -469,6 +467,7 @@ const KanbanItem = ({ taskItem, projectId }) => {
                      dueDate: dueDate
                     }
                 )
+                await dispatch(getAllTask(id))
             }catch(error){
                 console.log(error)
             }
@@ -508,7 +507,7 @@ const KanbanItem = ({ taskItem, projectId }) => {
             style={{ opacity: isDragging ? 0.5 : 1 }}
             onClick={()=>getTaskDetail(taskItem.id)}
         >
-            <div className={`priority-${taskItem.priority.toLowerCase()}`} style={{display:'inline-block'}}>{t(`list.priority.${taskItem.priority}`)}</div>
+            <div className={`priority-${taskItem.priority.toLowerCase()}`} style={{display:'inline-block', marginBottom:'4px'}}>{t(`list.priority.${taskItem.priority}`)}</div>
             <p>{taskItem.title}</p>
             <span>{taskItem.description}</span>
             <div className="member" style={{display:'flex', gap:'.5rem'}}>

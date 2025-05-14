@@ -7,6 +7,8 @@
   padding: 1rem .5rem;
   min-height: 190px;
   overflow: hidden;
+  max-height: 300px;
+  overflow-y: scroll;
 }
 .upcomingTask-header{
   text-align: start;
@@ -37,6 +39,7 @@
   padding: .5rem;
   border-radius: 1rem;
   background-color: var(--task-item-bg);
+  cursor: pointer;
 }
 .upcomingTask-item p{
   font-size: 12px;

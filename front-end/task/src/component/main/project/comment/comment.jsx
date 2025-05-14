@@ -78,7 +78,8 @@ export const Comment=({taskId})=>{
               avatar:avatar,
               firstname:firstname,
               lastname:lastname
-            }
+            },
+            createdAt:new Date().toISOString()
           }
           task.createNewComment(data)
           socketRef.current.emit('new-comment', data)

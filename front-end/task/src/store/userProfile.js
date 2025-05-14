@@ -11,11 +11,19 @@ const userSlice= createSlice({
     },
     reducers:{
         getUserProfile:(state, action)=>{
-            state.firstname=action.payload.firstname,
-            state.lastname=action.payload.lastname,
-            state.email=action.payload.email,
-            state.avatar=action.payload.avatar,
-            state.phone=action.payload.phone
+            if(action.payload){
+                state.firstname=action.payload.firstname,
+                state.lastname=action.payload.lastname,
+                state.email=action.payload.email,
+                state.avatar=action.payload.avatar,
+                state.phone=action.payload.phone
+            } else{
+                state.firstname='',
+                state.lastname='',
+                state.email='',
+                state.avatar='',
+                state.phone=''
+            }
         }
     }
 })

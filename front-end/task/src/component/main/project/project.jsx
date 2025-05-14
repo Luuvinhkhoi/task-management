@@ -89,6 +89,7 @@ export const Project = ()=>{
     const getCustomStyle=customStyles(darkMode)
     const handleTaskSubmit = async (e) => {
       e.preventDefault()
+      const formattedUsersId=assignedUserId.map(user=>user.value)
       await task.createTask(
         title,
         description,
@@ -96,7 +97,7 @@ export const Project = ()=>{
         priority,
         startDate,
         dueDate,
-        assignedUserId,
+        formattedUsersId,
         projectId
       );
       dispatch(getAllTask(projectId))
@@ -106,6 +107,7 @@ export const Project = ()=>{
       setDueDate("")
       setAssignedUserId([])
       setDescription("")
+      setAssignedUserId([])
     };
     
     const handleAssignUser = (selectedUsers) => {
@@ -129,7 +131,7 @@ export const Project = ()=>{
           const userMap = new Map(users.map(user => [user.id, user]));
           const selected= assignedIds.map(id => userMap.get(id));
           console.log(selected)
-          setAssignedUserId(assignedIds);
+          setAssignedUserId(selectedUsers);
           setMember(selected);
       } else {
           console.log('❌ selectedUsers is null or empty');
@@ -182,13 +184,14 @@ export const Project = ()=>{
       }
       getUserByProjectId()
     },[param.id])
+    
     console.log(formattedProjectUser)
     return (
         <div className="project">
            <div className='projectHeader'>
              <div className='headerItem'>
-                <div className={`projectHeader-${listActive()?'unActive':'active'}`} onClick={()=>navigate(`/project/${param.id}`)}>{t('project.Kanban board')}</div>
-                <div className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>{t('project.List')}</div>
+                <div style={{cursor:'pointer'}} className={`projectHeader-${listActive()?'unActive':'active'}`} onClick={()=>navigate(`/project/${param.id}`)}>{t('project.Kanban board')}</div>
+                <div style={{cursor:'pointer'}} className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>{t('project.List')}</div>
              </div>
              <div className='headerItem'>  
                 <div className='create' onClick={()=>setTaskFormOpen(true)}>{t('project.New task')}</div>
@@ -204,7 +207,7 @@ export const Project = ()=>{
                           <Select
                             options={statusOptions}
                             styles={getCustomStyle}
-                            defaultValue={statusOptions[1]}
+                            defaultValue={statusOptions[0]}
                             onChange={(selectedOption) => setStatus(selectedOption.value)} // Medium
                           />
                         </div>
@@ -255,10 +258,11 @@ export const Project = ()=>{
                       <Select 
                         closeMenuOnSelect={false}
                         components={animatedComponents}
+                        value={assignedUserId}
                         isMulti
                         styles={getCustomStyle}
                         options={formattedProjectUser}
-                        onChange={handleAssignUser}
+                        onChange={handleSelect}
                       ></Select>
                       
                       <button>Create Task</button>

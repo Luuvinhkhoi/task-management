@@ -32,6 +32,7 @@
     text-align: start;
     padding: .5rem;
     background-color: var(--kanban-bg);
+    cursor: pointer;
 }
 .priority{
     padding: 0 1rem;
@@ -42,8 +43,8 @@
     font-size: 14px;
 }
 .kanbanItem p{
-    font-weight: 500;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 15px;
 }
 .kanbanItem span{
     font-size: 12px;

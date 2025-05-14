@@ -19,13 +19,14 @@
 .sideBar .menuItem{
     width: 90%;
     margin: 1rem auto;
+    cursor: pointer;
 }
 .sideBar .menuItem >div:first-child{
     padding: 1rem;
     border-radius: 1rem;
 }
 .sideBar .menuItem.active div:first-child{
-    background-color: #526cff;
+    background-color: var(--button-bg);
     color: #ffffff;
 }
 .sideBar .menuItem>div{
@@ -45,7 +46,7 @@
     padding: .5rem 1.5rem;
 }
 .sideBar .sub-active{
-    background-color: #526cff;  
+    background-color: var(--button-bg);  
     border-radius: 1rem;
 }
 .sideBar .sub-active>div:first-child{
