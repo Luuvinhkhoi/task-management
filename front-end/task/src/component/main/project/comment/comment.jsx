@@ -4,7 +4,7 @@ import { useTimezone } from '../../../../timezoneContext';
 import task from "../../../../util/task";
 import {io} from 'socket.io-client'
 import './comment.css'
-export const Comment=({taskId})=>{
+export const Comment=({socket,taskId})=>{
     const [comments, setComments] = useState([]);
     const { timezone } = useTimezone();
     const [newComment, setNewComment] = useState('');
@@ -18,19 +18,11 @@ export const Comment=({taskId})=>{
     const SOCKET_URL = 'http://localhost:4001';
     useEffect(() => {
     // Tạo socket connection
-        const socket = io(SOCKET_URL,{
-          withCredentials:true
-        })
-        socketRef.current = socket;
-        // Xử lý các sự kiện socket
-        socket.on('connect', () => {
-          console.log('Socket connected:', socket.id);
-          
-          // Join room của task sau khi kết nối thành công
-          if (taskId) {
-            socket.emit('join-room', taskId);
-          }
-        });
+        
+        // Join room của task sau khi kết nối thành công
+        if (taskId) {
+          socket.emit('join-room', taskId);
+        }
         socket.on('receive-comment', (newComment) => {
           setComments(prev => [...prev, newComment]); // ✅ Cập nhật UI
         });

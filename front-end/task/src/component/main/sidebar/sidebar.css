@@ -29,7 +29,7 @@
     background-color: var(--button-bg);
     color: #ffffff;
 }
-.sideBar .menuItem>div{
+.sideBar .menuItem>div:first-child{
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -44,24 +44,25 @@
 }
 .sideBar .projectList li{
     padding: .5rem 1.5rem;
+    position: relative;
 }
 .sideBar .sub-active{
     background-color: var(--button-bg);  
-    border-radius: 1rem;
+    border-radius: .5rem;
 }
 .sideBar .sub-active>div:first-child{
     color: #ffffff;
 }
-.sideBar .overlay-unActive{
+.overlay-unActive{
     display: none;
 }
-.sideBar .option-unActive{
+.option-unActive{
     display: none;
 }
 .sideBar .projectForm-unActive{
     display: none;
 }
-.sideBar .option-active{
+.option-active{
     position: absolute ;
     background-color: var(--background-color);
     z-index: 100;
@@ -219,4 +220,16 @@
 
 .delete-warning .delete{
     background-color:#dc2626 ;
+}
+.see-more-unActive{
+    display: none;
+}
+.see-more-active{
+    display: block;
+    margin-top: .5rem;
+    padding: .5rem;
+    border-radius: .5rem;
+}
+.see-more-active:hover{
+    background-color:rgb(221, 222, 225);
 }

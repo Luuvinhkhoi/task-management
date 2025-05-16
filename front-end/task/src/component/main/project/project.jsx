@@ -10,7 +10,7 @@ import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next";
 import { fetchProjects } from '../../../store/project'
 import { getAllTask } from '../../../store/task'
-export const Project = ()=>{
+export const Project = ({socket})=>{
     const { t } = useTranslation();
     const dispatch=useDispatch()
     const darkMode = useSelector((state) => state.setting.darkMode);

@@ -15,8 +15,8 @@ import { useTranslation } from "react-i18next";
 import { useTimezone } from '../../../timezoneContext'
 import { Comment } from '../project/comment/comment';
 import { TaskDetail } from '../taskDetail/taskDetail'
-import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck } from 'lucide-react'
-export const Header=()=>{
+import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell } from 'lucide-react'
+export const Header=({socket})=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const theme=useSelector((state)=>state.setting.darkMode)
@@ -516,34 +516,37 @@ export const Header=()=>{
                 <div>{timeFormat}</div>
             </div>
             {userName?
-             <div style={{display:'inline-block'}}>
-                <div className='profile' style={{cursor:'pointer'}} ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
-                  <CircleUser></CircleUser>
-                  <p>{t(`header.Welcome`)} <span>{userName}</span></p>
+             <div>
+                <Bell></Bell>
+                <div style={{display:'inline-block'}}>
+                    <div className='profile' style={{cursor:'pointer'}} ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
+                        <CircleUser></CircleUser>
+                        <p>{t(`header.Welcome`)} <span>{userName}</span></p>
+                    </div>
+                    <AnimatePresence>
+                        {OpenDropdown==true &&(
+                            <motion.div 
+                                ref={dropdownRef} 
+                            initial={{ height: 0, opacity: 0 }} 
+                            animate={{ height: "auto", opacity: 1 }} 
+                            exit={{ opacity: 0, height: 0 }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
+                            className='profileDropDown'
+                            >
+                                <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>navigate('/profile')}>
+                                    <UserPen></UserPen>
+                                    <p>Edit profile</p>
+                                </div>
+                                <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>handleLogout()}>
+                                    <LogOut></LogOut>
+                                    <p>Log out</p>
+                                </div>
+                            </motion.div>
+        
+                        )
+                        }
+                    </AnimatePresence>
                 </div>
-                <AnimatePresence>
-                    {OpenDropdown==true &&(
-                        <motion.div 
-                            ref={dropdownRef} 
-                           initial={{ height: 0, opacity: 0 }} 
-                           animate={{ height: "auto", opacity: 1 }} 
-                           exit={{ opacity: 0, height: 0 }}
-                           transition={{ duration: 0.3, ease: "easeOut" }}
-                           className='profileDropDown'
-                        >
-                            <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>navigate('/profile')}>
-                                <UserPen></UserPen>
-                                <p>Edit profile</p>
-                            </div>
-                            <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>handleLogout()}>
-                                <LogOut></LogOut>
-                                <p>Log out</p>
-                            </div>
-                        </motion.div>
-    
-                    )
-                    }
-                </AnimatePresence>
              </div>
              :
              <div id='authOption'>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import {Settings, LayoutDashboard, FolderGit2, ChevronDown, Ellipsis, ChevronRight} from 'lucide-react'
 import { AnimatePresence, motion} from 'framer-motion'
@@ -13,10 +13,13 @@ import makeAnimated from 'react-select/animated';
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next';
 import { fetchProjects } from '../../../store/project'
+import { RenderDropdown } from './optionMenu'
 export const SideBar = ()=>{
    let location=useLocation()
    const darkMode = useSelector((state) => state.setting.darkMode);
    const {t}=useTranslation()
+   const selectRef = useRef();
+   const [position, setPosition] = useState({ top: 0, left: 0 });
    const animatedComponents = makeAnimated();
    let param=useParams()
    const dispatch=useDispatch()
@@ -31,6 +34,7 @@ export const SideBar = ()=>{
    const [startDate, setStartDate] = useState("");
    const [dueDate, setDueDate] = useState("");
    const [assignedUserId, setAssignedUserId] = useState([]);
+   const [openDropdownId, setOpenDropdownId] = useState(null);
    const [projectId, setProjectId] = useState("");
    const [users, setUser]=useState([])
    const [projectUsers, setProjectUser]=useState([])
@@ -93,6 +97,7 @@ export const SideBar = ()=>{
         setStartDate("")
         setDueDate("")
         setAssignedUserId([])
+        selectRef.current.clearValue();
         setDescription("")  
       } catch(error){
         console.log(error)
@@ -115,6 +120,14 @@ export const SideBar = ()=>{
         console.log(error)
       }
    }
+   const handleToggle = (e,id) => { //handle option form affected by overflow-y
+      const rect = e.currentTarget.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + window.scrollY,
+        left: rect.left + window.scrollX,
+      });
+      setOptionFormOpen(id)
+   };
    const handleSelect = (selectedUsers) => {
       console.log(selectedUsers)
       if(selectedUsers) {
@@ -267,6 +280,7 @@ export const SideBar = ()=>{
     },[])
    console.log(formattedUser)
    console.log(projectUsers)
+   
    return (
         <div className="sideBar">
            <div className='brand'>
@@ -303,45 +317,34 @@ export const SideBar = ()=>{
                            className='projectList'
                         >
                            <ul>
-                           {projects.map((project)=>
+                           
+                            {projects.map((project)=>
                              <div key={project.id} style={{position:'relative'}} className={isSubActive(`/project/${project.id}`)|| isSubActive(`/project/${project.id}/list`)? 'sub-active' : ''} onClick={(e)=>{e.stopPropagation(), setOptionFormOpen(null), navigate( `/project/${project.id}`)}}>
                                  <div style={{display:'flex', alignItems:'center', width:'100%', justifyContent:'space-between'}}><li>{project.title}</li>
-                                 <Ellipsis style={{paddingRight: '1rem'}}
+                                 <Ellipsis 
+                                          style={{paddingRight: '1rem'}}
                                           onClick={(e) => {
                                              e.stopPropagation(); // Ngăn chặn sự kiện click lan lên menuItem
                                              setOptionFormOpen(project.id)
+                                             handleToggle(e,project.id)
                                           }}
                                  ></Ellipsis></div>
-                                 <div className= {`option-${optionFormOpen===project.id?'active':'unActive'}`} >
-                                      <div className='close-button' onClick={(e)=>{
-                                        e.stopPropagation(); // Ngăn chặn sự kiện click lan lên menuItem
-                                        setOptionFormOpen(null)
-                                        }}>
-                                        <X style={{height:'16px', width:'16px'}}></X>
-                                      </div>
-                                      <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}} onClick={(e)=>{
-                                                e.stopPropagation()
-                                                setProjectFormOpen(project.id)
-                                                setOptionFormOpen(null) // Ngăn chặn sự kiện click lan lên menuItem
-                                                setEditFormOpen(project.id)
-                                                handleEditProject(project.id)
-                                              }
-                                              }
-                                      >
-                                          <div style={{display:'flex', gap:'.5rem', alignItems:'center'}}>
-                                            <FilePenLine style={{width:'16px', height:'16px'}}></FilePenLine>
-                                            <p>Edit</p>
-                                          </div>
-                                          <ChevronRight style={{width:'16px', height:'16px'}}>
-                                          </ChevronRight>
-                                      </div>
-                                      <div style={{display:'flex', justifyContent:'space-between'}} onClick={(e)=>{setProjectFormOpen(project.id),setDeleteProject(true),setOptionFormOpen(false), e.stopPropagation()}}>
-                                          <div style={{display:'flex', gap:'.5rem', alignItems:'center'}}>
-                                            <Trash2 style={{width:'16px', height:'16px', color:'red'}}></Trash2>
-                                            <p style={{color:'red'}}>Delete</p>
-                                          </div>
-                                      </div>
-                                    </div>
+                                 {optionFormOpen&&(<RenderDropdown
+                                    isOpen={optionFormOpen === project.id}
+                                    onClose={() => setOptionFormOpen(null)}
+                                    position={position}
+                                    onEdit={() => {
+                                      setProjectFormOpen(project.id);
+                                      setEditFormOpen(project.id);
+                                      handleEditProject(project.id);
+                                    }}
+                                    onDelete={() => {
+                                      setProjectFormOpen(project.id);
+                                      setDeleteProject(true);
+                                      setOptionFormOpen(null);
+                                    }}
+                                 >
+                                 </RenderDropdown>)}
                                  <div className={`overlay-${projectFormOpen===project.id?'active':'unActive'}`} onClick={(e)=>e.stopPropagation()} >
                                     {deleteProject?(
                                       <div className='delete-warning'>
@@ -499,6 +502,7 @@ export const SideBar = ()=>{
                                         closeMenuOnSelect={false}
                                         components={animatedComponents}
                                         isMulti
+                                        ref={selectRef}
                                         styles={getCustomStyle}
                                         options={formattedUser}
                                         onChange={handleSelect}

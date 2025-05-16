@@ -27,7 +27,8 @@
 .header .profile{
     color: var(--text-color);
     display: flex;
-    gap: 1.5rem;
+    gap: .5rem;
+    align-items: center;
     position: relative;
 }
 .header .profile span{

@@ -49,7 +49,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 io.use((socket, next) => {
   sessionMiddleware(socket.request, {}, () => {
-    if (!socket.request.session.passport.user) {
+    if (!socket.request.session.passport) {
       console.log('unauthorized')
       return next(new Error("Unauthorized"));
     }

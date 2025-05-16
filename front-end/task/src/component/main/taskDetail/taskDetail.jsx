@@ -270,8 +270,9 @@ export const TaskDetail=({overlayId, setOverlayId,taskId, projectId})=>{
     const handleDeleteTask=async(e,taskId)=>{        
         try{
             await task.deleteTask(taskId)
-            onTaskUpdated()
             dispatch(getAllTask(projectId))
+            dispatch(getAllTodayTask())
+            dispatch(getAllUpcomingTask())
             setDeleteTask(false)
             setOverlayId(null)
         }catch(error){

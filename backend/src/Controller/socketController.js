@@ -21,6 +21,9 @@ class Socket {
         socket.emit('error-comment', { message: 'Failed to save comment' });
       }
     });
+    socket.on('new-task',async(data)=>{
+      
+    })
   
     socket.on('disconnect', () => {
       console.log('User disconnected');

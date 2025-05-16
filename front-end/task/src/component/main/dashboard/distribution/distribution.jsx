@@ -4,8 +4,7 @@ import task from '../../../../util/task';
 import { useTranslation } from 'react-i18next';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 // Giả lập các ngày có task và trạng thái
-export const Distribution = () => {
-  const [tasks, setTask]=useState([])
+export const Distribution = ({tasks}) => {
   const {t}=useTranslation()
   const getStatusCounts = (data) => {
     const counts = data.reduce((acc, { status }) => {
