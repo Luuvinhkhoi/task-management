@@ -1,19 +1,18 @@
 import { Outlet } from "react-router-dom"
 import { SideBar } from "./sidebar/sidebar"
 import { Header } from "./header/header"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef,useState } from "react"
 import './main.css'
 import {io} from 'socket.io-client'
 export const Main = () =>{
-  const socketRef = useRef(null)
   const SOCKET_URL = 'http://localhost:4001';
-  
+  const [socket, setSocket] = useState(null);
   useEffect(() => {
       // Tạo socket connection
           const socket = io(SOCKET_URL,{
             withCredentials:true
           })
-          socketRef.current = socket;
+          setSocket(socket)
           // Xử lý các sự kiện socket
           socket.on('connect', () => {
             console.log('Socket connected:', socket.id);
@@ -26,16 +25,19 @@ export const Main = () =>{
           
           // Cleanup khi component unmount
           return () => {
-            socket.emit('leave-room');
-            socket.off('chat message');
+            // Ngắt các event listener nếu có
+            socket.off();
+
+            // Đóng kết nối socket
+            socket.disconnect();
           };
   }, []);
   return(
     <div className="main">
       <SideBar></SideBar>
       <div style={{height:'100%'}}>
-        <Header socket={socketRef.current}></Header>
-        <Outlet context={{socket: socketRef.current}}></Outlet>
+        <Header socket={socket}></Header>
+        <Outlet context={{socket}}></Outlet>
       </div>
     </div>
   )

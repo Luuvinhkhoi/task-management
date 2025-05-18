@@ -18,6 +18,7 @@ const createTask=async(title, description, status, priority, assignedUserId, pro
             user_id:memberId
         }));
         await db.TaskMember.bulkCreate(taskMembers);
+        return taskId
     } catch (error){
         throw new Error(`check error ${error}`)
     }

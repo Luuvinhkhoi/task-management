@@ -95,3 +95,24 @@
 .header .overlay-unActive{
     display: none !important;
 }
+.header .noti{
+    color: var(--text-color);
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    position: relative;
+}
+.header .notiDropDown{
+    position: absolute;
+    background-color: var(--dropdown);
+    padding: 1rem .5rem;
+    display: flex;
+    flex-direction: column;
+    right: 330px;
+    top: 5rem;
+    gap: 1rem;
+    text-align: center;
+    border-radius: .5rem;
+    border: 2px solid var(--border);
+    z-index: 10;
+}

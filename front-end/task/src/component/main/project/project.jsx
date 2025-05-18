@@ -6,12 +6,19 @@ import { useDispatch } from 'react-redux'
 import task from '../../../util/task'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
+import { useOutletContext } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next";
 import { fetchProjects } from '../../../store/project'
 import { getAllTask } from '../../../store/task'
-export const Project = ({socket})=>{
+export const Project = ()=>{
     const { t } = useTranslation();
+    const userId=useSelector(state=>state.userProfile.id)
+    const userName=useSelector((state)=>state.userProfile.firstname)
+    const lastname=useSelector((state)=>state.userProfile.lastname)
+    const avatar=useSelector((state)=>state.userProfile.avatar)
+    console.log(avatar)
+    const {socket}=useOutletContext()
     const dispatch=useDispatch()
     const darkMode = useSelector((state) => state.setting.darkMode);
     const animatedComponents = makeAnimated();
@@ -90,7 +97,7 @@ export const Project = ({socket})=>{
     const handleTaskSubmit = async (e) => {
       e.preventDefault()
       const formattedUsersId=assignedUserId.map(user=>user.value)
-      await task.createTask(
+      const result=await task.createTask(
         title,
         description,
         status,
@@ -100,6 +107,16 @@ export const Project = ({socket})=>{
         formattedUsersId,
         projectId
       );
+      const data={
+        taskId:result,
+        createdBy:userId,
+        formattedUsersId:formattedUsersId,
+        actorAvatar:avatar,
+        message:`${lastname} ${userName} vừa thêm vào 1 task mới`,
+        projectId: projectId
+      }
+      socket.emit('new-task', data)
+      
       dispatch(getAllTask(projectId))
       setTaskFormOpen(false)
       setTitle("")

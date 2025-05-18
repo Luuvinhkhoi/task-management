@@ -60,7 +60,7 @@ export const Dashboard = () =>{
   return(
     <div className='dashboard'>
         <div id='row1'>
-          <Task></Task>
+          <Task socket={socket}></Task>
           <Distribution tasks={tasks}></Distribution>
         </div>
         <div id='row2'>

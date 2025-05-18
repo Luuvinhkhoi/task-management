@@ -24,6 +24,31 @@ module.exports = {
         onDelete:'CASCADE'
 
       },
+      role: {
+        type: Sequelize.ENUM('viewer', 'editor', 'admin'),
+        defaultValue: 'admin',
+        allowNull: false
+      },
+      canEditProject: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      canDeleteProject: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      canCreateTask: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      canEditTask: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      canDeleteTask: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE

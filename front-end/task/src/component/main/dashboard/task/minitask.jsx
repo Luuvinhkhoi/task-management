@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react'
 import { TaskDetail } from '../../taskDetail/taskDetail';
 import { useTimezone } from '../../../../timezoneContext';
 import { getAllTodayTask } from '../../../../store/todayTask';
-export const Task = () =>{
+export const Task = ({socket}) =>{
     const todayTask=useSelector(state=>state.todayTasks.tasks||[])
     const[isClick, setIsClick]=useState(null)
     const {t} = useTranslation()
@@ -90,7 +90,8 @@ export const Task = () =>{
             ):<p>Tasks assigned to you will appear here. </p>}
           </div>
           {isClick !== null && todayTask && (
-                <TaskDetail 
+                <TaskDetail
+                    socket={socket}
                     overlayId={isClick} 
                     setOverlayId={setIsClick}
                     taskId={isClick} 

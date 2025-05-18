@@ -39,6 +39,31 @@ module.exports = (sequelize, DataTypes) => {
       },
       onUpdate: 'CASCADE',
       onDelete: 'CASCADE',
+    },
+    role: {
+      type: DataTypes.ENUM('viewer', 'editor', 'admin'),
+      defaultValue: 'admin',
+      allowNull: false
+    },
+    canEditProject: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    canDeleteProject: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    canCreateTask: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    canEditTask: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    canDeleteTask: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
     }
   }, {
     sequelize,

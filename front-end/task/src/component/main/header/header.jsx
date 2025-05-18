@@ -15,15 +15,18 @@ import { useTranslation } from "react-i18next";
 import { useTimezone } from '../../../timezoneContext'
 import { Comment } from '../project/comment/comment';
 import { TaskDetail } from '../taskDetail/taskDetail'
+import { Notification } from './noti/noti'
 import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell } from 'lucide-react'
 export const Header=({socket})=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
+    const userId=useSelector(state=>state.userProfile.id)
     const theme=useSelector((state)=>state.setting.darkMode)
     const { t } = useTranslation();
     const animatedComponents = makeAnimated();
     const [isClick, setIsClick]=useState(null)
     const [OpenDropdown, setOpenDropDown]=useState(false)
+    const [openNotification, setOpenNotification]=useState(false)
     const [openSearchBar, setOpenSearchBar]=useState(false)
     const [timeoutId, setTimeoutId] = useState(null);
     const [results, setResults]=useState([])
@@ -50,11 +53,19 @@ export const Header=({socket})=>{
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
     const dropdownRef = useRef(null);
+    const notiRef=useRef(null)
     const searchBarRef=useRef(null)
     const dropsearchRef=useRef(null)
     const { timezone } = useTimezone();
     const [date, setDate] = useState(new Date());
-  
+    const [noti, setNoti]=useState([])
+    useEffect(()=>{
+        if (!socket) return; 
+        socket.on('notification', (data) => {
+            console.log('Thông báo:', data.message);
+            setNoti(prev=>[...prev, data])
+        });
+    }, [userId])
     useEffect(() => {
       const interval = setInterval(() => {
         setDate(new Date());
@@ -375,6 +386,11 @@ export const Header=({socket})=>{
        
     },[])
     useEffect(() => {
+        if (notiRef.current) {
+            notiRef.current.style.width = `450px`;
+        }
+    }, [openNotification]);
+    useEffect(() => {
         if (profileRef.current && dropdownRef.current) {
             dropdownRef.current.style.width = `${profileRef.current.clientWidth}px`;
         }
@@ -387,11 +403,31 @@ export const Header=({socket})=>{
     useEffect(() => {
             const handleScroll = () => {
               setOpenDropDown(false);
+              setOpenNotification(false)
             };
             window.addEventListener("scroll", handleScroll);
             const handleClickOutside = (event) => {
                 if (profileRef.current && !profileRef.current.contains(event.target)) {
                   setOpenDropDown(false); // Đóng thanh tìm kiếm
+                  setOpenNotification(false)
+                }
+            };
+          
+            document.addEventListener("mousedown", handleClickOutside);
+    
+            return () => {
+              document.removeEventListener("mousedown", handleClickOutside);
+              window.removeEventListener("scroll", handleScroll);
+            };
+    }, []);
+    useEffect(() => {
+            const handleScroll = () => {
+              setOpenNotification(false)
+            };
+            window.addEventListener("scroll", handleScroll);
+            const handleClickOutside = (event) => {
+                if (notiRef.current && !notiRef.current.contains(event.target)) {
+                  setOpenNotification(false)
                 }
             };
           
@@ -516,8 +552,26 @@ export const Header=({socket})=>{
                 <div>{timeFormat}</div>
             </div>
             {userName?
-             <div>
-                <Bell></Bell>
+             <div style={{display:'flex', alignItems:'center'}}>
+                <div>
+                    <div className='noti' onClick={()=>setOpenNotification(!openNotification)}>
+                        <Bell></Bell>
+                    </div>
+                    <AnimatePresence>
+                            {openNotification==true&&(
+                                <motion.div 
+                                ref={notiRef} 
+                                initial={{ height: 0, opacity: 0 }} 
+                                animate={{ height: "auto", opacity: 1 }} 
+                                exit={{ opacity: 0, height: 0 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className='notiDropDown'
+                                >
+                                    <Notification noti={noti} setIsClick={setIsClick} isClick={isClick}></Notification>
+                                </motion.div>
+                            )}
+                    </AnimatePresence>
+                </div>
                 <div style={{display:'inline-block'}}>
                     <div className='profile' style={{cursor:'pointer'}} ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
                         <CircleUser></CircleUser>

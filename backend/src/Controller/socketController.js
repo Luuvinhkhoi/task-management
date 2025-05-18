@@ -1,8 +1,8 @@
-const CommentService =require("../Services/commentService")
 class Socket {
   static async connection(socket) {
-    console.log('User connected:', socket.id);
-    socket.on('join-room', (roomName) => {
+    console.log('User connected:', socket.user);
+    socket.join(`user-${socket.user}`);
+    socket.on('join-task', (roomName) => {
       socket.join( `task-${roomName}`);
       console.log(`User ${socket.id} joined room ${roomName}`);
       });
@@ -22,9 +22,26 @@ class Socket {
       }
     });
     socket.on('new-task',async(data)=>{
-      
+      const { taskId, formattedUsersId, createdBy,actorAvatar, message, projectId} = data;
+      console.log('hehe', data)
+      try{
+        formattedUsersId.forEach(userId => {
+          if (userId !== createdBy) {
+            _io.to(`user-${userId}`).emit('notification', {
+              actorAvatar:actorAvatar,
+              message: message,
+              taskId: taskId,
+              projectId:projectId
+            });
+            console.log('Emitting to user room:', `user-${userId}`);
+
+          }
+        });
+      } catch(error){
+        socket.emit('error-comment', { message: 'Failed to save comment' });
+      }
     })
-  
+    
     socket.on('disconnect', () => {
       console.log('User disconnected');
     });

@@ -14,7 +14,7 @@ import { useTimezone } from '../../../timezoneContext'
 import { getAllTask } from '../../../store/task';
 import { getAllTodayTask } from '../../../store/todayTask';
 import { getAllUpcomingTask } from '../../../store/upcomingTask';
-export const TaskDetail=({overlayId, setOverlayId,taskId, projectId})=>{
+export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
     const animatedComponents = makeAnimated();
     const { timezone } = useTimezone();
     const dispatch=useDispatch()
@@ -498,7 +498,7 @@ export const TaskDetail=({overlayId, setOverlayId,taskId, projectId})=>{
                             </div>
                         </div>
             
-                    </div>:<Comment taskId={item.id}></Comment>}
+                    </div>:<Comment socket={socket} taskId={item.id}></Comment>}
                     <div className='taskDetail-footer'>
                             <div className='edit' onClick={handleSaveEdit}>
                                 <FilePenLine></FilePenLine>

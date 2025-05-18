@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { TaskDetail } from '../../taskDetail/taskDetail';
 import { useTranslation } from 'react-i18next';
+import { useOutletContext } from 'react-router-dom';
 import { useTimezone } from '../../../../timezoneContext';
 import { getAllTodayTask } from '../../../../store/todayTask';
 export const TodayTask = () => {
@@ -11,6 +12,7 @@ export const TodayTask = () => {
   const { timezone } = useTimezone();
   const {t}=useTranslation()
   const location=useLocation()
+  const { socket } = useOutletContext();
   const dispatch=useDispatch()  
   const tasks=useSelector(state=>state.todayTasks.tasks||[])
   const[isClick, setIsClick]=useState(null)
@@ -106,6 +108,7 @@ export const TodayTask = () => {
          )}
         {isClick !== null && filterTask && (
               <TaskDetail 
+                  socket={socket}
                   overlayId={isClick} 
                   setOverlayId={setIsClick}
                   taskId={isClick} 

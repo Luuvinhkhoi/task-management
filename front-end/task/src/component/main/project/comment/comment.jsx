@@ -18,10 +18,11 @@ export const Comment=({socket,taskId})=>{
     const SOCKET_URL = 'http://localhost:4001';
     useEffect(() => {
     // Tạo socket connection
-        
+        socketRef.current = socket;
+
         // Join room của task sau khi kết nối thành công
         if (taskId) {
-          socket.emit('join-room', taskId);
+          socket.emit('join-task', taskId);
         }
         socket.on('receive-comment', (newComment) => {
           setComments(prev => [...prev, newComment]); // ✅ Cập nhật UI
@@ -54,7 +55,6 @@ export const Comment=({socket,taskId})=>{
         // Cleanup khi component unmount
         return () => {
           socket.emit('leave-room', taskId);
-          socket.off('chat message');
         };
     }, [taskId]);
   
