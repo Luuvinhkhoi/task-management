@@ -22,13 +22,13 @@ class Socket {
       }
     });
     socket.on('new-task',async(data)=>{
-      const { taskId, formattedUsersId, createdBy,actorAvatar, message, projectId} = data;
+      const { taskId, assignedUserId, user,actorId,message, projectId} = data;
       console.log('hehe', data)
       try{
-        formattedUsersId.forEach(userId => {
-          if (userId !== createdBy) {
+        assignedUserId.forEach(userId => {
+          if (userId !== actorId) {
             _io.to(`user-${userId}`).emit('notification', {
-              actorAvatar:actorAvatar,
+              user:user,
               message: message,
               taskId: taskId,
               projectId:projectId

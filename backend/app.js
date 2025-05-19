@@ -11,6 +11,7 @@ const projectRouter = require('./src/Routes/project');
 const taskRouter = require('./src/Routes/task');
 const uploadRouter = require('./src/Routes/upload');
 const commentRouter=require('./src/Routes/comment')
+const notificationRouter=require('./src/Routes/notification')
 const settingRouter=require('./src/Routes/setting')
 const Socket=require('./src/Controller/socketController')
 const s3Router=require('./src/Routes/s3')
@@ -75,6 +76,7 @@ app.use('/s3', s3Router)
 app.use('/setting', isAuthenticated, settingRouter)
 app.use('/comment', commentRouter)
 app.use('/search',isAuthenticated,searchRouter)
+app.use('/notification', isAuthenticated, notificationRouter)
 db.sequelize.sync().then(() => {
   server.listen(port, () => console.log(`Server listening on port ${port}`));
 });

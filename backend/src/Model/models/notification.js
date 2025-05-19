@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   Notification.init({
-    type: DataTypes.STRING,
     actorId: DataTypes.INTEGER,
     taskId: DataTypes.INTEGER,
     projectId: DataTypes.INTEGER,

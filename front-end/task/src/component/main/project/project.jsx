@@ -107,16 +107,21 @@ export const Project = ()=>{
         formattedUsersId,
         projectId
       );
-      const data={
+      const socketData={
         taskId:result,
-        createdBy:userId,
-        formattedUsersId:formattedUsersId,
-        actorAvatar:avatar,
+        actorId:userId,
+        assignedUserId:formattedUsersId,
+        user:{
+              id: userId,
+              avatar:avatar,
+              firstname:userName,
+              lastname:lastname
+        },
         message:`${lastname} ${userName} vừa thêm vào 1 task mới`,
         projectId: projectId
       }
-      socket.emit('new-task', data)
-      
+      task.createNoti(socketData)
+      socket.emit('new-task', socketData)
       dispatch(getAllTask(projectId))
       setTaskFormOpen(false)
       setTitle("")

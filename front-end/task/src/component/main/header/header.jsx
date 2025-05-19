@@ -567,7 +567,7 @@ export const Header=({socket})=>{
                                 transition={{ duration: 0.3, ease: "easeOut" }}
                                 className='notiDropDown'
                                 >
-                                    <Notification noti={noti} setIsClick={setIsClick} isClick={isClick}></Notification>
+                                    <Notification noti={noti} setNoti={setNoti} setIsClick={setIsClick} isClick={isClick}></Notification>
                                 </motion.div>
                             )}
                     </AnimatePresence>

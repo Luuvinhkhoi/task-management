@@ -565,7 +565,32 @@ let task={
             method: 'GET',
             credentials: 'include'
           }).then(response => {
-            
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
+    },
+    createNoti(data){
+        return fetch(`${baseUrl}/notification`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data),
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
+    },
+    getAllNoti(){
+        return fetch(`${baseUrl}/notification`, {
+            method: 'GET',
+            credentials: 'include',
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     }

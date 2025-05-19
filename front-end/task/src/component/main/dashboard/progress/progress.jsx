@@ -7,7 +7,7 @@ export const Progress = ({progress})=>{
   return (
     <div id='progress'>
       <h3 style={{textAlign:'start'}}>{t('dashboard.progress')}</h3>
-      {progress.length > 1?progress.map(item=>
+      {progress.length > 0?progress.map(item=>
         <div className='progressItem'>
           <h4>{item.projectName}</h4>
           <div>
