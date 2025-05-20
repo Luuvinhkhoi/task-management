@@ -12,13 +12,13 @@ const createTask=async(title, description, status, priority, assignedUserId, pro
             createdAt:startDate,
             endedAt:dueDate
         })
-        const taskId = result.id;
+        const result2 ={ taskId: result.id,createdAt:result.createdAt}
         const taskMembers = assignedUserId.map(memberId => ({
-            task_id: taskId,
+            task_id: result2.taskId,
             user_id:memberId
         }));
         await db.TaskMember.bulkCreate(taskMembers);
-        return taskId
+        return result2
     } catch (error){
         throw new Error(`check error ${error}`)
     }

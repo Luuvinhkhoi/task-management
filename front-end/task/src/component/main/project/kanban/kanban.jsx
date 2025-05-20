@@ -17,7 +17,7 @@ import {X} from 'lucide-react'
 import Select from 'react-select'
 import { Download, Paperclip, Trash2, FilePenLine } from 'lucide-react';
 import { Comment } from '../comment/comment';
-
+import { useOutletContext } from 'react-router-dom';
 
 const ItemType = "KANBAN_ITEM";
 
@@ -180,6 +180,7 @@ const KanbanItem = ({ taskItem, projectId }) => {
         }),
     });
         const dispatch=useDispatch()
+        const {socket}=useOutletContext()
         const {timezone}=useTimezone()
         const animatedComponents = makeAnimated();
         const theme=useSelector((state)=>state.setting.darkMode)
@@ -725,7 +726,7 @@ const KanbanItem = ({ taskItem, projectId }) => {
                                 </div>
                             </div>
                 
-                        </div>:<Comment taskId={item.id}></Comment>}
+                        </div>:<Comment socket={socket} taskId={item.id}></Comment>}
                         <div className='taskDetail-footer'>
                                 <div className='edit' onClick={handleSaveEdit}>
                                    <FilePenLine></FilePenLine>

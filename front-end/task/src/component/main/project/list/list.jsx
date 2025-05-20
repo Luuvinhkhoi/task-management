@@ -3,7 +3,7 @@ import './list.css'
 import { useEffect, useState, useRef } from 'react'
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from 'react-redux'
-import { useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { getAllTask, updateTaskStatus } from '../../../../store/task';
 import { FaFilePdf, FaDownload, FaGoogleDrive, FaPlus } from "react-icons/fa";
 import Select from 'react-select'
@@ -19,6 +19,7 @@ import { Placeholder } from 'react-select/animated';
 export const List = ()=>{
     const dispatch=useDispatch()
     const {timezone}=useTimezone()
+    const {socket}=useOutletContext()
     const animatedComponents = makeAnimated();
     const theme=useSelector((state)=>state.setting.darkMode)
     const { t } = useTranslation();
@@ -584,7 +585,7 @@ export const List = ()=>{
                                 </div>
                             </div>
                 
-                        </div>:<Comment taskId={item.id}></Comment>}
+                        </div>:<Comment socket={socket} taskId={item.id}></Comment>}
                         <div className='taskDetail-footer'>
                                 <div className='edit' onClick={handleSaveEdit}>
                                    <FilePenLine></FilePenLine>

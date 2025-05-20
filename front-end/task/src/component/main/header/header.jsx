@@ -16,7 +16,7 @@ import { useTimezone } from '../../../timezoneContext'
 import { Comment } from '../project/comment/comment';
 import { TaskDetail } from '../taskDetail/taskDetail'
 import { Notification } from './noti/noti'
-import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell } from 'lucide-react'
+import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot } from 'lucide-react'
 export const Header=({socket})=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
@@ -49,11 +49,13 @@ export const Header=({socket})=>{
     const [formattedUsers, setFormatedUser]=useState([])
     const [assignedUserId, setAssignedUserId] = useState([]);
     const [users, setUser]=useState([])//list of user
+    const [view, setView]=useState(true)
     const [deleteAttachment, setDeleteAttachment]=useState(false)
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
     const dropdownRef = useRef(null);
     const notiRef=useRef(null)
+    const notiDropRef=useRef(null)
     const searchBarRef=useRef(null)
     const dropsearchRef=useRef(null)
     const { timezone } = useTimezone();
@@ -63,7 +65,8 @@ export const Header=({socket})=>{
         if (!socket) return; 
         socket.on('notification', (data) => {
             console.log('Thông báo:', data.message);
-            setNoti(prev=>[...prev, data])
+            setView(false)
+            setNoti(prev=>[data,...prev])
         });
     }, [userId])
     useEffect(() => {
@@ -73,110 +76,6 @@ export const Header=({socket})=>{
   
       return () => clearInterval(interval);
     }, []);
-    const tabs=[
-        { value: 'Detail', label: 'Detail' },
-        { value: 'Comment', label: 'Comment' },
-    ]
-    const options = [
-        { value: 'Low', label: 'Low' },
-        { value: 'Medium', label: 'Medium' },
-        { value: 'High', label: 'High' },
-        { value: 'Urgent', label: 'Urgent' }
-    ];
-    const statusOptions = [
-        { value: 'To do', label: 'To do' },
-        { value: 'In progress', label: 'In progress' },
-        { value: 'Complete', label: 'Complete' },
-    ];
-    const customStyles =(darkMode) =>({
-        control: (base, state) => ({
-          ...base,
-          backgroundColor: darkMode ? '#1c2536' : '#fff',
-          boxShadow: 'none',
-          color: 'inherit',
-          border: 'inherit',
-          fontSize: '12px',
-          '&:hover': {
-            border: 'inherit'
-          },
-          borderRadius:'10rem'
-        }),
-        option: (base, state) => ({
-          ...base,
-          backgroundColor: state.isFocused
-            ? (darkMode ? '#007bff' : '#eaeaea')
-            : (darkMode ? '#1c2536' : '#fff'),
-          color: darkMode ? '#fff' : '#000',
-          fontSize: '12px',
-          cursor: 'pointer',
-        }),
-        singleValue: (base) => ({
-          ...base,
-          color: 'inherit'
-        }),
-        multiValue: (base) => ({
-            ...base,
-            backgroundColor:'none'
-        }),
-        menu: (base) => ({
-          ...base,
-          backgroundColor: darkMode ? '#1c2536' : '#fff',
-          zIndex: 9999,
-        }),
-        dropdownIndicator:(base)=>({
-            ...base,
-            padding:'unset'
-        }),
-        placeholder:(base)=>({
-            ...base,
-            padding:'unset',
-            fontSize:'12px'
-        }),
-    });
-    const statusCustomStyles =(darkMode) =>({
-        control: (base, state) => ({
-          ...base,
-          backgroundColor: 'inherit',
-          boxShadow: 'none',
-          color: 'inherit',
-          border: 'inherit',
-          fontSize: '12px',
-          '&:hover': {
-            border: 'inherit'
-          },
-          borderRadius:'10rem'
-        }),
-        option: (base, state) => ({
-          ...base,
-          backgroundColor: state.isFocused
-            ? (darkMode ? '#007bff' : '#eaeaea')
-            : (darkMode ? '#1c2536' : '#fff'),
-          color: darkMode ? '#fff' : '#000',
-          fontSize: '12px',
-          cursor: 'pointer',
-        }),
-        singleValue: (base) => ({
-          ...base,
-          backgroundColor:'none',
-          color: 'inherit'
-        }),
-        menu: (base) => ({
-          ...base,
-          backgroundColor: darkMode ? '#1c2536' : '#fff',
-          zIndex: 9999,
-        }),
-        dropdownIndicator:(base)=>({
-            ...base,
-            padding:'unset'
-        }),
-        placeholder:(base)=>({
-            ...base,
-            padding:'unset',
-            fontSize:'12px'
-        }),
-    });
-    const getCustomStyle=customStyles(theme)
-    const getStatusCustomStyle=statusCustomStyles(theme)
     const dayFormat = new Intl.DateTimeFormat('en-CA', {
       year: 'numeric',
       month: '2-digit',
@@ -252,117 +151,6 @@ export const Header=({socket})=>{
         }, 500);
         setTimeoutId(id);
     }
-    async function getTaskDetail(task_id){
-        try{
-            const result=await task.getTaskDetail(task_id)
-            setTaskDetail(result)
-            setStatus(result[0].status)
-            setPriority(result[0].priority)
-            setTitle(result[0].title)
-            setDueDate(result[0].endedAt)
-            setStartDate(result[0].createdAt)
-            setDescription(result[0].description)
-            setTaskDetailMember(result[0].users)
-            setTaskDetailOpen(true)
-            setOverlay(true)
-
-          } catch(error){
-            console.log(error)
-        }
-    }
-    async function getAllUser(id){
-            try{
-                  const result = await task.getAllUser()
-                  const formatted = result.map(user => ({
-                    value: user.id, // Dùng ID làm giá trị
-                    label: (
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
-                        <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
-                        <span>{user.firstname} {user.lastname}</span>
-                      </div>
-                    )// Dùng username làm tên hiển thị
-                }));
-                  setUser(result)
-                  const result2 = await task.getUserByProjectId(id)
-                  const formattedProjectUser = result2.map(user =>
-                    formatted.find(u => u.value === user.id)
-                  ).filter(Boolean); // Loại bỏ phần tử undefined nếu không tìm thấy
-                  setFormatedUser(formattedProjectUser)
-            } catch(error){
-                  console.log(error)
-            }
-    }
-    const fileInputRef = useRef(null);
-    const handleUploadClick = () => {
-            fileInputRef.current.click();
-    };
-    const handleFileChange = (event, id) => {
-          const file = event.target.files[0]; // Lấy file người dùng chọn
-          if (file) {
-            console.log("Selected file: ", file);
-            try{
-               task.uploadAttachment(file, id)
-            } catch (error) {
-                console.error('Error uploading file:', error);
-            }
-          }
-    };
-    const handleSaveEdit=async(e, taskId, id)=>{
-            try{
-                const formattedUsersId=assignedUserId.map(user=>user.value)
-                console.log(formattedUsersId)
-                await task.updateTaskDetail(
-                    {id:taskId,
-                     title:title,
-                     status:status,
-                     priority:priority,
-                     description:description,
-                     assignedUserId:formattedUsersId,
-                     projectId:id,
-                     startDate:startDate,
-                     dueDate: dueDate
-                    }
-                )
-            }catch(error){
-                console.log(error)
-            }
-    }
-     async function handleDownload(s3UrlFromDB){
-            try{
-                const key = extractS3KeyFromUrl(s3UrlFromDB);
-                const result=await task.getPresignedUrl(key)
-                window.location.href = result.url;
-            }catch (error){
-                console.log(error)
-            }
-    }
-    async function handleDeleteAttachment(s3UrlFromDB, id, task_id){
-                try{
-                    const key = extractS3KeyFromUrl(s3UrlFromDB);
-                    const result=await task.deleteAttachment(key, id)
-                    getTaskDetail(task_id)
-                    setDeleteAttachment(false)
-                }catch (error){
-                        console.log(error)
-                }
-    }
-    const handleSelect = (selectedUsers) => {
-            console.log(selectedUsers)
-            if (!selectedUsers || selectedUsers.length === 0) {
-                return;
-            }else if(selectedUsers) {
-                const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
-                const userMap = new Map(users.map(user => [user.id, user]));
-                const selected= assignedIds.map(id => userMap.get(id));
-                console.log(selectedUsers)
-                setAssignedUserId(selectedUsers);
-                setTaskDetailMember(selected)
-            } else {
-                console.log('❌ selectedUsers is null or empty');
-                // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
-                setAssignedUserId([]);
-            }
-    };
     useEffect(() => {
             if (taskDetailMembers.length > 0 && users.length > 0) {
               const preselectedUsers = formattedUsers.filter(option =>
@@ -386,8 +174,8 @@ export const Header=({socket})=>{
        
     },[])
     useEffect(() => {
-        if (notiRef.current) {
-            notiRef.current.style.width = `450px`;
+        if (notiDropRef.current) {
+            notiDropRef.current.style.width = `450px`;
         }
     }, [openNotification]);
     useEffect(() => {
@@ -403,13 +191,11 @@ export const Header=({socket})=>{
     useEffect(() => {
             const handleScroll = () => {
               setOpenDropDown(false);
-              setOpenNotification(false)
             };
             window.addEventListener("scroll", handleScroll);
             const handleClickOutside = (event) => {
                 if (profileRef.current && !profileRef.current.contains(event.target)) {
                   setOpenDropDown(false); // Đóng thanh tìm kiếm
-                  setOpenNotification(false)
                 }
             };
           
@@ -461,7 +247,7 @@ export const Header=({socket})=>{
           if (timeoutId) clearTimeout(timeoutId);
         };
       }, [timeoutId]);
-    console.log(openSearchBar)
+    console.log(isClick)
     return (
         <div className='header'>
             <div className='searchBar' onClick={handleActive} ref={searchBarRef}>
@@ -553,21 +339,24 @@ export const Header=({socket})=>{
             </div>
             {userName?
              <div style={{display:'flex', alignItems:'center'}}>
-                <div>
-                    <div className='noti' onClick={()=>setOpenNotification(!openNotification)}>
-                        <Bell></Bell>
+                <div style={{position:'relative'}}>
+                    <div className='noti' ref={notiRef} onClick={()=>{setOpenNotification(!openNotification), setView(true)}}>
+                        <Bell>
+                        </Bell>
+                        {view?(<div></div>):(<div style={{position:'absolute', bottom:'18px', left:'-10px', backgroundColor:'orange',height:'10px', width:'10px', borderRadius:'1rem' }}></div>)}
                     </div>
                     <AnimatePresence>
                             {openNotification==true&&(
                                 <motion.div 
-                                ref={notiRef} 
+                                ref={notiDropRef} 
                                 initial={{ height: 0, opacity: 0 }} 
+                                onMouseDown={(e) => e.stopPropagation()}
                                 animate={{ height: "auto", opacity: 1 }} 
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.3, ease: "easeOut" }}
                                 className='notiDropDown'
                                 >
-                                    <Notification noti={noti} setNoti={setNoti} setIsClick={setIsClick} isClick={isClick}></Notification>
+                                    <Notification socket={socket} noti={noti} setNoti={setNoti} setIsClick={setIsClick} isClick={isClick}></Notification>
                                 </motion.div>
                             )}
                     </AnimatePresence>

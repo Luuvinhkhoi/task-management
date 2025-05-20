@@ -107,8 +107,8 @@ export const Project = ()=>{
         formattedUsersId,
         projectId
       );
-      const socketData={
-        taskId:result,
+      const data={
+        taskId:result.taskId,
         actorId:userId,
         assignedUserId:formattedUsersId,
         user:{
@@ -117,10 +117,26 @@ export const Project = ()=>{
               firstname:userName,
               lastname:lastname
         },
+        createdAt:result.createdAt,
         message:`${lastname} ${userName} vừa thêm vào 1 task mới`,
         projectId: projectId
       }
-      task.createNoti(socketData)
+      const result2 = await task.createNoti(data)
+      const socketData={
+        notiId:result2,
+        taskId:result.taskId,
+        actorId:userId,
+        assignedUserId:formattedUsersId,
+        user:{
+              id: userId,
+              avatar:avatar,
+              firstname:userName,
+              lastname:lastname
+        },
+        createdAt:result.createdAt,
+        message:`${lastname} ${userName} vừa thêm vào 1 task mới`,
+        projectId: projectId
+      }
       socket.emit('new-task', socketData)
       dispatch(getAllTask(projectId))
       setTaskFormOpen(false)
@@ -292,7 +308,7 @@ export const Project = ()=>{
                 </div>
              </div>
            </div>
-           <Outlet></Outlet>  
+           <Outlet context={{socket}}></Outlet>  
         </div>
     )
 }

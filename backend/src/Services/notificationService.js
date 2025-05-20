@@ -1,7 +1,6 @@
 const { where } = require('sequelize')
 const { Op } = require('sequelize');
 const db =require('../Model/models');
-const notification = require('../Model/models/notification');
 const createNotification=async(actorId,taskId, projectId, message, assignedUserId)=>{
     try{
         const result=await db.Notification.create({
@@ -10,11 +9,14 @@ const createNotification=async(actorId,taskId, projectId, message, assignedUserI
             projectId:projectId,
             message:message
         })
-        const notiMembers = assignedUserId.map(memberId => ({
+        let array=[]
+        const notiMembers = await assignedUserId.filter(memberId => memberId!=actorId);
+        array=await notiMembers.map(memberId=>({
             notificationId: result.id,
             userId:memberId
-        }));
-        await db.NotificationRecipient.bulkCreate(notiMembers)
+        }))
+        await db.NotificationRecipient.bulkCreate(array)
+        return result.id
     } catch (error){
         throw new Error(`check error ${error}`)
     }
@@ -25,7 +27,8 @@ const getAllNotification=async(userId)=>{
             {
                 where:{
                     userId:userId
-                }
+                },
+                order: [['createdAt', 'DESC']]
             }
         )
         const plainResult=await Promise.all(result.map(item=>item.get({plain:true})))
@@ -36,6 +39,7 @@ const getAllNotification=async(userId)=>{
         const mergedResult=plainResult2.map((item, index)=>{
             return {
                 ...item,
+                isRead:plainResult[index].isRead,
                 user: {
                     id: plainResult3[index].id,
                     firstname: plainResult3[index].firstname,
@@ -49,7 +53,23 @@ const getAllNotification=async(userId)=>{
         throw new Error(`check error ${error}`)
     }
 }
+const updateNotificationStatus=async (userId, notiId)=>{
+    try{
+        const result=await db.NotificationRecipient.update(
+            {isRead:true},
+            {
+                where:{
+                    notificationId:notiId,
+                    userId:userId
+                }
+            }
+        )
+    } catch (error){
+        throw new Error(`check error ${error}`)
+    }
+}
 module.exports={
     createNotification,
-    getAllNotification
+    getAllNotification,
+    updateNotificationStatus
 }
