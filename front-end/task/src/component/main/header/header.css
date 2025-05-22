@@ -115,4 +115,6 @@
     border-radius: .5rem;
     border: 2px solid var(--border);
     z-index: 10;
+    height: 300px;
+    overflow-y: scroll;
 }

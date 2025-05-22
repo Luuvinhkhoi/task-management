@@ -35,6 +35,10 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
     const [attachmentUrl, setAttachmentUrl]=useState()
     const [formattedUsers, setFormatedUser]=useState([])
     const [assignedUserId, setAssignedUserId] = useState([]);
+    const userId=useSelector(state=>state.userProfile.id)
+    const avatar=useSelector(state=>state.userProfile.avatar)
+    const lastname=useSelector(state=>state.userProfile.lastname)
+    const firstname=useSelector(state=>state.userProfile.firstname)
     const [users, setUser]=useState([])//list of user
     const [deleteAttachment, setDeleteAttachment]=useState(false)
     const tabs=[
@@ -189,11 +193,43 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
             fileInputRef.current.click();
     };
     const handleFileChange =async (event, id) => {
+            const formattedUsersId=assignedUserId.map(user=>user.value)
             const file = event.target.files[0]; // Lấy file người dùng chọn
             if (file) {
             console.log("Selected file: ", file);
             try{
                 await task.uploadAttachment(file, id)
+                const data={
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                const result2 = await task.createNoti(data)
+                const socketData={
+                    notiId:result2,
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                socket.emit('new-update', socketData)
                 getTaskDetail(id)
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -217,6 +253,37 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                         dueDate: dueDate
                     }
                 )
+                const data={
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                const result2 = await task.createNoti(data)
+                const socketData={
+                    notiId:result2,
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                socket.emit('new-update', socketData)
                 dispatch(getAllTodayTask())
                 dispatch(getAllUpcomingTask())
             }catch(error){
@@ -289,6 +356,7 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                 setAssignedUserId(preselectedUsers);
             }
     }, [taskDetailMembers, formattedUsers]);
+    console.log(assignedUserId)
     useEffect(()=>{
         async function getAllUser(){
             try{
@@ -498,7 +566,7 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                             </div>
                         </div>
             
-                    </div>:<Comment socket={socket} taskId={item.id}></Comment>}
+                    </div>:<Comment projectId={projectId} assignedUserId={assignedUserId} socket={socket} taskId={item.id}></Comment>}
                     <div className='taskDetail-footer'>
                             <div className='edit' onClick={handleSaveEdit}>
                                 <FilePenLine></FilePenLine>

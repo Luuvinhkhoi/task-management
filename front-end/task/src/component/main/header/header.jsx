@@ -351,7 +351,7 @@ export const Header=({socket})=>{
                                 ref={notiDropRef} 
                                 initial={{ height: 0, opacity: 0 }} 
                                 onMouseDown={(e) => e.stopPropagation()}
-                                animate={{ height: "auto", opacity: 1 }} 
+                                animate={{ height: "300px", opacity: 1 }} 
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.3, ease: "easeOut" }}
                                 className='notiDropDown'

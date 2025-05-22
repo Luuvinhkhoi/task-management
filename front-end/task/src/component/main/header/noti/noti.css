@@ -6,3 +6,7 @@
 .noti{
     position: relative;
 }
+.noti-header{
+    text-align: left;
+    cursor: pointer;
+}

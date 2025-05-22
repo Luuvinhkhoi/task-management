@@ -4,10 +4,11 @@ import { useTimezone } from '../../../../timezoneContext';
 import task from "../../../../util/task";
 import {io} from 'socket.io-client'
 import './comment.css'
-export const Comment=({socket,taskId})=>{
+export const Comment=({projectId,assignedUserId,socket,taskId})=>{
     const [comments, setComments] = useState([]);
     const { timezone } = useTimezone();
     const [newComment, setNewComment] = useState('');
+    const userId=useSelector(state=>state.userProfile.id)
     const avatar=useSelector(state=>state.userProfile.avatar)
     const lastname=useSelector(state=>state.userProfile.lastname)
     const firstname=useSelector(state=>state.userProfile.firstname)
@@ -61,20 +62,43 @@ export const Comment=({socket,taskId})=>{
   // Thiết lập các socket event listeners
       const submit=async(e)=>{
         e.preventDefault()
+        const formattedUsersId=assignedUserId.map(user=>user.value)
         try{
           console.log('hihi')
           const data={
             taskId:taskId,
             content:newComment, 
+            actorId:userId,
+            assignedUserId:formattedUsersId,
             user:{
+              id: userId,
               avatar:avatar,
               firstname:firstname,
               lastname:lastname
             },
+            message:`${lastname} ${firstname} vừa comment vào 1 task`,
+            projectId: projectId,
+            createdAt:new Date().toISOString()
+          }
+          const result2 = await task.createNoti(data)
+          const socketData={
+            notiId:result2,
+            taskId:taskId,
+            content:newComment, 
+            actorId:userId,
+            assignedUserId:formattedUsersId,
+            user:{
+              id: userId,
+              avatar:avatar,
+              firstname:firstname,
+              lastname:lastname
+            },
+            message:`${lastname} ${firstname} vừa comment vào 1 task`,
+            projectId: projectId,
             createdAt:new Date().toISOString()
           }
           task.createNewComment(data)
-          socketRef.current.emit('new-comment', data)
+          socketRef.current.emit('new-comment', socketData)
           setNewComment("");
         } catch(error){
           console.log(error)

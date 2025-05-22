@@ -15,7 +15,22 @@ class Socket {
       try {
         // Gửi lại comment mới cho tất cả client
         console.log('receive comment')
+        console.log(data)
         _io.to(`task-${data.taskId}`).emit('receive-comment', data);
+        data.assignedUserId.forEach(userId => {
+          if (userId !== data.actorId) {
+            _io.to(`user-${userId}`).emit('notification', {
+              comment: data.content,
+              id:data.notiId,
+              user:data.user,
+              message: data.message,
+              taskId: data.taskId,
+              createdAt:data.createdAt,
+              projectId:data.projectId
+            });
+            console.log('Emitting to user room:', `user-${userId}`);
+          }
+        });
       } catch (err) {
         console.error('Error saving comment:', err.message);
         socket.emit('error-comment', { message: 'Failed to save comment' });
@@ -43,7 +58,28 @@ class Socket {
         socket.emit('error-comment', { message: 'Failed to save comment' });
       }
     })
-    
+    socket.on('new-update', async (data) => {
+      const {notiId, taskId, assignedUserId, user,actorId,message, projectId, createdAt} = data;
+      console.log('hehe', data)
+      try{
+        assignedUserId.forEach(userId => {
+          if (userId !== actorId) {
+            _io.to(`user-${userId}`).emit('notification', {
+              id:notiId,
+              user:user,
+              message: message,
+              taskId: taskId,
+              createdAt:createdAt,
+              projectId:projectId
+            });
+            console.log('Emitting to user room:', `user-${userId}`);
+
+          }
+        });
+      } catch(error){
+        socket.emit('error-comment', { message: 'Failed to save comment' });
+      }
+    })
     socket.on('disconnect', () => {
       console.log('User disconnected');
     });
