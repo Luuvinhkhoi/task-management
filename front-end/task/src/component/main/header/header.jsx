@@ -273,11 +273,11 @@ export const Header=({socket})=>{
                                         <div>
                                             <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                                 <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
-                                                <p>Project</p>
+                                                <p style={{fontWeight:500}}>Project</p>
                                             </div>
                                             {results.project?results.project.map(item=>
                                                 <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={()=>navigate(`/project/${item.id}`)}>
-                                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
+                                                    <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
                                                     <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
                                                 </div>
                                             ):null}
@@ -287,13 +287,13 @@ export const Header=({socket})=>{
                                         <div >
                                         <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                             <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
-                                            <p>Task</p>
+                                            <p style={{fontWeight:500}}>Task</p>
                                         </div>
                                         {results.task?results.task.map(item=>
                                             <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id)}}>
                                                 <div style={{display:'flex', justifyContent:'space-between'}}>
-                                                    <p style={{fontWeight:'600', fontSize:'16px'}}>{item.title}</p>
-                                                    <div className={`priority-${item.priority.toLowerCase()}`}>{item.priority}</div>
+                                                    <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
+                                                    <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{item.priority}</div>
                                                 </div>
                                                 <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
                                                                     {new Intl.DateTimeFormat('en-CA', {
@@ -329,7 +329,7 @@ export const Header=({socket})=>{
                     overlayId={isClick} 
                     setOverlayId={setIsClick} 
                     taskId={isClick} 
-                    
+                    socket={socket}
                     projectId={results.task.find(item => item.id === isClick)?.project_id}
                 />
             )}  

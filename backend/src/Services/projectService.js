@@ -8,11 +8,47 @@ const createProject=async(title, startDate, dueDate, assignedUserId)=>{
             createdAt:startDate,
             endedAt:dueDate
         })
-        const taskMembers = assignedUserId.map(memberId => ({
+        const taskMembers = assignedUserId.map(member => ({
             projectId: result.id,
-            userId:memberId
+            userId:member.userId,
+            role:member.role
         }));
-        await db.ProjectMember.bulkCreate(taskMembers);
+        await Promise.all(taskMembers.map(user=>{
+            if(user.role==='admin'){
+               return db.ProjectMember.create({
+                    projectId:user.projectId,
+                    role:user.role,
+                    userId:user.userId,
+                    canEditProject:true,	
+                    canDeleteProject:true,	
+                    canCreateTask:true,	
+                    canEditTask	: true,
+                    canDeleteTask: true
+                })
+            } else if(user.role==='editor'){
+                return db.ProjectMember.create({
+                    projectId:user.projectId,
+                    role:user.role,
+                    userId:user.userId,
+                    canEditProject:false,	
+                    canDeleteProject:false,	
+                    canCreateTask:true,	
+                    canEditTask	: true,
+                    canDeleteTask: true
+                })
+            }else if(user.role==='viewer'){
+               return db.ProjectMember.create({
+                    projectId:user.projectId,
+                    role:user.role,
+                    userId:user.userId,
+                    canEditProject:false,	
+                    canDeleteProject:false,	
+                    canCreateTask:false,	
+                    canEditTask	: false,
+                    canDeleteTask: false
+                })
+            }
+        }))
     } catch (error){
         throw new Error(`check error ${error}`)
     }
@@ -72,7 +108,7 @@ const getAllProject=async(userId)=>{
         }
       )))
       console.log(result)
-      const plainResult =await result.map(project => project.get({ plain: true }))    
+      const plainResult =await result.map(project => project.get({ plain: true }))  
       return plainResult
     } catch (error){
       throw new Error(`check error ${error}`)

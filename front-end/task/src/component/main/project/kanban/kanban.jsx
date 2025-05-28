@@ -25,10 +25,17 @@ export const Kanban = () => {
     const { t } = useTranslation();
     const { id } = useParams()
     const dispatch=useDispatch()
+    const theme=useSelector((state)=>state.setting.darkMode)
+
     const location=useLocation()
     const tasks=useSelector((state)=>state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
     const hasUnsavedChanges = useSelector(state => state.tasks.hasUnsavedChanges);
+    const [users, setUser]=useState([])//list of user
+    const [formattedUsers, setFormatedUser]=useState([])
+    const [taskDetailMembers, setTaskDetailMember]=useState([])
+    const [assignedUserId, setAssignedUserId] = useState([]);
+    console.log(formattedUsers)
     // Hàm di chuyển item khi kéo thả
     const moveItem = (id, newStatus) => {
         try{
@@ -37,6 +44,36 @@ export const Kanban = () => {
           console.log(error)
         }
     };
+     useEffect(()=>{
+              async function getAllUser(){
+                try{
+                  const result = await task.getAllUser()
+                  console.log(result)
+                  console.log('hihihihihihihih')
+
+                  const formatted = await result.map(user => ({
+                    value: user.id, // Dùng ID làm giá trị
+                    label: (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
+                          <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+                          <span>{user.firstname} {user.lastname}</span>
+                        </div>
+                      )// Dùng username làm tên hiển thị
+                    }));
+                  setUser(result)
+                  console.log(formatted)
+                  const result2 = await task.getUserByProjectId(id)
+                  const formattedProjectUser = result2.map(user =>
+                        formatted.find(u => u.value === user.id)
+                  ).filter(Boolean); 
+                  console.log(formattedProjectUser)// Loại bỏ phần tử undefined nếu không tìm thấy
+                  setFormatedUser(formattedProjectUser)
+                } catch(error){
+                  console.log(error)
+                }
+              }
+              getAllUser()
+    },[id])
     useEffect(()=>{
       async function fetchTask(){
         try{
@@ -95,10 +132,18 @@ export const Kanban = () => {
                     status="To do" 
                     title={t('kanban.todo')} 
                     projectId={id}
+                    formattedUsers={formattedUsers}
+                    setFormatedUser={setFormatedUser}
+                    users={users}
+                    setUser={setUser}
+                    taskDetailMembers={taskDetailMembers}
+                    setTaskDetailMember={setTaskDetailMember}
+                    assignedUserId={assignedUserId}
+                    setAssignedUserId={setAssignedUserId}
                     tasks={tasks}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
-                    borderColor=" #007bff" 
+                    borderColor="#007bff" 
                 />
 
                 {/* In Progress Column */}
@@ -107,6 +152,14 @@ export const Kanban = () => {
                     title={t('kanban.inProgress')} 
                     tasks={tasks}
                     projectId={id}
+                    formattedUsers={formattedUsers}
+                    setFormatedUser={setFormatedUser}
+                    users={users}
+                    setUser={setUser}
+                    taskDetailMembers={taskDetailMembers}
+                    setTaskDetailMember={setTaskDetailMember}
+                    assignedUserId={assignedUserId}
+                    setAssignedUserId={setAssignedUserId}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
                     borderColor="#f59e0b" 
@@ -118,6 +171,14 @@ export const Kanban = () => {
                     title={t('kanban.complete')} 
                     tasks={tasks}
                     projectId={id}
+                    formattedUsers={formattedUsers}
+                    setFormatedUser={setFormatedUser}
+                    users={users}
+                    setUser={setUser}
+                    taskDetailMembers={taskDetailMembers}
+                    setTaskDetailMember={setTaskDetailMember}
+                    assignedUserId={assignedUserId}
+                    setAssignedUserId={setAssignedUserId}
                     taskMembers={taskMembers}
                     moveItem={moveItem}
                     borderColor="rgb(50, 213, 131)" 
@@ -128,9 +189,29 @@ export const Kanban = () => {
 };
 
 // Định nghĩa KanbanColumn bên ngoài Kanban nhưng vẫn trong cùng file
-const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor, projectId }) => {
+const KanbanColumn = ({
+    status,
+    title,
+    tasks,
+    taskMembers,
+    moveItem,
+    borderColor,
+    projectId,
+    users,
+    setUser,
+    formattedUsers,
+    setFormatedUser,
+    taskDetailMembers,
+    setTaskDetailMember,
+    assignedUserId,
+    setAssignedUserId
+})=> {
+    console.log(formattedUsers)
+    const {role}=useOutletContext()
+    const isDroppable = role !== 'viewer';
     const [{ isOver }, drop] = useDrop({
         accept: ItemType,
+        canDrop:()=>isDroppable,
         drop: (item) => moveItem(item.id, status),
         collect: (monitor) => ({
             isOver: monitor.isOver(),
@@ -162,7 +243,17 @@ const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor,
             </div>
             <div className='kanbanItemList'>
                 {mergeTask.map((task) => (
-                    <KanbanItem key={task.id} taskItem={task} projectId={projectId} />
+                    <KanbanItem key={task.id}
+                                taskItem={task}
+                                users={users}
+                                formattedUsers={formattedUsers}
+                                setFormatedUser={setFormatedUser}
+                                projectId={projectId}
+                                taskDetailMembers={taskDetailMembers}
+                                setTaskDetailMember={setTaskDetailMember}
+                                assignedUserId={assignedUserId}
+                                setAssignedUserId={setAssignedUserId}
+                    />
                 ))}
             </div>
         </div>
@@ -170,11 +261,18 @@ const KanbanColumn = ({ status, title, tasks,taskMembers, moveItem, borderColor,
 };
 
 // Định nghĩa KanbanItem bên ngoài Kanban nhưng vẫn trong cùng file
-const KanbanItem = ({ taskItem, projectId }) => {
+const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser,assignedUserId,setAssignedUserId, taskDetailMembers,setTaskDetailMember }) => {
     const { t } = useTranslation();
+    const userId=useSelector(state=>state.userProfile.id)
+    const avatar=useSelector(state=>state.userProfile.avatar)
+    const lastname=useSelector(state=>state.userProfile.lastname)
+    const firstname=useSelector(state=>state.userProfile.firstname)
+    const {role}=useOutletContext()
+    const isDraggable = role !== 'viewer';
     const [{ isDragging }, drag] = useDrag({
         type: ItemType,
         item: { id: taskItem.id },
+        canDrag: isDraggable,
         collect: (monitor) => ({
             isDragging: monitor.isDragging(),
         }),
@@ -202,11 +300,8 @@ const KanbanItem = ({ taskItem, projectId }) => {
         const [startDate, setStartDate] = useState("");
         const [dueDate, setDueDate] = useState("");
         const [isSelecting, setIsSelecting] = useState(false);
-        const [users, setUser]=useState([])//list of user
-        const [formattedUsers, setFormatedUser]=useState([])
-        const [taskDetailMembers, setTaskDetailMember]=useState([])
-        const [assignedUserId, setAssignedUserId] = useState([]);
         const [deleteAttachment, setDeleteAttachment]=useState(false)
+        console.log(formattedUsers)
         const tabs=[
             { value: 'Detail', label: 'Detail' },
             { value: 'Comment', label: 'Comment' },
@@ -327,11 +422,43 @@ const KanbanItem = ({ taskItem, projectId }) => {
             fileInputRef.current.click();
         };
         const handleFileChange = async (event, id) => {
+          const formattedUsersId=assignedUserId.map(user=>user.value)
           const file = event.target.files[0]; // Lấy file người dùng chọn
           if (file) {
             console.log("Selected file: ", file);
             try{
                const result=await task.uploadAttachment(file, id)
+               const data={
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                const result2 = await task.createNoti(data)
+                const socketData={
+                    notiId:result2,
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                socket.emit('new-update', socketData)
                getTaskDetail(id)
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -340,32 +467,7 @@ const KanbanItem = ({ taskItem, projectId }) => {
         };
         
         console.log(taskDetail)
-        useEffect(()=>{
-              async function getAllUser(){
-                try{
-                  const result = await task.getAllUser()
-                  const formatted = result.map(user => ({
-                    value: user.id, // Dùng ID làm giá trị
-                    label: (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
-                          <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
-                          <span>{user.firstname} {user.lastname}</span>
-                        </div>
-                      )// Dùng username làm tên hiển thị
-                    }));
-                  setUser(result)
-                  const result2 = await task.getUserByProjectId(projectId)
-                  const formattedProjectUser = result2.map(user =>
-                        formatted.find(u => u.value === user.id)
-                  ).filter(Boolean); // Loại bỏ phần tử undefined nếu không tìm thấy
-                  setFormatedUser(formattedProjectUser)
-                  
-                } catch(error){
-                  console.log(error)
-                }
-              }
-              getAllUser()
-        },[projectId])
+
         async function getTaskDetail(task_id){
             try{
                 const result=await task.getTaskDetail(task_id)
@@ -429,7 +531,39 @@ const KanbanItem = ({ taskItem, projectId }) => {
         async function handleDeleteAttachment(s3UrlFromDB, id, task_id){
             try{
                 const key = extractS3KeyFromUrl(s3UrlFromDB);
+                const formattedUsersId=assignedUserId.map(user=>user.value)
                 const result=await task.deleteAttachment(key, id)
+                const data={
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                const result2 = await task.createNoti(data)
+                const socketData={
+                    notiId:result2,
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                socket.emit('new-update', socketData)
                 getTaskDetail(task_id)
                 setDeleteAttachment(false)
             }catch (error){
@@ -468,7 +602,40 @@ const KanbanItem = ({ taskItem, projectId }) => {
                      dueDate: dueDate
                     }
                 )
-                await dispatch(getAllTask(id))
+                const data={
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                const result2 = await task.createNoti(data)
+                const socketData={
+                    notiId:result2,
+                    taskId:taskId,
+                    actorId:userId,
+                    assignedUserId:formattedUsersId,
+                    user:{
+                        id: userId,
+                        avatar:avatar,
+                        firstname:firstname,
+                        lastname:lastname
+                    },
+                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    projectId: projectId,
+                    createdAt:new Date().toISOString()
+                }
+                socket.emit('new-update', socketData)
+                dispatch(getAllTodayTask())
+                dispatch(getAllUpcomingTask())
+                dispatch(getAllTask(id))
             }catch(error){
                 console.log(error)
             }
@@ -483,20 +650,22 @@ const KanbanItem = ({ taskItem, projectId }) => {
                 console.log(error)
             }
         }
+        console.log(users)
         useEffect(() => {
             if (taskDetailMembers.length > 0 && users.length > 0) {
               const preselectedUsers = formattedUsers.filter(option =>
                 taskDetailMembers.some(user => user.id === option.value)
               );
               console.log('❌ selectedUsers is null or empty');
-    
+       
               setAssignedUserId(preselectedUsers);
+            }else{
+                console.log('❌ selectedUsers is null or empty');
             }
+
         }, [taskDetailMembers, formattedUsers]);
-        useEffect(() => {
-            console.log("✅ assignedUserId updated:", assignedUserId);
-        }, [assignedUserId]);
-        console.log(users)
+        
+        console.log(role)
         console.log(taskDetailMembers)
         console.log(assignedUserId)
         console.log(taskItem)
@@ -508,22 +677,43 @@ const KanbanItem = ({ taskItem, projectId }) => {
             style={{ opacity: isDragging ? 0.5 : 1 }}
             onClick={()=>getTaskDetail(taskItem.id)}
         >
-            <div className={`priority-${taskItem.priority.toLowerCase()}`} style={{display:'inline-block', marginBottom:'4px'}}>{t(`list.priority.${taskItem.priority}`)}</div>
-            <p>{taskItem.title}</p>
+            <div style={{display:'flex', justifyContent:'space-between'}}>
+                <p>{taskItem.title}</p>
+                <div className={`priority-${taskItem.priority.toLowerCase()}`} style={{display:'inline-block', marginBottom:'4px'}}>{t(`list.priority.${taskItem.priority}`)}</div>
+            </div>
             <span>{taskItem.description}</span>
-            <div className="member" style={{display:'flex', gap:'.5rem'}}>
+            <div style={{display:'flex', justifyContent:'space-between', alignItems:'center',borderTop:'1px solid'}}>
+                <div style={{display:'flex', gap:'.5rem', fontSize:'12px', paddingTop:'.5rem'}}>
+                    <div>
+                        {new Intl.DateTimeFormat('en-CA', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        timeZone: timezone,
+                        }).format(new Date(taskItem.endedAt))}
+                    </div>
+                    <div>
+                        {new Intl.DateTimeFormat('en-US', {
+                        hour: 'numeric',
+                        minute: '2-digit',
+                        hour12: true,
+                        timeZone: timezone,
+                        }).format(new Date(taskItem.endedAt))}
+                    </div>
+                </div>
+                <div className="member" style={{display:'flex', gap:'.5rem'}}>
                 {taskItem.members.length>3?(
                     <>
                         {taskItem.members.slice(2).map(member=>
                             <div>
-                                <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'24px ', width: '24px '}} alt="Avatar" />
                              </div>
                         )}
                             <div
                                 style={{
                                     borderRadius: '50%',
-                                    height: '32px',
-                                    width: '32px',
+                                    height: '24px',
+                                    width: '24px',
                                     backgroundColor: '#fff',
                                     display: 'flex',
                                     alignItems: 'center',
@@ -538,10 +728,11 @@ const KanbanItem = ({ taskItem, projectId }) => {
                     </>
                     ):(taskItem.members.map(member=>
                         <div>
-                            <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                            <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'24px ', width: '24px '}} alt="Avatar" />
                         </div>
                     ))
                     }
+                </div>
             </div>
         </div>
         <div className={`overlay-${overlay?'active':'unActive'}`}>
@@ -559,7 +750,147 @@ const KanbanItem = ({ taskItem, projectId }) => {
                             </div>
                         </div>
                     </div>
-                ):(taskDetail&&status&&priority?taskDetail.map(item=>
+                ):(taskDetail&&status&&priority?taskDetail.map(item=>{
+                    return role=='viewer'?(
+                        <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
+                        <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail'), setOverlay(false)}}><X></X></div>
+                        <div className='status-priority' style={{width: '250px'}}>
+                            <div className={`priority-${priority.toLowerCase()}`} style={{padding:'4px 8px', fontSize:14}}>
+                                {priority}
+                            </div>
+                            <div className={`status-${status.toLowerCase().replace(/\s/g, '')}`} style={{padding:'4px 8px', fontSize:14}} >
+                                {status}
+                            </div>
+                        </div>
+                        <div className='title'>
+                            <p style={{border: 'none',outline: 'none', boxShadow: 'none', fontWeight:700, fontSize:28}}>{title}</p>
+                        </div>
+                        <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
+                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                                <div style={{display:'flex', gap:'.5rem', fontSize:'14px', fontWeight:'500'}}>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-CA', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        timeZone: timezone,
+                                        }).format(new Date(taskItem.endedAt))}
+                                    </div>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-US', {
+                                        hour: 'numeric',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                        timeZone: timezone,
+                                        }).format(new Date(taskItem.endedAt))}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                                <div style={{display:'flex', gap:'.5rem', fontSize:'14px',fontWeight:'500'}}>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-CA', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        timeZone: timezone,
+                                        }).format(new Date(taskItem.endedAt))}
+                                    </div>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-US', {
+                                        hour: 'numeric',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                        timeZone: timezone,
+                                        }).format(new Date(taskItem.endedAt))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="taskHeader" style={{width:'165px'}}>
+                            {tabs.map(tab => (
+                            <div
+                                key={tab.value}
+                                className={`tabItem ${isOpenTab === tab.value ? 'active' : ''}`}
+                                onClick={() => setIsOpenTab(tab.value)}
+                            >
+                                {tab.label}
+                            </div>
+                            ))}
+                        </div>
+                        {isOpenTab==='Detail'?<div className='taskDetail-body'>
+                            <div className='body-item'>
+                                <h4>Description</h4>
+                                <div>
+                                    <p style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}>{description}</p>
+                                </div>
+                            </div>
+                            <div className='body-item'>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                </div>
+                                
+                                <div style={{maxHeight:'150px', overflowY:'scroll'}}>
+                                    {taskDetailMembers.map(user=>
+                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                            <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
+                                            <div>
+                                                <span>{user.firstname}</span>
+                                                <span> </span>
+                                                <span>{user.lastname}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
+                                        <input type='file' ref={fileInputRef} 
+                                        onChange={(e)=>handleFileChange(e, item.id)} 
+                                        style={{ display: 'none' }}></input>Upload</div>
+                                </div>
+                                <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
+                                {item.attachment.map((file, index) => {
+                                    const isGoogleDrive = file.url.includes("drive.google.com");
+                                    const isPdf = file.url.endsWith(".pdf");
+                                    const isDoc = file.url.endsWith(".docx");
+                                    const isExcel=file.url.endsWith('.xlsx')
+                                    return (
+                                        <div key={index} className="attachment-box">
+                                        <div style={{ display: 'flex', alignItems:'center', gap: '8px' }}>
+                                            {isGoogleDrive ? (
+                                            <FaGoogleDrive size={24} />
+                                            ) : isPdf ? (
+                                            <img src={pdf} style={{height:'32px', width:'28px'}} />
+                                            ) : isDoc ? (
+                                            <img src={word} style={{height:'24px', width:'24px'}} />
+                                            ): isExcel?(
+                                                <img src={excel} style={{height:'24px', width:'24px'}} />
+                                            ):(
+                                                <Paperclip style={{height:'24px', width:'24px', color:'rgb(107, 114, 128)'}} />  
+                                            )}
+
+                                            <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
+                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <div style={{display:'flex', gap:'1rem'}}>
+                                                <div onClick={()=>handleDownload(file.url)}>
+                                                    <Download style={{color:'#007bff'}} />
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    );
+                                })}
+                                </div>
+                            </div>
+                
+                        </div>:<Comment role={role} socket={socket} taskId={item.id} assignedUserId={assignedUserId} projectId={projectId}></Comment>}
+                    </div>
+                    ):(
                     <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
                         <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail'), setOverlay(false)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
@@ -633,7 +964,7 @@ const KanbanItem = ({ taskItem, projectId }) => {
                             <div className='body-item'>
                                 <h4>Description</h4>
                                 <div>
-                                    <input value={description} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
+                                    <input value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
                                 </div>
                             </div>
                             <div className='body-item'>
@@ -726,7 +1057,7 @@ const KanbanItem = ({ taskItem, projectId }) => {
                                 </div>
                             </div>
                 
-                        </div>:<Comment socket={socket} taskId={item.id}></Comment>}
+                        </div>:<Comment socket={socket} taskId={item.id} assignedUserId={assignedUserId} projectId={projectId}></Comment>}
                         <div className='taskDetail-footer'>
                                 <div className='edit' onClick={handleSaveEdit}>
                                    <FilePenLine></FilePenLine>
@@ -753,7 +1084,8 @@ const KanbanItem = ({ taskItem, projectId }) => {
                             </div>
                         </div>
                     </div>
-                ):<div>Loading</div>
+                    )
+                }):<div>Loading</div>
                 )}
             </div>
  

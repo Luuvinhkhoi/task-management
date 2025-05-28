@@ -17,7 +17,6 @@ export const Project = ()=>{
     const userName=useSelector((state)=>state.userProfile.firstname)
     const lastname=useSelector((state)=>state.userProfile.lastname)
     const avatar=useSelector((state)=>state.userProfile.avatar)
-    console.log(avatar)
     const {socket}=useOutletContext()
     const dispatch=useDispatch()
     const darkMode = useSelector((state) => state.setting.darkMode);
@@ -37,6 +36,7 @@ export const Project = ()=>{
     const [projectId, setProjectId] = useState("");
     const [users, setUser]=useState([])
     const [projectUsers, setProjectUser]=useState([])
+    const [role, setRole]=useState()
     const [formattedUser, setFormatedUser]=useState([])
     const [formattedProjectUser, setFormatedProjectUser]=useState([])
     const location=useLocation()
@@ -178,8 +178,21 @@ export const Project = ()=>{
       }
   };
     useEffect(()=>{
-      setProjectId(param.id)
+        setProjectId(param.id)
     },[param])
+    useEffect(()=>{
+      async function setUserRole(){
+        try{
+          const result=await task.getUserRole(param.id)
+          console.log('hihi')
+          setRole(result[0].role)
+        }catch(error){
+          console.log(error)
+        }
+      }
+      setUserRole()
+    },[projectId])
+    console.log(role)
     useEffect(()=>{
       async function getAllUser(){
         try{
@@ -232,7 +245,10 @@ export const Project = ()=>{
                 <div style={{cursor:'pointer'}} className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>{t('project.List')}</div>
              </div>
              <div className='headerItem'>  
-                <div className='create' onClick={()=>setTaskFormOpen(true)}>{t('project.New task')}</div>
+                <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+                    <div style={{fontWeight:'500', fontSize:16}}>Your role: {role}</div>
+                    <div className='create' onClick={()=>setTaskFormOpen(true)}>{t('project.New task')}</div>
+                </div>
                 <div className={`overlay-${taskFormOpen?'active':'unActive'}`}>
                   <form className={`projectForm-${taskFormOpen?'active':'unActive'}`} onSubmit={handleTaskSubmit} >
                       <div className='close-button' onClick={()=>{setTaskFormOpen(!taskFormOpen)}}><X></X></div>
@@ -308,7 +324,7 @@ export const Project = ()=>{
                 </div>
              </div>
            </div>
-           <Outlet context={{socket}}></Outlet>  
+           <Outlet context={{socket, role}}></Outlet>  
         </div>
     )
 }

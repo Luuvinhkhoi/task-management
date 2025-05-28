@@ -4,7 +4,7 @@ import { useTimezone } from '../../../../timezoneContext';
 import task from "../../../../util/task";
 import {io} from 'socket.io-client'
 import './comment.css'
-export const Comment=({projectId,assignedUserId,socket,taskId})=>{
+export const Comment=({role,projectId,assignedUserId,socket,taskId})=>{
     const [comments, setComments] = useState([]);
     const { timezone } = useTimezone();
     const [newComment, setNewComment] = useState('');
@@ -111,59 +111,101 @@ export const Comment=({projectId,assignedUserId,socket,taskId})=>{
       }, [comments])
     
       return(
-          <div className="comment">
-            <div style={{maxHeight:'200px', overflowY:'scroll', marginBottom:'1rem'}}   ref={commentsEndRef}>
-              {comments.map((comment, index) => (
-                <div key={index} className="comment-item" >
-                  <div className="avatar">
-                    <img src={comment.user.avatar? comment.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
-                  </div>
-                  <div className="comment-content">
-                    <div style={{fontSize:'14px', fontWeight:'600', display:'flex', justifyContent:'space-between'}}>
-                      <div>
-                        <span>{comment.user.firstname}</span>
-                        <span> </span>
-                        <span>{comment.user.lastname}</span>
-                      </div>
-                      <div style={{display:'flex', gap:'.5rem', fontSize:'14px'}}>
-                        <div>
-                                      {new Intl.DateTimeFormat('en-CA', {
-                                        year: 'numeric',
-                                        month: '2-digit',
-                                        day: '2-digit',
-                                        timeZone: timezone,
-                                      }).format(new Date(comment.createdAt))}
-                        </div>
-                        <div>{new Intl.DateTimeFormat('en-US', {
-                                        hour: 'numeric',
-                                        minute: '2-digit',
-                                        hour12: true,
-                                        timeZone: timezone,
-                                      }).format(new Date(comment.createdAt))}
-                        </div>
-                      </div>
+          role==='viewer'?(
+            <div className="comment">
+              <div style={{maxHeight:'200px', overflowY:'scroll', marginBottom:'1rem'}}   ref={commentsEndRef}>
+                {comments.map((comment, index) => (
+                  <div key={index} className="comment-item" >
+                    <div className="avatar">
+                      <img src={comment.user.avatar? comment.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
                     </div>
-                    <p className="comment-text">{comment.content}</p>
+                    <div className="comment-content">
+                      <div style={{fontSize:'14px', fontWeight:'600', display:'flex', justifyContent:'space-between'}}>
+                        <div>
+                          <span>{comment.user.firstname}</span>
+                          <span> </span>
+                          <span>{comment.user.lastname}</span>
+                        </div>
+                        <div style={{display:'flex', gap:'.5rem', fontSize:'14px'}}>
+                          <div>
+                                        {new Intl.DateTimeFormat('en-CA', {
+                                          year: 'numeric',
+                                          month: '2-digit',
+                                          day: '2-digit',
+                                          timeZone: timezone,
+                                        }).format(new Date(comment.createdAt))}
+                          </div>
+                          <div>{new Intl.DateTimeFormat('en-US', {
+                                          hour: 'numeric',
+                                          minute: '2-digit',
+                                          hour12: true,
+                                          timeZone: timezone,
+                                        }).format(new Date(comment.createdAt))}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="comment-text">{comment.content}</p>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-           <form onSubmit={submit}>
-              <div>
-                <img src={avatar? avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}}></img>
+                ))}
               </div>
-              <textarea
-                  placeholder="Thêm bình luận..."
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();   
-                      submit(e);          
-                    }
-                  }}
-              />
-           </form>
-        </div>
+            
+          </div>
+          ):(
+            <div className="comment">
+              <div style={{maxHeight:'200px', overflowY:'scroll', marginBottom:'1rem'}}   ref={commentsEndRef}>
+                {comments.map((comment, index) => (
+                  <div key={index} className="comment-item" >
+                    <div className="avatar">
+                      <img src={comment.user.avatar? comment.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                    </div>
+                    <div className="comment-content">
+                      <div style={{fontSize:'14px', fontWeight:'600', display:'flex', justifyContent:'space-between'}}>
+                        <div>
+                          <span>{comment.user.firstname}</span>
+                          <span> </span>
+                          <span>{comment.user.lastname}</span>
+                        </div>
+                        <div style={{display:'flex', gap:'.5rem', fontSize:'14px'}}>
+                          <div>
+                                        {new Intl.DateTimeFormat('en-CA', {
+                                          year: 'numeric',
+                                          month: '2-digit',
+                                          day: '2-digit',
+                                          timeZone: timezone,
+                                        }).format(new Date(comment.createdAt))}
+                          </div>
+                          <div>{new Intl.DateTimeFormat('en-US', {
+                                          hour: 'numeric',
+                                          minute: '2-digit',
+                                          hour12: true,
+                                          timeZone: timezone,
+                                        }).format(new Date(comment.createdAt))}
+                          </div>
+                        </div>
+                      </div>
+                      <p className="comment-text">{comment.content}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            <form onSubmit={submit}>
+                <div>
+                  <img src={avatar? avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}}></img>
+                </div>
+                <textarea
+                    placeholder="Thêm bình luận..."
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();   
+                        submit(e);          
+                      }
+                    }}
+                />
+            </form>
+          </div>
+          )
     )
 }

@@ -59,7 +59,15 @@ const getUserByProjectId= async(projectId)=>{
     console.log(plainResult)
     const result2= await Promise.all(plainResult.map(item=>db.User.findByPk(item.userId)))
     const plainResult2 =await result2.map(user => user.get({ plain: true }))
-    return plainResult2
+    const merge=plainResult2.map((user, index)=>
+        {
+            return{
+                ...user,
+                role:plainResult[index].role
+            }
+        }
+      )  
+    return merge
   } catch (error) {
     throw new Error(`check error ${error}`, error)  
   }
@@ -79,10 +87,29 @@ const updateUser=async(id,updateData)=>{
 
   }
 }
+const getUserRole=async(userId, projectId)=>{
+  try{
+    let result= await db.ProjectMember.findAll(
+      {
+        where:{
+          projectId: projectId,
+          userId:userId
+        }
+      }
+    )
+    console.log(result)
+    const plainResult=await result.map(item=>item.get({plain:'true'}))
+    return plainResult
+  } catch (error){
+    throw new Error(`check error ${error}`, error)  
+
+  }
+}
 module.exports={
     createUser,
     loginUser,
     getAllUser,
     updateUser,
-    getUserByProjectId
+    getUserByProjectId,
+    getUserRole
 }

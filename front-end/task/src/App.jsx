@@ -29,7 +29,7 @@ function App() {
   const project=useSelector(state=>state.projects.projects)
   useEffect(() => {
     dispatch(getAllSetting())
-}, []);
+  }, []);
   useEffect(() => {
       if (language) {
         i18n.changeLanguage(language);

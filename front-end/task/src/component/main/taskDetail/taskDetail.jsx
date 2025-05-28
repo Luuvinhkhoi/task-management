@@ -286,6 +286,7 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                 socket.emit('new-update', socketData)
                 dispatch(getAllTodayTask())
                 dispatch(getAllUpcomingTask())
+                dispatch(getAllTask(projectId))
             }catch(error){
                 console.log(error)
             }
@@ -350,13 +351,12 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
             if (taskDetailMembers.length > 0 && users.length > 0) {
                 const preselectedUsers = formattedUsers.filter(option =>
                 taskDetailMembers.some(user => user.id === option.value)
-                );
-                console.log('❌ selectedUsers is null or empty');
-    
+                );    
                 setAssignedUserId(preselectedUsers);
             }
     }, [taskDetailMembers, formattedUsers]);
     console.log(assignedUserId)
+
     useEffect(()=>{
         async function getAllUser(){
             try{
@@ -369,7 +369,7 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                         <span>{user.firstname} {user.lastname}</span>
                         </div>
                     )// Dùng username làm tên hiển thị
-                }));
+                    }));
                     setUser(result)
                     const result2 = await task.getUserByProjectId(projectId)
                     const formattedProjectUser = result2.map(user =>
@@ -383,7 +383,7 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
         getAllUser()
     },[])
     console.log(taskId)
-    console.log(overlayId)
+    console.log(taskDetailMembers)
     return(
         <div className={`overlay-${overlayId===taskId?'active':'unActive'}`}>
             {deleteTask?(

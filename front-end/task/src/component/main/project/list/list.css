@@ -15,7 +15,7 @@
 }
 .listHeader{
     display: grid;
-    grid-template-columns: .5fr 1.5fr .5fr .5fr .5fr .5fr .5fr;
+    grid-template-columns: .5fr 1fr .5fr .5fr .5fr .5fr .5fr;
     font-size: 14px;
     font-weight: 500;
     padding-bottom: .5rem;
@@ -29,7 +29,7 @@
 }
 .listContentItem{
     display: grid;
-    grid-template-columns: .5fr 1.5fr .5fr .5fr .5fr .5fr .5fr;
+    grid-template-columns: .5fr 1fr .5fr .5fr .5fr .5fr .5fr;
     align-items: center;
     text-align: left;
     font-size: 14px;

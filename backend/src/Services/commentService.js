@@ -24,10 +24,8 @@ class CommentService {
         order: [['createdAt', 'ASC']],
       }
     );
-    console.log(result)
     const plainResult=await Promise.all(result.map(item=>item.get({plain:true})))
     const result2=await Promise.all(plainResult.map(item=>db.User.findByPk(item.user_id)))
-    console.log(result2)
     const plainResult2=await Promise.all(result2.map(item=>item.get({plain:true})))
     const mergedResult=plainResult.map((item, index)=>{
         return{

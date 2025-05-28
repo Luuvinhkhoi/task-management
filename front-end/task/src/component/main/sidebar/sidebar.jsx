@@ -16,6 +16,7 @@ import { fetchProjects } from '../../../store/project'
 import { RenderDropdown } from './optionMenu'
 export const SideBar = ()=>{
    let location=useLocation()
+   const theme=useSelector((state)=>state.setting.darkMode)
    const darkMode = useSelector((state) => state.setting.darkMode);
    const {t}=useTranslation()
    const selectRef = useRef();
@@ -42,6 +43,7 @@ export const SideBar = ()=>{
    const [formattedProjectUser, setFormatedProjectUser]=useState([])
    const [initialProjectUSer, setInitialProjectUser]=useState()
    const [isOpen, setIsOpen]=useState('unActive')
+   const permission={admin:'Admin', editor:'Editor', viewer:'Viewer'}
    const navigate=useNavigate()
    const customStyles =(darkMode) =>({
       control: (base, state) => ({
@@ -76,6 +78,7 @@ export const SideBar = ()=>{
         zIndex: 9999,
       }),
    });
+   
    const customComponents = {
       MultiValue: () => null, // Không render gì cả
    };
@@ -131,41 +134,53 @@ export const SideBar = ()=>{
    const handleSelect = (selectedUsers) => {
       console.log(selectedUsers)
       if(selectedUsers) {
-          console.log(selectedUsers)
           const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
-          console.log(assignedIds)
-          console.log(users)
           const userMap = new Map(users.map(user => [user.id, user]));
-          console.log(userMap)
           const selected= assignedIds.map(id => userMap.get(id));
-          console.log(selected) 
-          setAssignedUserId(assignedIds);
-          setProjectUser(selected);
-          const formattedUsers = selected.map(user => ({
-            value: user.id, // Dùng ID làm giá trị
-            label: `${user.firstname} ${user.lastname}`,// Dùng username làm tên hiển thị
-            avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
-          }));
           console.log(formattedUser)
           console.log(assignedIds)
-          setFormatedProjectUser(formattedUsers)
-          setAssignedUserId(assignedIds)
-
-
+          console.log(userMap)
+          console.log(selected)
+          console.log(assignedIds)
+          setFormatedProjectUser(selectedUsers)
+          setProjectUser(selected)
+          const assignedWithRole = assignedIds.map(id => ({
+            userId: id,
+            role: 'admin',
+          }));
+          setAssignedUserId(assignedWithRole)
       } else {
           console.log('❌ selectedUsers is null or empty');
           // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
           setAssignedUserId([]);
       }
    }
+   const handleSelectRole=(id, role)=>{
+      const updatedMembers = assignedUserId.map(member => {
+        if (member.userId === id) {
+          return { ...member, role: role }; // tạo object mới
+        }
+        return member;
+      });
+      setAssignedUserId(updatedMembers);
+
+         
+   }
    const handleCreateProject=async()=>{
       const result = await task.getAllUser()
-      const formattedUsers = result.map(user => ({
+      console.log(result)
+      setUser(result)
+      const formatted =result.map(user => ({
         value: user.id, // Dùng ID làm giá trị
-        label: `${user.firstname} ${user.lastname}`,// Dùng username làm tên hiển thị
-        avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
+        label: (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
+              <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+              <span>{user.firstname} {user.lastname}</span>
+            </div>
+        )// Dùng username làm tên hiển thị
       }));
-      setFormatedUser(formattedUsers)
+      console.log(formatted)
+      setFormatedUser(formatted)
       setProjectUser([])
       setTitle("")
       setDueDate()
@@ -175,15 +190,18 @@ export const SideBar = ()=>{
    const handleEditProject= async (id)=>{
     try{
       const result = await task.getAllUser()
-      const formattedUsers = result.map(user => ({
+      const formatted =result.map(user => ({
         value: user.id, // Dùng ID làm giá trị
-        label: `${user.firstname} ${user.lastname}`,// Dùng username làm tên hiển thị
-        avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
+        label: (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
+              <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
+              <span>{user.firstname} {user.lastname}</span>
+            </div>
+        )// Dùng username làm tên hiển thị
       }));
       const result2 = await task.getUserByProjectId(id)
-      const projectUserIds = result2.map(user => user.id);
       const formattedProjectUser = result2.map(user =>
-       formattedUsers.find(u => u.value === user.id)
+       formatted.find(u => u.value === user.id)
      ).filter(Boolean);
       // Loại bỏ phần tử undefined nếu không tìm thấy
       const result3=await task.getProjectById(id)
@@ -192,8 +210,7 @@ export const SideBar = ()=>{
       setDueDate(result3.endedAt)
       setProjectUser(result2)
       setUser(result)
-      setFormatedUser(formattedUsers)
-      setFormatedProjectUser(formattedProjectUser)
+      setFormatedUser(formatted)
       const assignedIds = formattedProjectUser.map((user) => user.value);
       setAssignedUserId(assignedIds)
     } catch(error){
@@ -227,60 +244,23 @@ export const SideBar = ()=>{
         setIsOpen('active')
       }
     }, [location.pathname])
+   useEffect(() => {
+            if (projectUsers.length > 0 && users.length > 0) {
+                const preselectedUsers = formattedUser.filter(option =>
+                 projectUsers.some(user => user.id === option.value)
+                );    
+                setFormatedProjectUser(preselectedUsers);
+                setRole(projectUsers.find(user=>user.id===userId))
+            }
+  }, [projectUsers, formattedUser, users]);
    
-   useEffect(()=>{
-         async function getAllUser(){
-           try{
-             const result = await task.getAllUser()
-             const formattedUsers = result.map(user => ({
-               value: user.id, // Dùng ID làm giá trị
-               label: `${user.firstname} ${user.lastname}`,// Dùng username làm tên hiển thị
-               avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
-             }));
-             const result2 = await task.getUserByProjectId(param.id)
-             const projectUserIds = result2.map(user => user.id);
-             const formattedProjectUser = result2.map(user =>
-              formattedUsers.find(u => u.value === user.id)
-            ).filter(Boolean); // Loại bỏ phần tử undefined nếu không tìm thấy
-             setProjectUser(result2)
-             setInitialProjectUser(result2)
-             setUser(result)
-             setFormatedUser(formattedUsers)
-             setFormatedProjectUser(formattedProjectUser)
-             const assignedIds = formattedProjectUser.map((user) => user.value);
-             setAssignedUserId(assignedIds)
-           } catch(error){
-             console.log(error)
-           }
-         }
-         getAllUser()
-    },[param.id])
-    useEffect(()=>{
-      async function getAllUser(){
-        try{
-          const result = await task.getAllUser()
-          const formattedUsers = result.map(user => ({
-            value: user.id, // Dùng ID làm giá trị
-            label: `${user.firstname} ${user.lastname}`,// Dùng username làm tên hiển thị
-            avatar: user.avatar || 'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'
-          }));
-          setUser(result)
-          setFormatedUser(formattedUsers)
-          setFormatedProjectUser(formattedProjectUser)
-          const assignedIds = formattedProjectUser.map((user) => user.value);
-          setAssignedUserId(assignedIds)
-        } catch(error){
-          console.log(error)
-        }
-      }
-      getAllUser()
- },[])
     useEffect(()=>{
           dispatch(fetchProjects())
     },[])
    console.log(formattedUser)
+   console.log(formattedProjectUser)
    console.log(projectUsers)
-   
+   console.log(assignedUserId)
    return (
         <div className="sideBar">
            <div className='brand'>
@@ -319,7 +299,9 @@ export const SideBar = ()=>{
                            <ul>
                            
                             {projects.map((project)=>
-                             <div key={project.id} style={{position:'relative'}} className={isSubActive(`/project/${project.id}`)|| isSubActive(`/project/${project.id}/list`)? 'sub-active' : ''} onClick={(e)=>{e.stopPropagation(), setOptionFormOpen(null), navigate( `/project/${project.id}`)}}>
+                             <div key={project.id} style={{position:'relative'}} className={isSubActive(`/project/${project.id}`)|| isSubActive(`/project/${project.id}/list`)? 'sub-active' : ''} 
+                             onClick={(e)=>{e.stopPropagation(), setOptionFormOpen(null), navigate( `/project/${project.id}`)}}
+                             >
                                  <div style={{display:'flex', alignItems:'center', width:'100%', justifyContent:'space-between'}}><li>{project.title}</li>
                                  <Ellipsis 
                                           style={{paddingRight: '1rem'}}
@@ -362,7 +344,7 @@ export const SideBar = ()=>{
                                       </div>
                                     ):(
                                       <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={(e)=>handleProjectSubmit(e, project.id)}>
-                                            <div className='close-button' onClick={(e)=>{e.stopPropagation(),setEditFormOpen(null), setProjectFormOpen(null)}}><X></X></div>
+                                            <div className='close-button' onClick={(e)=>{e.stopPropagation(),setEditFormOpen(null), setProjectFormOpen(null), setFormatedProjectUser([])}}><X></X></div>
                                             <h3>Edit project</h3>
                                             <div className='title'>
                                               <input value={title} onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
@@ -402,22 +384,12 @@ export const SideBar = ()=>{
                                             </div>
                                             <div className='select'>
                                               <Select 
-                                                components={customComponents}
+                                                components={animatedComponents}
                                                 isMulti
                                                 value={formattedProjectUser}
                                                 styles={getCustomStyle}
                                                 options={formattedUser}
                                                 onChange={handleSelect}
-                                                formatOptionLabel={(option) => (
-                                                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    <img 
-                                                      src={option.avatar} 
-                                                      alt="avatar" 
-                                                      style={{ borderRadius: '50%', height: '32px', width: '32px' }} 
-                                                    />
-                                                    <span>{option.label}</span>
-                                                  </div>
-                                                )}
                                               ></Select>
                                             </div>
                                             <div className='member'>
@@ -433,7 +405,14 @@ export const SideBar = ()=>{
                                                                   <p>{user.email}</p>
                                                               </div>
                                                             </div>
-                                                            <X style={{height:'16px', width:'16px'}} onClick={()=>handleRemoveUser(user.id)}></X>
+                                                            <div style={{display:'flex',gap:16, alignItems:'center'}}>
+                                                              <select id="select" value={user.role}  onChange={(e)=>handleSelectRole(user.id, e.target.value)} style={{borderRadius:'.5rem', padding:4}}>
+                                                                <option value="admin">Admin</option>
+                                                                <option value="editor">Editor</option>
+                                                                <option value="viewer">Viewer</option>
+                                                              </select>
+                                                              <X style={{height:'16px', width:'16px'}} onClick={()=>handleRemoveUser(user.id)}></X>
+                                                            </div>
 
                                                         </div>
                                                     ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>Not any member yet</span>)}
@@ -459,7 +438,7 @@ export const SideBar = ()=>{
                </div>
               <div className={`overlay-${createProjectFormOpen?'active':'unActive'}`}>
                                 <form className={`projectForm-${projectFormOpen?'active':'unActive'}`} onSubmit={handleCreateProjectSubmit}>
-                                    <div className='close-button' onClick={()=>{setProjectFormOpen(!projectFormOpen), setCreateProjectFormOpen(false)}}><X></X></div>
+                                    <div className='close-button' onClick={()=>{setProjectFormOpen(!projectFormOpen), setCreateProjectFormOpen(false), setFormatedProjectUser([])}}><X></X></div>
                                     <h3>Create new project</h3>
                                     <div className='title'>
                                       <input placeholder='Title' value={title} onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
@@ -503,25 +482,17 @@ export const SideBar = ()=>{
                                         components={animatedComponents}
                                         isMulti
                                         ref={selectRef}
+                                        value={formattedProjectUser}
                                         styles={getCustomStyle}
                                         options={formattedUser}
                                         onChange={handleSelect}
-                                        formatOptionLabel={(option) => (
-                                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <img 
-                                              src={option.avatar} 
-                                              alt="avatar" 
-                                              style={{ borderRadius: '50%', height: '32px', width: '32px' }} 
-                                            />
-                                            <span>{option.label}</span>
-                                          </div>
-                                        )}
                                       ></Select>
                                     </div>
                                     <div className='member'>
                                         <div>
                                             {projectUsers.length>0?projectUsers.map(user=>
-                                                <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                                <div key={user.id} style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1rem'}}>
+                                                  <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                                                     <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
                                                     <div>
                                                         <span>{user.firstname}</span>
@@ -529,7 +500,16 @@ export const SideBar = ()=>{
                                                         <span>{user.lastname}</span>
                                                         <p>{user.email}</p>
                                                     </div>
-                                                </div>
+                                                  </div>
+                                                  <div style={{display:'flex',gap:16, alignItems:'center'}}>
+                                                    <select id="select" onChange={(e)=>handleSelectRole(user.id, e.target.value)} style={{borderRadius:'.5rem', padding:4}}>
+                                                      <option value="admin">Admin</option>
+                                                      <option value="editor">Editor</option>
+                                                      <option value="viewer">Viewer</option>
+                                                    </select>
+                                                    <X style={{height:'16px', width:'16px'}} onClick={()=>handleRemoveUser(user.id)}></X>
+                                                  </div>
+                                               </div>
                                             ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>Not any member yet</span>)}
                                         </div>
                                     </div>

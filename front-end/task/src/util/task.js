@@ -609,5 +609,16 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
+    getUserRole(projectId){
+        return fetch(`${baseUrl}/user/role/${projectId}`, {
+            method: 'GET',
+            credentials: 'include',
+          }).then(response => {
+            if (!response.ok) {
+              throw new Error(`Request failed with status ${response.status}`);
+            }
+            return response.json(); // Chờ và lấy dữ liệu trả về từ server
+        });
+    }
 }
 export default task

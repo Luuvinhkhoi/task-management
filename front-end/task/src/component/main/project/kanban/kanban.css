@@ -51,15 +51,14 @@
     font-weight: 400;
 }
 .kanbanItem .member{
-    border-top: 1px solid;
     padding-top: .5rem;
     justify-content: right;
 }
 .kanbanItem .member div{
     border-radius: 10rem;
     overflow: hidden;
-    width: 32px;
-    height: 32px;
+    width: 24px;
+    height: 24px;
 }
 .kanbanItem .member div img{
     height: 100%;
