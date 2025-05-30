@@ -17,7 +17,7 @@ import { Comment } from '../project/comment/comment';
 import { TaskDetail } from '../taskDetail/taskDetail'
 import { Notification } from './noti/noti'
 import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot } from 'lucide-react'
-export const Header=({socket})=>{
+export const Header=({socket, role})=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const userId=useSelector(state=>state.userProfile.id)
@@ -61,6 +61,7 @@ export const Header=({socket})=>{
     const { timezone } = useTimezone();
     const [date, setDate] = useState(new Date());
     const [noti, setNoti]=useState([])
+    const [projectRole, setProjectRole]=useState()
     useEffect(()=>{
         if (!socket) return; 
         socket.on('notification', (data) => {
@@ -113,6 +114,17 @@ export const Header=({socket})=>{
       
         return `${year}-${month}-${day}T${hour}:${minute}`;
     };
+    async function getRole(projectId){
+        try{
+            console.log(role)
+            console.log(projectId)
+            const result=role.find(item=>item.projectId===projectId)
+            console.log(result)
+            setProjectRole(result.role)
+        }catch(error){
+            console.log(error)
+        }
+    }
     async function handleLogout(){
         try{
             const response = await task.logOut()
@@ -247,7 +259,7 @@ export const Header=({socket})=>{
           if (timeoutId) clearTimeout(timeoutId);
         };
       }, [timeoutId]);
-    console.log(isClick)
+    console.log(role)
     return (
         <div className='header'>
             <div className='searchBar' onClick={handleActive} ref={searchBarRef}>
@@ -290,7 +302,7 @@ export const Header=({socket})=>{
                                             <p style={{fontWeight:500}}>Task</p>
                                         </div>
                                         {results.task?results.task.map(item=>
-                                            <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id)}}>
+                                            <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
                                                 <div style={{display:'flex', justifyContent:'space-between'}}>
                                                     <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
                                                     <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{item.priority}</div>
@@ -326,6 +338,7 @@ export const Header=({socket})=>{
             </div>
             {isClick !== null && results.task && (
                 <TaskDetail 
+                    role={projectRole}
                     overlayId={isClick} 
                     setOverlayId={setIsClick} 
                     taskId={isClick} 

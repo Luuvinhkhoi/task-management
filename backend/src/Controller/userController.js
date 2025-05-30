@@ -43,10 +43,19 @@ const getUserRole=async(req, res)=>{
       res.status(500).json({error: error.message})
    }
 }
+const getAllUserRole=async(req, res)=>{
+   try{
+      const result=await service.getAllUserRole(req.user.id)
+      res.status(201).json(result)
+   } catch(error){
+      res.status(500).json({error: error.message})
+   }
+}
 module.exports={
     createUser,
     getAllUser,
     updateUser,
     getUserByProjectId,
-    getUserRole
+    getUserRole,
+    getAllUserRole
 }

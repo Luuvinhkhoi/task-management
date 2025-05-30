@@ -14,15 +14,17 @@ import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next';
 import { fetchProjects } from '../../../store/project'
 import { RenderDropdown } from './optionMenu'
-export const SideBar = ()=>{
+export const SideBar = ({role})=>{
    let location=useLocation()
    const theme=useSelector((state)=>state.setting.darkMode)
+   const userId=useSelector((state)=>state.userProfile.id)
    const darkMode = useSelector((state) => state.setting.darkMode);
    const {t}=useTranslation()
    const selectRef = useRef();
    const [position, setPosition] = useState({ top: 0, left: 0 });
    const animatedComponents = makeAnimated();
    let param=useParams()
+   const [checkPermission, setCheckPermission]=useState(true)
    const dispatch=useDispatch()
    const projects=useSelector(state=>state.projects.projects)
    const [projectDetail, setProjectDetail]=useState([])
@@ -155,6 +157,20 @@ export const SideBar = ()=>{
           setAssignedUserId([]);
       }
    }
+   function handlePermission(projectId){
+    console.log(role)
+    console.log(projectId)
+    console.log(checkPermission)
+    for(let i=0; i<role.length; i++){
+      if(role[i].projectId===projectId){
+        if(role[i].role!=='admin'){
+          setCheckPermission(false)
+          setOptionFormOpen(false)
+          console.log('check')
+        }
+      }
+    }
+   }
    const handleSelectRole=(id, role)=>{
       const updatedMembers = assignedUserId.map(member => {
         if (member.userId === id) {
@@ -250,7 +266,6 @@ export const SideBar = ()=>{
                  projectUsers.some(user => user.id === option.value)
                 );    
                 setFormatedProjectUser(preselectedUsers);
-                setRole(projectUsers.find(user=>user.id===userId))
             }
   }, [projectUsers, formattedUser, users]);
    
@@ -309,6 +324,7 @@ export const SideBar = ()=>{
                                              e.stopPropagation(); // Ngăn chặn sự kiện click lan lên menuItem
                                              setOptionFormOpen(project.id)
                                              handleToggle(e,project.id)
+                                             handlePermission(project.id)
                                           }}
                                  ></Ellipsis></div>
                                  {optionFormOpen&&(<RenderDropdown
@@ -327,6 +343,12 @@ export const SideBar = ()=>{
                                     }}
                                  >
                                  </RenderDropdown>)}
+                                 <div className={`overlay-${checkPermission?'unActive':'active'}`} onClick={(e)=>e.stopPropagation()}>
+                                    <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                      <div className='close-button' onClick={(e)=>{e.stopPropagation(),setCheckPermission(true)}}><X style={{height:14, width:14}}></X></div>
+                                      <p>Sorry, you don't have permission on this project</p>
+                                    </div>
+                                 </div>
                                  <div className={`overlay-${projectFormOpen===project.id?'active':'unActive'}`} onClick={(e)=>e.stopPropagation()} >
                                     {deleteProject?(
                                       <div className='delete-warning'>

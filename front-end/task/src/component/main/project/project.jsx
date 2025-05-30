@@ -184,7 +184,6 @@ export const Project = ()=>{
       async function setUserRole(){
         try{
           const result=await task.getUserRole(param.id)
-          console.log('hihi')
           setRole(result[0].role)
         }catch(error){
           console.log(error)

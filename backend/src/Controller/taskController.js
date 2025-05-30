@@ -83,7 +83,7 @@ const updateTaskDetail=async(req, res)=>{
       if (!startDate || !dueDate || isNaN(new Date(startDate).getTime()) || isNaN(new Date(dueDate).getTime())) {
          return res.status(400).json({error: "Invalid date format"});
       }
-      const task= await service.updateTaskDetail(id, title, status, priority, description, projectId  ,startTimestamp, endTimestamp,assignedUserId)
+      const task= await service.updateTaskDetail(req.user.id,id, title, status, priority, description, projectId  ,startTimestamp, endTimestamp,assignedUserId)
       res.status(201).json('success')
    } catch(error){
       res.status(500).json({error: error.message})
@@ -92,7 +92,7 @@ const updateTaskDetail=async(req, res)=>{
 const deleteTask=async(req, res)=>{
    try{
       const {id}=req.params
-      const task= await service.deleteTask(id)
+      const task= await service.deleteTask(req.user.id,id)
       res.status(201).json('success')
    } catch(error){
       res.status(500).json({error: error.message})

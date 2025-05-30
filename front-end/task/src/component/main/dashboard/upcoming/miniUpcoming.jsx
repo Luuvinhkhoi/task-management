@@ -36,7 +36,7 @@ export const MiniUpcoming = () => {
               <div className='upcomingTask-item' onClick={()=>setIsClick(task.id)}>
                   <div style={{display:'flex', gap:'1rem', alignContent:'center', justifyContent:'space-between'}} >
                     <h4>{task.title.length>30?task.title.slice(0,30)+'...':task.title}</h4>
-                    <div className={`priority-${task.priority.toLowerCase()}`}>{task.priority}</div>
+                    <div className={`priority-${task.priority.toLowerCase()}`}  style={{marginBottom:'.5rem'}}>{task.priority}</div>
                   </div>
                   <p>{task.description}</p>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>

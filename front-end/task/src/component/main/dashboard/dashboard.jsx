@@ -15,6 +15,7 @@ export const Dashboard = () =>{
   const [tasks, setTask]=useState([])
   const [progress, setProgress]=useState([])
   const { socket } = useOutletContext();
+  const {role}=useOutletContext
   useEffect(() => {
     if (!socket) return;
 

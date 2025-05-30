@@ -105,11 +105,28 @@ const getUserRole=async(userId, projectId)=>{
 
   }
 }
+const getAllUserRole=async(userId)=>{
+  try{
+    let result= await db.ProjectMember.findAll(
+      {
+        where:{
+          userId:userId
+        }
+      }
+    )
+    const plainResult=await result.map(item=>item.get({plain:'true'}))
+    return plainResult
+  } catch (error){
+    throw new Error(`check error ${error}`, error)  
+
+  }
+}
 module.exports={
     createUser,
     loginUser,
     getAllUser,
     updateUser,
     getUserByProjectId,
-    getUserRole
+    getUserRole, 
+    getAllUserRole
 }

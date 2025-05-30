@@ -47,4 +47,5 @@
 .todayTaskListItem .itemHeader .status-priority{
     display: flex;
     gap: 1rem;
+    margin-bottom: .5rem;
 }

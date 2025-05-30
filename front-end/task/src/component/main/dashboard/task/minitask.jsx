@@ -36,7 +36,7 @@ export const Task = ({socket}) =>{
               <div className='task-item' onClick={()=>setIsClick(task.id)}>
                   <div style={{display:'flex', gap:'1rem', alignContent:'center', justifyContent:'space-between'}}>
                     <h4>{task.title.length>20?task.title.slice(0,20)+'...':task.title}</h4>
-                    <div className={`priority-${task.priority.toLowerCase()}`}>{t(`list.priority.${task.priority}`)}</div>
+                    <div className={`priority-${task.priority.toLowerCase()}`} style={{marginBottom:'.5rem'}}>{t(`list.priority.${task.priority}`)}</div>
                   </div>
                   <p>{task.description.length>70?task.description.slice(0,70)+'...':task.description}</p>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>

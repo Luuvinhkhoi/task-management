@@ -2,7 +2,8 @@ import { useEffect, useState, useRef } from 'react'
 import task from '../../../util/task'
 import {X} from 'lucide-react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Download, Paperclip, Trash2, FilePenLine } from 'lucide-react';
+import { Download, Paperclip, Trash2, FilePenLine, Loader2 } from 'lucide-react';
+import { AnimatePresence, motion} from 'framer-motion'
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { Comment } from '../project/comment/comment';
@@ -14,11 +15,14 @@ import { useTimezone } from '../../../timezoneContext'
 import { getAllTask } from '../../../store/task';
 import { getAllTodayTask } from '../../../store/todayTask';
 import { getAllUpcomingTask } from '../../../store/upcomingTask';
-export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
+export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectId})=>{
     const animatedComponents = makeAnimated();
     const { timezone } = useTimezone();
     const dispatch=useDispatch()
     const theme=useSelector((state)=>state.setting.darkMode)
+    const [error, setError]=useState(false)
+    const [loading, setLoading]=useState(false)
+    const [overlay, setOverlay]=useState(false)
     const [deleteTask,setDeleteTask]=useState(false)
     const [taskDetail, setTaskDetail]=useState()
     const [dueDate, setDueDate] = useState("");
@@ -181,7 +185,6 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
             setDescription(result[0].description)
             setTaskDetailMember(result[0].users)
             setTaskDetailOpen(true)
-            setOverlay(true)
 
             } catch(error){
             console.log(error)
@@ -236,12 +239,11 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
             }
             }
     };
+    console.log(`role:${role}`)
     const handleSaveEdit=async()=>{
             try{
                 const formattedUsersId=assignedUserId.map(user=>user.value)
-                console.log(assignedUserId)
-                console.log(formattedUsersId)
-                await task.updateTaskDetail(
+                const result= await task.updateTaskDetail(
                     {id:taskId,
                         title:title,
                         status:status,
@@ -253,6 +255,9 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                         dueDate: dueDate
                     }
                 )
+                if(result){
+                    setTimeout(()=>{setLoading(false)},1000 )
+                }
                 const data={
                     taskId:taskId,
                     actorId:userId,
@@ -288,7 +293,7 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                 dispatch(getAllUpcomingTask())
                 dispatch(getAllTask(projectId))
             }catch(error){
-                console.log(error)
+                setTimeout(()=>{setLoading(false),setError(true)},1000 )
             }
     }
     const extractS3KeyFromUrl = (url) => {
@@ -400,200 +405,399 @@ export const TaskDetail=({overlayId, socket ,setOverlayId,taskId, projectId})=>{
                         </div>
                     </div>
                 </div>
-            ):(taskDetail&&status&&priority?taskDetail.map(item=>
-                <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
-                    <div className='close-button' onClick={()=>{setTaskDetailOpen(null), setIsOpenTab('Detail'), console.log("Closing overlay"),setOverlayId(null)}}><X></X></div>
-                    <div className='status-priority' style={{width: '250px'}}>
-                        <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
-                            <Select
-                            options={options}
-                            styles={getCustomStyle}
-                            value={options.find(option => {
-                                return option.value == priority
-                            })}
-                            onChange={(selectedOption) => setPriority(selectedOption.value)} // Medium
-                            />
-                        </div>
-                        <div className={`status-${status.toLowerCase().replace(/\s/g, '')}`} style={{padding:'unset'}}>
-                            <Select
-                                options={statusOptions}
-                                styles={getStatusCustomStyle}
-                                value={statusOptions.find(option => option.value == status)}
-                                onChange={(selectedOption) => setStatus(selectedOption.value)} // Medium
-                            />
-                        </div>
-                    </div>
-                    <div className='title'>
-                        <input value={title} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none'}}></input>
-                    </div>
-                    <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
-                        <div style={{display:'flex', gap:'.5rem'}}>Start date: 
-                            <input type='datetime-local'
-                                    value={toDateTimeLocal(startDate)}
-                                    onChange={(e) => {
-                                    const newStart = e.target.value;
-                                    if (!dueDate || newStart <= dueDate) {
-                                        setStartDate(newStart);
-                                    } else {
-                                        alert('Start date cannot be after due date!');
-                                    }
-                                    }}
-                                    style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
-                            >  
-                            </input>
-                        </div>
-                        <div style={{display:'flex', gap:'.5rem'}}>Due date: 
-                            <input type='datetime-local'
-                                    value={toDateTimeLocal(dueDate)}
-                                    onChange={(e) => {
-                                    const newDue = e.target.value;
-                                    if (!startDate || newDue >= startDate) {
-                                        setDueDate(newDue);
-                                    } else {
-                                        alert('Due date cannot be before start date!');
-                                    }
-                                    }}
-                                    style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
-                            >  
-                            </input>
-                        </div>
-                    </div>
-                    <div className="taskHeader" style={{width:'165px'}}>
-                        {tabs.map(tab => (
-                        <div
-                            key={tab.value}
-                            className={`tabItem ${isOpenTab === tab.value ? 'active' : ''}`}
-                            onClick={() => setIsOpenTab(tab.value)}
-                        >
-                            {tab.label}
-                        </div>
-                        ))}
-                    </div>
-                    {isOpenTab==='Detail'?<div className='taskDetail-body'>
-                        <div className='body-item'>
-                            <h4>Description</h4>
-                            <div>
-                                <input value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
+            ):(taskDetail&&status&&priority?taskDetail.map(item=>{
+                return role==='viewer'?(
+                    <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
+                        <div className='close-button' onClick={()=>{setTaskDetailOpen(null), setIsOpenTab('Detail'), console.log("Closing overlay"),setOverlayId(null)}}><X></X></div>
+                        <div className='status-priority' style={{width: '250px'}}>
+                            <div className={`priority-${priority.toLowerCase()}`} style={{padding:'4px 8px', fontSize:14}}>
+                                {priority}
+                            </div>
+                            <div className={`status-${status.toLowerCase().replace(/\s/g, '')}`} style={{padding:'4px 8px', fontSize:14}} >
+                                {status}
                             </div>
                         </div>
-                        <div className='body-item'>
-                            <div style={{display:'flex', gap:'1rem'}}>
-                                <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
-                                {isSelecting ?(<span
-                                    onClick={() => setIsSelecting(false)}
-                                    style={{color:'#007bff', fontWeight:'600'}}
-                                    >
-                                    Done
-                                    </span>
-                                ): (
-                                    <span
-                                    onClick={() => setIsSelecting(true)}
-                                    style={{color:'#007bff', fontWeight:'600'}}
-                                    >
-                                    Add
-                                    </span>
-                                )}
-                            </div>
-                            {isSelecting ? (
-                                <Select
-                                options={formattedUsers}
-                                value={assignedUserId}
-                                onChange={handleSelect}
-                                required
-                                closeMenuOnSelect={false}
-                                components={animatedComponents}
-                                isMulti
-                                styles={getCustomStyle}
-                                />
-                            ):(
-                            <div>
-                                {taskDetailMembers.map(user=>
-                                    <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
-                                        <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
-                                        <div>
-                                            <span>{user.firstname}</span>
-                                            <span> </span>
-                                            <span>{user.lastname}</span>
-                                        </div>
+                        <div className='title'>
+                            <p style={{border: 'none',outline: 'none', boxShadow: 'none', fontWeight:700, fontSize:28}}>{title}</p>
+                        </div>
+                        <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
+                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                                <div style={{display:'flex', gap:'.5rem', fontSize:'14px', fontWeight:'500'}}>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-CA', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        timeZone: timezone,
+                                        }).format(new Date(startDate))}
                                     </div>
-                                )}
-                            </div>)}
-                        </div>
-                        <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
-                            <div style={{display:'flex', gap:'1rem'}}>
-                                <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
-                                <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
-                                    <input type='file' ref={fileInputRef} 
-                                    onChange={(e)=>handleFileChange(e, item.id)} 
-                                    style={{ display: 'none' }}></input>Upload</div>
-                            </div>
-                            <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
-                            {item.attachment.map((file, index) => {
-                                const isGoogleDrive = file.url.includes("drive.google.com");
-                                const isPdf = file.url.endsWith(".pdf");
-                                const isDoc = file.url.endsWith(".docx");
-                                const isExcel=file.url.endsWith('.xlsx')
-                                return (
-                                    <div key={index} className="attachment-box">
-                                    <div style={{ display: 'flex', alignItems:'center', gap: '8px' }}>
-                                        {isGoogleDrive ? (
-                                        <FaGoogleDrive size={24} />
-                                        ) : isPdf ? (
-                                        <img src={pdf} style={{height:'32px', width:'28px'}} />
-                                        ) : isDoc ? (
-                                        <img src={word} style={{height:'24px', width:'24px'}} />
-                                        ): isExcel?(
-                                            <img src={excel} style={{height:'24px', width:'24px'}} />
-                                        ):(
-                                            <Paperclip style={{height:'24px', width:'24px', color:'rgb(107, 114, 128)'}} />  
-                                        )}
-
-                                        <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
-                                        <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
-                                        <div style={{display:'flex', gap:'1rem'}}>
-                                            <div onClick={()=>handleDownload(file.url)}>
-                                                <Download style={{color:'#007bff'}} />
-                                            </div>
-                                            <div onClick={()=>{setDeleteAttachment(true), setAttachmentId(file.id), setAttachmentUrl(file.url)}}>
-                                                <Trash2 style={{color:'#dc2626'}}></Trash2>
-                                            </div>
-                                        </div>
-                                        </div>
-                                    </div>
-                                    </div>
-                                );
-                            })}
-                            </div>
-                        </div>
-            
-                    </div>:<Comment projectId={projectId} assignedUserId={assignedUserId} socket={socket} taskId={item.id}></Comment>}
-                    <div className='taskDetail-footer'>
-                            <div className='edit' onClick={handleSaveEdit}>
-                                <FilePenLine></FilePenLine>
-                                <p>Save</p>
-                            </div>
-                            <div className='delete' onClick={()=>{setDeleteTask(true), setTaskDetail(false)}}>
-                                <Trash2 color='white'></Trash2>
-                                <p style={{color:'white'}}>Delete</p>
-                            </div>
-                    </div>
-                    <div className={`overlay-${deleteAttachment?'active':'unActive'}`}>
-                                <div className='delete-warning'>
-                                    <h2>Xác nhận xóa</h2>
-                                    <span>Bạn có chắc chắn muốn xóa file này? Hành động này không thể hoàn tác.</span>
-                                    <div className='delete-warning-footer'>
-                                        <div className='edit' onClick={()=>{ setDeleteAttachment(false)}}>
-                                            <p>Cancel</p>
-                                        </div>
-                                        <div className='delete' onClick={(e)=>handleDeleteAttachment(attachmentUrl, attachmentId, taskId)}>
-                                            <Trash2 color='white'></Trash2>
-                                            <p style={{color:'white'}}>Delete</p>
-                                        </div>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-US', {
+                                        hour: 'numeric',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                        timeZone: timezone,
+                                        }).format(new Date(startDate))}
                                     </div>
                                 </div>
+                            </div>
+
+                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                                <div style={{display:'flex', gap:'.5rem', fontSize:'14px',fontWeight:'500'}}>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-CA', {
+                                        year: 'numeric',
+                                        month: '2-digit',
+                                        day: '2-digit',
+                                        timeZone: timezone,
+                                        }).format(new Date(dueDate))}
+                                    </div>
+                                    <div>
+                                        {new Intl.DateTimeFormat('en-US', {
+                                        hour: 'numeric',
+                                        minute: '2-digit',
+                                        hour12: true,
+                                        timeZone: timezone,
+                                        }).format(new Date(dueDate))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="taskHeader" style={{width:'165px'}}>
+                            {tabs.map(tab => (
+                            <div
+                                key={tab.value}
+                                className={`tabItem ${isOpenTab === tab.value ? 'active' : ''}`}
+                                onClick={() => setIsOpenTab(tab.value)}
+                            >
+                                {tab.label}
+                            </div>
+                            ))}
+                        </div>
+                        {isOpenTab==='Detail'?<div className='taskDetail-body'>
+                            <div className='body-item'>
+                                <h4>Description</h4>
+                                <div>
+                                    <p style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}>{description}</p>
+                                </div>
+                            </div>
+                            <div className='body-item'>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                </div>
+                                
+                                <div style={{maxHeight:'150px', overflowY:'scroll'}}>
+                                    {taskDetailMembers.map(user=>
+                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                            <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
+                                            <div>
+                                                <span>{user.firstname}</span>
+                                                <span> </span>
+                                                <span>{user.lastname}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
+                                        <input type='file' ref={fileInputRef} 
+                                        onChange={(e)=>handleFileChange(e, item.id)} 
+                                        style={{ display: 'none' }}></input>Upload</div>
+                                </div>
+                                <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
+                                {item.attachment.map((file, index) => {
+                                    const isGoogleDrive = file.url.includes("drive.google.com");
+                                    const isPdf = file.url.endsWith(".pdf");
+                                    const isDoc = file.url.endsWith(".docx");
+                                    const isExcel=file.url.endsWith('.xlsx')
+                                    return (
+                                        <div key={index} className="attachment-box">
+                                        <div style={{ display: 'flex', alignItems:'center', gap: '8px' }}>
+                                            {isGoogleDrive ? (
+                                            <FaGoogleDrive size={24} />
+                                            ) : isPdf ? (
+                                            <img src={pdf} style={{height:'32px', width:'28px'}} />
+                                            ) : isDoc ? (
+                                            <img src={word} style={{height:'24px', width:'24px'}} />
+                                            ): isExcel?(
+                                                <img src={excel} style={{height:'24px', width:'24px'}} />
+                                            ):(
+                                                <Paperclip style={{height:'24px', width:'24px', color:'rgb(107, 114, 128)'}} />  
+                                            )}
+
+                                            <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
+                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <div style={{display:'flex', gap:'1rem'}}>
+                                                <div onClick={()=>handleDownload(file.url)}>
+                                                    <Download style={{color:'#007bff'}} />
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    );
+                                })}
+                                </div>
+                            </div>
+                
+                        </div>:<Comment role={role} socket={socket} taskId={item.id} assignedUserId={assignedUserId} projectId={projectId}></Comment>}
                     </div>
+                ):(
+                    <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
+                        <div className='close-button' onClick={()=>{setTaskDetailOpen(null), setIsOpenTab('Detail'), console.log("Closing overlay"),setOverlayId(null)}}><X></X></div>
+                        <div className='status-priority' style={{width: '250px'}}>
+                            <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
+                                <Select
+                                options={options}
+                                styles={getCustomStyle}
+                                value={options.find(option => {
+                                    return option.value == priority
+                                })}
+                                onChange={(selectedOption) => setPriority(selectedOption.value)} // Medium
+                                />
+                            </div>
+                            <div className={`status-${status.toLowerCase().replace(/\s/g, '')}`} style={{padding:'unset'}}>
+                                <Select
+                                    options={statusOptions}
+                                    styles={getStatusCustomStyle}
+                                    value={statusOptions.find(option => option.value == status)}
+                                    onChange={(selectedOption) => setStatus(selectedOption.value)} // Medium
+                                />
+                            </div>
+                        </div>
+                        <div className='title'>
+                            <input value={title} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none'}}></input>
+                        </div>
+                        <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
+                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                                <input type='datetime-local'
+                                        value={toDateTimeLocal(startDate)}
+                                        onChange={(e) => {
+                                        const newStart = e.target.value;
+                                        if (!dueDate || newStart <= dueDate) {
+                                            setStartDate(newStart);
+                                        } else {
+                                            alert('Start date cannot be after due date!');
+                                        }
+                                        }}
+                                        style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                >  
+                                </input>
+                            </div>
+                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                                <input type='datetime-local'
+                                        value={toDateTimeLocal(dueDate)}
+                                        onChange={(e) => {
+                                        const newDue = e.target.value;
+                                        if (!startDate || newDue >= startDate) {
+                                            setDueDate(newDue);
+                                        } else {
+                                            alert('Due date cannot be before start date!');
+                                        }
+                                        }}
+                                        style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                >  
+                                </input>
+                            </div>
+                        </div>
+                        <div className="taskHeader" style={{width:'165px'}}>
+                            {tabs.map(tab => (
+                            <div
+                                key={tab.value}
+                                className={`tabItem ${isOpenTab === tab.value ? 'active' : ''}`}
+                                onClick={() => setIsOpenTab(tab.value)}
+                            >
+                                {tab.label}
+                            </div>
+                            ))}
+                        </div>
+                        {isOpenTab==='Detail'?<div className='taskDetail-body'>
+                            <div className='body-item'>
+                                <h4>Description</h4>
+                                <div>
+                                    <input value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
+                                </div>
+                            </div>
+                            <div className='body-item'>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                    {isSelecting ?(<span
+                                        onClick={() => setIsSelecting(false)}
+                                        style={{color:'#007bff', fontWeight:'600'}}
+                                        >
+                                        Done
+                                        </span>
+                                    ): (
+                                        <span
+                                        onClick={() => setIsSelecting(true)}
+                                        style={{color:'#007bff', fontWeight:'600'}}
+                                        >
+                                        Add
+                                        </span>
+                                    )}
+                                </div>
+                                {isSelecting ? (
+                                    <Select
+                                    options={formattedUsers}
+                                    value={assignedUserId}
+                                    onChange={handleSelect}
+                                    required
+                                    closeMenuOnSelect={false}
+                                    components={animatedComponents}
+                                    isMulti
+                                    styles={getCustomStyle}
+                                    />
+                                ):(
+                                <div>
+                                    {taskDetailMembers.map(user=>
+                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                            <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
+                                            <div>
+                                                <span>{user.firstname}</span>
+                                                <span> </span>
+                                                <span>{user.lastname}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>)}
+                            </div>
+                            <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
+                                <div style={{display:'flex', gap:'1rem'}}>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
+                                        <input type='file' ref={fileInputRef} 
+                                        onChange={(e)=>handleFileChange(e, item.id)} 
+                                        style={{ display: 'none' }}></input>Upload</div>
+                                </div>
+                                <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
+                                {item.attachment.map((file, index) => {
+                                    const isGoogleDrive = file.url.includes("drive.google.com");
+                                    const isPdf = file.url.endsWith(".pdf");
+                                    const isDoc = file.url.endsWith(".docx");
+                                    const isExcel=file.url.endsWith('.xlsx')
+                                    return (
+                                        <div key={index} className="attachment-box">
+                                        <div style={{ display: 'flex', alignItems:'center', gap: '8px' }}>
+                                            {isGoogleDrive ? (
+                                            <FaGoogleDrive size={24} />
+                                            ) : isPdf ? (
+                                            <img src={pdf} style={{height:'32px', width:'28px'}} />
+                                            ) : isDoc ? (
+                                            <img src={word} style={{height:'24px', width:'24px'}} />
+                                            ): isExcel?(
+                                                <img src={excel} style={{height:'24px', width:'24px'}} />
+                                            ):(
+                                                <Paperclip style={{height:'24px', width:'24px', color:'rgb(107, 114, 128)'}} />  
+                                            )}
+
+                                            <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
+                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <div style={{display:'flex', gap:'1rem'}}>
+                                                <div onClick={()=>handleDownload(file.url)}>
+                                                    <Download style={{color:'#007bff'}} />
+                                                </div>
+                                                <div onClick={()=>{setDeleteAttachment(true), setAttachmentId(file.id), setAttachmentUrl(file.url)}}>
+                                                    <Trash2 style={{color:'#dc2626'}}></Trash2>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                    );
+                                })}
+                                </div>
+                            </div>
+                
+                        </div>:<Comment projectId={projectId} assignedUserId={assignedUserId} socket={socket} taskId={item.id}></Comment>}
+                        <div className='taskDetail-footer'>
+                                <div className='edit' onClick={()=>{handleSaveEdit(),setOverlay(true), setLoading(true)}}>
+                                    <FilePenLine></FilePenLine>
+                                    <p>Save</p>
+                                </div>
+                                <div className='delete' onClick={()=>{setDeleteTask(true), setTaskDetail(false)}}>
+                                    <Trash2 color='white'></Trash2>
+                                    <p style={{color:'white'}}>Delete</p>
+                                </div>
+                        </div>
+                        <div className={`overlay-${deleteAttachment?'active':'unActive'}`}>
+                            <div className='delete-warning'>
+                                <h2>Xác nhận xóa</h2>
+                                <span>Bạn có chắc chắn muốn xóa file này? Hành động này không thể hoàn tác.</span>
+                                <div className='delete-warning-footer'>
+                                    <div className='edit' onClick={()=>{ setDeleteAttachment(false)}}>
+                                        <p>Cancel</p>
+                                    </div>
+                                    <div className='delete' onClick={(e)=>handleDeleteAttachment(attachmentUrl, attachmentId, taskId)}>
+                                        <Trash2 color='white'></Trash2>
+                                        <p style={{color:'white'}}>Delete</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                       <div className={`overlay-${overlay?'active':'unActive'}`}>
+                        {loading?(
+                            <div className={`overlay-${loading?'active':'unActive'}`}>
+                                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                                    <motion.div
+                                        animate={{ rotate: [0, 360] }}
+                                        transition={{ 
+                                            duration: 1, 
+                                            repeat: Infinity, 
+                                            ease: "linear",
+                                            repeatType: "loop" // Quan trọng!
+                                        }}
+                                        style={{
+                                            width: "24px",
+                                            height: "24px",
+                                            transformOrigin: "12px 12px" // Chỉ định chính xác tâm
+                                        }}
+                                    >
+                                        <Loader2 style={{color:' #007bff'}} />
+                                    </motion.div>
+                                    <p style={{fontWeight:500, color:'black'}}>Updating task...</p>
+                                </div>
+                            </div>
+                        ):(
+                            error?(
+                                    <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Failed to update the task.</p>
+                                        <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                    </div>
+                            ):(
+                                    <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Task updated successfully.</p>
+                                    </div>
+                            )
+                        )}
+                       </div>
+
                 </div>
-            ):<div>Loading</div>
+                )}
+            ):
+                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                    <motion.div
+                        animate={{ rotate: [0, 360] }}
+                        transition={{ 
+                            duration: 1, 
+                            repeat: Infinity, 
+                            ease: "linear",
+                            repeatType: "loop" // Quan trọng!
+                        }}
+                        style={{
+                            width: "24px",
+                            height: "24px",
+                            transformOrigin: "12px 12px" // Chỉ định chính xác tâm
+                        }}
+                    >
+                        <Loader2 style={{color:' #007bff'}} />
+                    </motion.div>
+                    <p style={{fontWeight:500, color:'black'}}>Loading...</p>
+                </div>
             )}
         </div>
     )

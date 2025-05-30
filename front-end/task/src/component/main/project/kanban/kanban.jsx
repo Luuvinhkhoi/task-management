@@ -6,6 +6,9 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import { useTranslation } from "react-i18next";
 import { useLocation, useParams } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { getAllTodayTask } from '../../../../store/todayTask';
+import { AnimatePresence, motion} from 'framer-motion'
+import { getAllUpcomingTask } from '../../../../store/upcomingTask';
 import { getAllTask, updateTaskStatus } from '../../../../store/task';
 import { updateItem } from '../../../../store/task';
 import makeAnimated from 'react-select/animated';
@@ -15,7 +18,7 @@ import word from '../../../../assets/word.png'
 import excel from '../../../../assets/excel.png'
 import {X} from 'lucide-react'
 import Select from 'react-select'
-import { Download, Paperclip, Trash2, FilePenLine } from 'lucide-react';
+import { Download, Paperclip, Trash2, FilePenLine, Loader2 } from 'lucide-react';
 import { Comment } from '../comment/comment';
 import { useOutletContext } from 'react-router-dom';
 
@@ -284,6 +287,9 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
         const theme=useSelector((state)=>state.setting.darkMode)
         const [isOpenTab, setIsOpenTab] = useState('Detail');
         const { id } = useParams()
+        const [errorOverlay,setErrorOverlay ]=useState(false)
+        const [error, setError]=useState(false)
+        const [loading, setLoading]=useState(false)
         const [overlay, setOverlay]=useState(false)
         const [deleteTask,setDeleteTask]=useState(false)
         const [taskDetailOpen, setTaskDetailOpen]=useState(false)
@@ -590,7 +596,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
         const handleSaveEdit=async(e)=>{
             try{
                 const formattedUsersId=assignedUserId.map(user=>user.value)
-                await task.updateTaskDetail(
+                const result=await task.updateTaskDetail(
                     {id:taskId,
                      title:title,
                      status:status,
@@ -602,6 +608,9 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                      dueDate: dueDate
                     }
                 )
+                if(result){
+                    setTimeout(()=>{setLoading(false)},1000 )
+                }
                 const data={
                     taskId:taskId,
                     actorId:userId,
@@ -637,7 +646,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                 dispatch(getAllUpcomingTask())
                 dispatch(getAllTask(id))
             }catch(error){
-                console.log(error)
+                setTimeout(()=>{setLoading(false),setError(true)},1000 )
             }
         }
         const handleDeleteTask=async(e,taskId)=>{        
@@ -774,7 +783,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                                         month: '2-digit',
                                         day: '2-digit',
                                         timeZone: timezone,
-                                        }).format(new Date(taskItem.endedAt))}
+                                        }).format(new Date(taskItem.createdAt))}
                                     </div>
                                     <div>
                                         {new Intl.DateTimeFormat('en-US', {
@@ -782,7 +791,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                                         minute: '2-digit',
                                         hour12: true,
                                         timeZone: timezone,
-                                        }).format(new Date(taskItem.endedAt))}
+                                        }).format(new Date(taskItem.createdAt))}
                                     </div>
                                 </div>
                             </div>
@@ -1059,7 +1068,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                 
                         </div>:<Comment socket={socket} taskId={item.id} assignedUserId={assignedUserId} projectId={projectId}></Comment>}
                         <div className='taskDetail-footer'>
-                                <div className='edit' onClick={handleSaveEdit}>
+                                <div className='edit' onClick={()=>{handleSaveEdit(),setErrorOverlay(true), setLoading(true)}}>
                                    <FilePenLine></FilePenLine>
                                    <p>Save</p>
                                 </div>
@@ -1083,6 +1092,44 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                                 </div>
                             </div>
                         </div>
+                        <div className={`overlay-${errorOverlay?'active':'unActive'}`}>
+                        {loading?(
+                            <div className={`overlay-${loading?'active':'unActive'}`}>
+                                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                                    <motion.div
+                                        animate={{ rotate: [0, 360] }}
+                                        transition={{ 
+                                            duration: 1, 
+                                            repeat: Infinity, 
+                                            ease: "linear",
+                                            repeatType: "loop" // Quan trọng!
+                                        }}
+                                        style={{
+                                            width: "24px",
+                                            height: "24px",
+                                            transformOrigin: "12px 12px" // Chỉ định chính xác tâm
+                                        }}
+                                    >
+                                        <Loader2 style={{color:' #007bff'}} />
+                                    </motion.div>
+                                    <p style={{fontWeight:500, color:'black'}}>Updating task...</p>
+                                </div>
+                            </div>
+                        ):(
+                            error?(
+                                    <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setErrorOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Failed to update the task.</p>
+                                        <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                    </div>
+                            ):(
+                                    <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setErrorOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Task updated successfully.</p>
+                                    </div>
+                            )
+                        )}
+                       </div>
                     </div>
                     )
                 }):<div>Loading</div>
