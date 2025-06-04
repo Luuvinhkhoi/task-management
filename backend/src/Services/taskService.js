@@ -317,10 +317,12 @@ const updateTaskDetail= async (userId,id, title ,status, priority, description, 
 }
 const deleteTask=async(userId,id)=>{
     try{
-        const checkRole=db.ProjectMember.findOne({
+        const checkProjectId=await db.Task.findByPk(id)
+        const plainResult2=await checkProjectId.get({plain:true})
+        const checkRole=await db.ProjectMember.findOne({
             where:{
                 userId:userId,
-                projectId:project_id
+                projectId:plainResult2.project_id
             }
         })
         const plainResult=await checkRole.get({plain:true})
@@ -329,6 +331,13 @@ const deleteTask=async(userId,id)=>{
                 {
                     where:{
                         id: id
+                    }
+                }
+            )
+            await db.Notification.destroy(
+                {
+                    where:{
+                        taskId:id
                     }
                 }
             )

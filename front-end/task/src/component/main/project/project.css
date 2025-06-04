@@ -117,6 +117,7 @@
     width: 100%;
     background-color: var(--search-bg);
     align-content: center;
+    border-radius: .5rem;
 }
 .project  .projectForm-active .option .select select{
     outline: none;

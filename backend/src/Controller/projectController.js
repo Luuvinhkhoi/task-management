@@ -44,7 +44,7 @@ const getProjectProgress=async(req, res)=>{
 }
 const updateProject=async(req, res)=>{
    try{
-      const {id,title,assignedUserId,startDate, dueDate}=req.body.updateData
+      const {id,title,assignedUserId,startDate, dueDate, role}=req.body.updateData
       console.log(req.body)
       const startTimestamp = new Date(startDate).toISOString(); 
       const endTimestamp = new Date(dueDate).toISOString();
@@ -53,7 +53,7 @@ const updateProject=async(req, res)=>{
       if (!startDate || !dueDate || isNaN(new Date(startDate).getTime()) || isNaN(new Date(dueDate).getTime())) {
          return res.status(400).json({error: "Invalid date format"});
       }
-      const task= await service.updateProject(req.user.id,id, title,startTimestamp, endTimestamp,assignedUserId)
+      const task= await service.updateProject(req.user.id,id, title,startTimestamp, endTimestamp,assignedUserId, role)
       res.status(201).json('success')
    } catch(error){
       res.status(500).json({error: error.message})

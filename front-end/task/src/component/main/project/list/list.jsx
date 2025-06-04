@@ -36,6 +36,9 @@ export const List = ()=>{
     const tasks=useSelector(state=> state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
     const [taskId, setTaskId]=useState()
+    const [updateError, setUpdateError]=useState(false)
+    const [updateSuccess, setUpdateSuccess]=useState(false)
+    const [notiOverlay, setNotiOverlay]=useState(false)
     const [attachmentId, setAttachmentId]=useState()
     const [attachmentUrl, setAttachmentUrl]=useState()
     const [priority, setPriority] = useState();
@@ -392,6 +395,9 @@ export const List = ()=>{
                     )
                     if(result){
                         setTimeout(()=>{setLoading(false)},1000 )
+                        setError(false)
+                        setUpdateError(false)
+                        setUpdateSuccess(true)
                     }
                     const data={
                         taskId:taskId,
@@ -428,17 +434,25 @@ export const List = ()=>{
                     dispatch(getAllUpcomingTask())
                     dispatch(getAllTask(id))
                 }catch(error){
-                    setTimeout(()=>{setLoading(false),setError(true)},1000 )
+                    setTimeout(()=>{setLoading(false)},1000 )
+                    setError(true)
+                    setUpdateError(true)
+                    setUpdateSuccess(false)
                 }
     }
     const handleDeleteTask=async(e,taskId)=>{        
         try{
-            await task.deleteTask(taskId)
+            const result=await task.deleteTask(taskId)
+            if(result){
+                setTimeout(()=>{setLoading(false)},1000 )
+                setError(false)
+            }
             dispatch(getAllTask(id))
             setDeleteTask(false)
-            setOverlay(false)
+            setTaskDetail(null)
         }catch(error){
-            console.log(error)
+            setTimeout(()=>{setLoading(false)},1000 )
+            setError(true)
         }
     }
     useEffect(() => {
@@ -515,6 +529,59 @@ export const List = ()=>{
             </div>
             
             <div className={`overlay-${overlay?'active':'unActive'}`}>
+                <div className={`overlay-${notiOverlay?'active':'unActive'}`}>
+                    {loading?(
+                        <div className={`overlay-${loading?'active':'unActive'}`}>
+                            <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                                <motion.div
+                                    animate={{ rotate: [0, 360] }}
+                                    transition={{ 
+                                        duration: 1, 
+                                        repeat: Infinity, 
+                                        ease: "linear",
+                                        repeatType: "loop" // Quan trọng!
+                                    }}
+                                    style={{
+                                        width: "24px",
+                                        height: "24px",
+                                        transformOrigin: "12px 12px" // Chỉ định chính xác tâm
+                                    }}
+                                >
+                                    <Loader2 style={{color:' #007bff'}} />
+                                </motion.div>
+                                <p style={{fontWeight:500, color:'black'}}>Please wait...</p>
+                            </div>
+                        </div>
+                    ):(
+                        error?(
+                                updateError?(
+                                    <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setNotiOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Failed to update task.</p>
+                                        <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                    </div>
+                                ):(
+                                    <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setNotiOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Failed to delete task.</p>
+                                        <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                    </div>
+                                )
+                        ):(
+                                updateSuccess?(
+                                    <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setNotiOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Task updated successfully.</p>
+                                    </div>
+                                ):(
+                                    <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                        <div className='close-button' onClick={()=>{setNotiOverlay(false), setOverlay(null),dispatch(getAllTask(id))}}><X style={{height:12, width:12}}></X></div>
+                                        <p style={{fontWeight:500}}>Task deleted successfully.</p>
+                                    </div>
+                                )
+                        )
+                    )}
+                </div>
                 {deleteTask?(
                     <div className='delete-warning'>
                         <h2>Xác nhận xóa</h2>
@@ -523,7 +590,7 @@ export const List = ()=>{
                             <div className='edit' onClick={()=>{setOverlay(null), setDeleteTask(null)}}>
                             <p>Cancel</p>
                             </div>
-                            <div className='delete' onClick={(e)=>handleDeleteTask(e, taskId)}>
+                            <div className='delete' onClick={(e)=>{handleDeleteTask(e, taskId), setNotiOverlay(true), setLoading(true)}}>
                                 <Trash2 color='white'></Trash2>
                                 <p style={{color:'white'}}>Delete</p>
                             </div>

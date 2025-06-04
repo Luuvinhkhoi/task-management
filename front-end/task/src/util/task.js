@@ -365,9 +365,7 @@ let task={
               console.error('Response error');
             }
             return jsonResponse;
-        }).catch(networkError => {
-            console.log(networkError.message);
-        });
+        })
     }
     ,
     getAllUser(){

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import {Settings, LayoutDashboard, FolderGit2, ChevronDown, Ellipsis, ChevronRight} from 'lucide-react'
+import {Settings, LayoutDashboard, FolderGit2, ChevronDown, Ellipsis, ChevronRight, Loader2} from 'lucide-react'
 import { AnimatePresence, motion} from 'framer-motion'
 import {X} from 'lucide-react'
 import { Trash2, FilePenLine, Plus } from 'lucide-react';
@@ -24,7 +24,7 @@ export const SideBar = ({role})=>{
    const [position, setPosition] = useState({ top: 0, left: 0 });
    const animatedComponents = makeAnimated();
    let param=useParams()
-   const [checkPermission, setCheckPermission]=useState(true)
+   const [checkViewerPermission, setCheckViewerPermission]=useState(true)
    const dispatch=useDispatch()
    const projects=useSelector(state=>state.projects.projects)
    const [projectDetail, setProjectDetail]=useState([])
@@ -33,6 +33,9 @@ export const SideBar = ({role})=>{
    const [optionFormOpen, setOptionFormOpen]=useState(null)
    const [editFormOpen, setEditFormOpen]=useState(null)
    const [deleteProject,setDeleteProject]=useState(false)
+   const [error, setError]=useState(false)
+   const [loading, setLoading]=useState(false)
+   const [overlay, setOverlay]=useState(false)
    const [title, setTitle] = useState("");
    const [startDate, setStartDate] = useState("");
    const [dueDate, setDueDate] = useState("");
@@ -40,6 +43,7 @@ export const SideBar = ({role})=>{
    const [openDropdownId, setOpenDropdownId] = useState(null);
    const [projectId, setProjectId] = useState("");
    const [users, setUser]=useState([])
+   const [userRole, setUserRole]=useState([])
    const [projectUsers, setProjectUser]=useState([])
    const [formattedUser, setFormatedUser]=useState([])
    const [formattedProjectUser, setFormatedProjectUser]=useState([])
@@ -47,6 +51,7 @@ export const SideBar = ({role})=>{
    const [isOpen, setIsOpen]=useState('unActive')
    const permission={admin:'Admin', editor:'Editor', viewer:'Viewer'}
    const navigate=useNavigate()
+
    const customStyles =(darkMode) =>({
       control: (base, state) => ({
         ...base,
@@ -93,8 +98,10 @@ export const SideBar = ({role})=>{
     }
     const handleCreateProjectSubmit = async(e)=>{
       e.preventDefault()
+      console.log(assignedUserId)
+      console.log(userRole)
       try{
-        await task.createProject(title, startDate, dueDate, assignedUserId)
+        await task.createProject(title, startDate, dueDate,assignedUserId)
         dispatch(fetchProjects())
         setProjectFormOpen(null)
         setCreateProjectFormOpen(null)
@@ -103,7 +110,6 @@ export const SideBar = ({role})=>{
         setDueDate("")
         setAssignedUserId([])
         selectRef.current.clearValue();
-        setDescription("")  
       } catch(error){
         console.log(error)
       }
@@ -111,18 +117,22 @@ export const SideBar = ({role})=>{
    const handleProjectSubmit = async(e, id)=>{
       e.preventDefault()
       try{
-        await task.updateProject(
+        setProjectFormOpen(!projectFormOpen)
+        const result= await task.updateProject(
               {id:id,
                title:title,
                assignedUserId:assignedUserId,
+               role:userRole,
                startDate:startDate,
                dueDate: dueDate
               }
         )
+        if(result){
+            setTimeout(()=>{setLoading(false)},1000 )
+        }
         await fetchProjects()
-        setProjectFormOpen(!projectFormOpen)
       } catch(error){
-        console.log(error)
+        setTimeout(()=>{setLoading(false),setError(true)},1000 )
       }
    }
    const handleToggle = (e,id) => { //handle option form affected by overflow-y
@@ -158,29 +168,27 @@ export const SideBar = ({role})=>{
       }
    }
    function handlePermission(projectId){
-    console.log(role)
-    console.log(projectId)
-    console.log(checkPermission)
     for(let i=0; i<role.length; i++){
       if(role[i].projectId===projectId){
         if(role[i].role!=='admin'){
-          setCheckPermission(false)
+          setCheckViewerPermission(projectId)
           setOptionFormOpen(false)
           console.log('check')
         }
       }
     }
    }
-   const handleSelectRole=(id, role)=>{
-      const updatedMembers = assignedUserId.map(member => {
-        if (member.userId === id) {
-          return { ...member, role: role }; // tạo object mới
-        }
-        return member;
-      });
-      setAssignedUserId(updatedMembers);
-
-         
+   const handleSelectRole=(newIndex, newRole)=>{
+      console.log(newIndex)
+      let updatedMembers=[...userRole]
+      updatedMembers[newIndex]=newRole
+      setUserRole(updatedMembers);
+      console.log(userRole)
+      console.log(assignedUserId)
+      let assignedWithRole = [...assignedUserId]
+      assignedWithRole[newIndex].role=newRole
+      setAssignedUserId(assignedWithRole)
+      console.log(assignedUserId)
    }
    const handleCreateProject=async()=>{
       const result = await task.getAllUser()
@@ -216,9 +224,10 @@ export const SideBar = ({role})=>{
         )// Dùng username làm tên hiển thị
       }));
       const result2 = await task.getUserByProjectId(id)
+      const role=result2.map(user=>user.role)
       const formattedProjectUser = result2.map(user =>
        formatted.find(u => u.value === user.id)
-     ).filter(Boolean);
+      ).filter(Boolean);
       // Loại bỏ phần tử undefined nếu không tìm thấy
       const result3=await task.getProjectById(id)
       setTitle(result3.title)
@@ -229,8 +238,9 @@ export const SideBar = ({role})=>{
       setFormatedUser(formatted)
       const assignedIds = formattedProjectUser.map((user) => user.value);
       setAssignedUserId(assignedIds)
+      setUserRole(role)
     } catch(error){
-      console.log(error)
+      setTimeout(()=>{setLoading(false),setError(true)},1000 )
     }
    }
    const handleRemoveUser=async(id)=>{
@@ -247,12 +257,11 @@ export const SideBar = ({role})=>{
    }
    const handleDeleteProject=async(e, id)=>{
       try{
-        await task.deleteProject(id)
-        navigate('/')
-        dispatch(fetchProjects())
         setProjectFormOpen(!projectFormOpen)
+        await task.deleteProject(id)
+        dispatch(fetchProjects())
       } catch(error){
-        console.log(error)
+        setTimeout(()=>{setLoading(false),setError(true)},1000 )
       }
    }
    useEffect(() => {
@@ -343,12 +352,50 @@ export const SideBar = ({role})=>{
                                     }}
                                  >
                                  </RenderDropdown>)}
-                                 <div className={`overlay-${checkPermission?'unActive':'active'}`} onClick={(e)=>e.stopPropagation()}>
+                                 <div className={`overlay-${checkViewerPermission!==project.id?'unActive':'active'}`} onClick={(e)=>e.stopPropagation()}>
                                     <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
-                                      <div className='close-button' onClick={(e)=>{e.stopPropagation(),setCheckPermission(true)}}><X style={{height:14, width:14}}></X></div>
+                                      <div className='close-button' onClick={(e)=>{e.stopPropagation(),setCheckViewerPermission(true)}}><X style={{height:14, width:14}}></X></div>
                                       <p>Sorry, you don't have permission on this project</p>
                                     </div>
                                  </div>
+                                 <div className={`overlay-${overlay===project.id?'active':'unActive'}`}>
+                                    {loading?(
+                                        <div className={`overlay-${loading?'active':'unActive'}`}>
+                                            <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                                                <motion.div
+                                                    animate={{ rotate: [0, 360] }}
+                                                    transition={{ 
+                                                        duration: 1, 
+                                                        repeat: Infinity, 
+                                                        ease: "linear",
+                                                        repeatType: "loop" // Quan trọng!
+                                                    }}
+                                                    style={{
+                                                        width: "24px",
+                                                        height: "24px",
+                                                        transformOrigin: "12px 12px" // Chỉ định chính xác tâm
+                                                    }}
+                                                >
+                                                    <Loader2 style={{color:' #007bff'}} />
+                                                </motion.div>
+                                                <p style={{fontWeight:500, color:'black'}}>Please wait...</p>
+                                            </div>
+                                        </div>
+                                    ):(
+                                        error?(
+                                                <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                                    <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                                    <p style={{fontWeight:500}}>Failed</p>
+                                                    <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                                </div>
+                                        ):(
+                                                <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                                    <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                                    <p style={{fontWeight:500}}>Project update successfully.</p>
+                                                </div>
+                                        )
+                                    )}
+                                  </div>
                                  <div className={`overlay-${projectFormOpen===project.id?'active':'unActive'}`} onClick={(e)=>e.stopPropagation()} >
                                     {deleteProject?(
                                       <div className='delete-warning'>
@@ -358,14 +405,14 @@ export const SideBar = ({role})=>{
                                             <div className='edit' onClick={()=>{setProjectFormOpen(null),setDeleteProject(null)}}>
                                               <p>Cancel</p>
                                             </div>
-                                            <div className='delete' onClick={(e)=>handleDeleteProject(e, project.id)}>
+                                            <div className='delete' onClick={(e)=>{handleDeleteProject(e, project.id),setOverlay(project.id), setLoading(true)}}>
                                                 <Trash2 color='white'></Trash2>
                                                 <p style={{color:'white'}}>Delete</p>
                                             </div>
                                         </div>
                                       </div>
                                     ):(
-                                      <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={(e)=>handleProjectSubmit(e, project.id)}>
+                                      <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={(e)=>{handleProjectSubmit(e, project.id),setOverlay(project.id), setLoading(true)  }}>
                                             <div className='close-button' onClick={(e)=>{e.stopPropagation(),setEditFormOpen(null), setProjectFormOpen(null), setFormatedProjectUser([])}}><X></X></div>
                                             <h3>Edit project</h3>
                                             <div className='title'>
@@ -416,7 +463,7 @@ export const SideBar = ({role})=>{
                                             </div>
                                             <div className='member'>
                                                 <div>
-                                                    {projectUsers.length>0?projectUsers.map(user=>
+                                                    {projectUsers.length>0?projectUsers.map((user, index)=>
                                                         <div key={user.id} style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1rem'}}>
                                                             <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                                                               <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
@@ -428,7 +475,7 @@ export const SideBar = ({role})=>{
                                                               </div>
                                                             </div>
                                                             <div style={{display:'flex',gap:16, alignItems:'center'}}>
-                                                              <select id="select" value={user.role}  onChange={(e)=>handleSelectRole(user.id, e.target.value)} style={{borderRadius:'.5rem', padding:4}}>
+                                                              <select id="select" value={userRole[index]}  onChange={(e)=>handleSelectRole(index, e.target.value)} style={{borderRadius:'.5rem', padding:4}}>
                                                                 <option value="admin">Admin</option>
                                                                 <option value="editor">Editor</option>
                                                                 <option value="viewer">Viewer</option>
@@ -512,7 +559,7 @@ export const SideBar = ({role})=>{
                                     </div>
                                     <div className='member'>
                                         <div>
-                                            {projectUsers.length>0?projectUsers.map(user=>
+                                            {projectUsers.length>0?projectUsers.map((user, index)=>
                                                 <div key={user.id} style={{display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:'1rem'}}>
                                                   <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                                                     <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
@@ -524,7 +571,7 @@ export const SideBar = ({role})=>{
                                                     </div>
                                                   </div>
                                                   <div style={{display:'flex',gap:16, alignItems:'center'}}>
-                                                    <select id="select" onChange={(e)=>handleSelectRole(user.id, e.target.value)} style={{borderRadius:'.5rem', padding:4}}>
+                                                    <select id="select" onChange={(e)=>handleSelectRole(index, e.target.value)} style={{borderRadius:'.5rem', padding:4}}>
                                                       <option value="admin">Admin</option>
                                                       <option value="editor">Editor</option>
                                                       <option value="viewer">Viewer</option>

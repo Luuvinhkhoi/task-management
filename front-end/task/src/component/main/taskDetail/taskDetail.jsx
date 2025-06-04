@@ -22,6 +22,8 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
     const theme=useSelector((state)=>state.setting.darkMode)
     const [error, setError]=useState(false)
     const [loading, setLoading]=useState(false)
+    const [updateError, setUpdateError]=useState(false)
+    const [updateSuccess, setUpdateSuccess]=useState(false)
     const [overlay, setOverlay]=useState(false)
     const [deleteTask,setDeleteTask]=useState(false)
     const [taskDetail, setTaskDetail]=useState()
@@ -257,6 +259,9 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                 )
                 if(result){
                     setTimeout(()=>{setLoading(false)},1000 )
+                    setError(false)
+                    setUpdateError(false)
+                    setUpdateSuccess(true)
                 }
                 const data={
                     taskId:taskId,
@@ -293,7 +298,10 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                 dispatch(getAllUpcomingTask())
                 dispatch(getAllTask(projectId))
             }catch(error){
-                setTimeout(()=>{setLoading(false),setError(true)},1000 )
+                setTimeout(()=>{setLoading(false)},1000 )
+                setError(true)
+                setUpdateError(true)
+                setUpdateSuccess(false)
             }
     }
     const extractS3KeyFromUrl = (url) => {
@@ -342,14 +350,20 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
     };
     const handleDeleteTask=async(e,taskId)=>{        
         try{
-            await task.deleteTask(taskId)
+            const result=await task.deleteTask(taskId)
+            if(result){
+                setTimeout(()=>{setLoading(false)},1000 )
+                setError(false)
+            }
             dispatch(getAllTask(projectId))
             dispatch(getAllTodayTask())
             dispatch(getAllUpcomingTask())
             setDeleteTask(false)
-            setOverlayId(null)
+            setTaskDetail(null)
         }catch(error){
-            console.log(error)
+            setTimeout(()=>{setLoading(false)},1000 )
+            setError(true)
+
         }
     }
     useEffect(() => {
@@ -391,6 +405,60 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
     console.log(taskDetailMembers)
     return(
         <div className={`overlay-${overlayId===taskId?'active':'unActive'}`}>
+            <div className={`overlay-${overlay?'active':'unActive'}`}>
+            {loading?(
+                <div className={`overlay-${loading?'active':'unActive'}`}>
+                    <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                        <motion.div
+                            animate={{ rotate: [0, 360] }}
+                            transition={{ 
+                                duration: 1, 
+                                repeat: Infinity, 
+                                ease: "linear",
+                                repeatType: "loop" // Quan trọng!
+                            }}
+                            style={{
+                                width: "24px",
+                                height: "24px",
+                                transformOrigin: "12px 12px" // Chỉ định chính xác tâm
+                            }}
+                        >
+                            <Loader2 style={{color:' #007bff'}} />
+                        </motion.div>
+                        <p style={{fontWeight:500, color:'black'}}>Please wait...</p>
+                    </div>
+                </div>
+            ):(
+                error?(
+                        updateError?(
+                            <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                <p style={{fontWeight:500}}>Failed to update task.</p>
+                                <p style={{fontSize:12}}>Please try again or check your permission</p>
+                            </div>
+                        ):(
+                            <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                <p style={{fontWeight:500}}>Failed to delete task.</p>
+                                <p style={{fontSize:12}}>Please try again or check your permission</p>
+                            </div>
+                        )
+                ):(
+                        updateSuccess?(
+                            <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
+                                <p style={{fontWeight:500}}>Task updated successfully.</p>
+                            </div>
+                        ):(
+                            <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
+                                <div className='close-button' onClick={()=>{setOverlay(false), setOverlayId(null)}}><X style={{height:12, width:12}}></X></div>
+                                <p style={{fontWeight:500}}>Task deleted successfully.</p>
+                            </div>
+                        )
+                )
+            )}
+            </div>
+
             {deleteTask?(
                 <div className='delete-warning'>
                     <h2>Xác nhận xóa</h2>
@@ -399,7 +467,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         <div className='edit' onClick={()=>{setOverlayId(null), setDeleteTask(null)}}>
                         <p>Cancel</p>
                         </div>
-                        <div className='delete' onClick={(e)=>handleDeleteTask(e, taskId)}>
+                        <div className='delete' onClick={(e)=>{handleDeleteTask(e, taskId),setOverlay(true), setLoading(true)}}>
                             <Trash2 color='white'></Trash2>
                             <p style={{color:'white'}}>Delete</p>
                         </div>
@@ -737,45 +805,6 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                 </div>
                             </div>
                         </div>
-                       <div className={`overlay-${overlay?'active':'unActive'}`}>
-                        {loading?(
-                            <div className={`overlay-${loading?'active':'unActive'}`}>
-                                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
-                                    <motion.div
-                                        animate={{ rotate: [0, 360] }}
-                                        transition={{ 
-                                            duration: 1, 
-                                            repeat: Infinity, 
-                                            ease: "linear",
-                                            repeatType: "loop" // Quan trọng!
-                                        }}
-                                        style={{
-                                            width: "24px",
-                                            height: "24px",
-                                            transformOrigin: "12px 12px" // Chỉ định chính xác tâm
-                                        }}
-                                    >
-                                        <Loader2 style={{color:' #007bff'}} />
-                                    </motion.div>
-                                    <p style={{fontWeight:500, color:'black'}}>Updating task...</p>
-                                </div>
-                            </div>
-                        ):(
-                            error?(
-                                    <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
-                                        <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                        <p style={{fontWeight:500}}>Failed to update the task.</p>
-                                        <p style={{fontSize:12}}>Please try again or check your permission</p>
-                                    </div>
-                            ):(
-                                    <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
-                                        <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                        <p style={{fontWeight:500}}>Task updated successfully.</p>
-                                    </div>
-                            )
-                        )}
-                       </div>
-
                 </div>
                 )}
             ):

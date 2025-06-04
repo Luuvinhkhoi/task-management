@@ -53,7 +53,7 @@ const createProject=async(title, startDate, dueDate, assignedUserId)=>{
         throw new Error(`check error ${error}`)
     }
 }
-const updateProject=async(userId, id,title, startDate, dueDate, assignedUserId)=>{
+const updateProject=async(userId, id,title, startDate, dueDate, assignedUserId, assignedRoles )=>{
     try{
         const checkRole=await db.ProjectMember.findOne({
             where:{
@@ -63,37 +63,58 @@ const updateProject=async(userId, id,title, startDate, dueDate, assignedUserId)=
         })
         const plainResult=await checkRole.get({plain:true})
         if(plainResult.role==='admin'){
-            const result=await db.Project.update(
+            // 1. Cập nhật thông tin Project
+            const result = await db.Project.update(
                 {
-                    title:title,
-                    createdAt:startDate,
-                    endedAt:dueDate
+                    title: title,
+                    createdAt: startDate,
+                    endedAt: dueDate
                 },
                 {
-                    where:{
-                    id:id
+                    where: {
+                    id: id
                     }
                 }
-            )
+            );
+
+            // 2. Xoá các thành viên không còn trong danh sách
             await db.ProjectMember.destroy({
                 where: {
                     projectId: id,
-                    userId: { [Op.notIn]: assignedUserId} 
+                    userId: { [Op.notIn]: assignedUserId }
                 }
-            })
+            });
+
+            // 3. Tìm các thành viên đã tồn tại
             const existing = await db.ProjectMember.findAll({
-                    where: { projectId: id }
+                where: { projectId: id }
             });
             const existingMemberIds = existing.map(row => row.userId);
-            console.log(existingMemberIds)
-            const newMembers = assignedUserId.filter(id => !existingMemberIds.includes(id));
-            console.log(newMembers)
+
+            // 4. Tìm user mới để thêm
+            const newMembers = assignedUserId
+            .map((user_id, index) => ({ user_id, role: assignedRoles[index] }))
+            .filter(({ user_id }) => !existingMemberIds.includes(user_id));
+
+            // 5. Thêm các thành viên mới vào bảng ProjectMember
             await db.ProjectMember.bulkCreate(
-                newMembers.map(user_id => ({
+                newMembers.map(({ user_id, role }) => ({
                     projectId: id,
                     userId: user_id,
+                    role: role
                 }))
             );
+
+            // 6. Cập nhật role của thành viên đã tồn tại nếu khác với role mới
+            for (const row of existing) {
+                const index = assignedUserId.indexOf(row.userId);
+                const newRole = assignedRoles[index];
+                if (row.role !== newRole) {
+                    row.role = newRole;
+                    await row.save();
+                }
+            }
+
         } else{
             throw new Error(`User does not have permission to edit this task.`)
         }

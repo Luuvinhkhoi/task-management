@@ -61,38 +61,52 @@ export const Project = ()=>{
       { value: 'Complete', label: 'Complete' },
     ];
     const customStyles =(darkMode) =>({
-      control: (base, state) => ({
-        ...base,
-        backgroundColor: darkMode ? '#1c2536' : '#fff',
-        boxShadow: 'none',
-        color: darkMode ? '#ddd' : '#000',
-        border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
-        padding: '8px',
-        fontSize: '14px',
-        '&:hover': {
-          border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
-        },
-        borderRadius:'.5rem'
-      }),
-      option: (base, state) => ({
-        ...base,
-        backgroundColor: state.isFocused
-          ? (darkMode ? '#007bff' : '#eaeaea')
-          : (darkMode ? '#1c2536' : '#fff'),
-        color: darkMode ? '#fff' : '#000',
-        fontSize: '14px',
-        cursor: 'pointer',
-      }),
-      singleValue: (base) => ({
-        ...base,
-        color: darkMode ? '#ddd' : '#000',
-      }),
-      menu: (base) => ({
-        ...base,
-        backgroundColor: darkMode ? '#1c2536' : '#fff',
-        zIndex: 9999,
-      }),
-    });
+            control: (base, state) => ({
+              ...base,
+              backgroundColor: darkMode ? '#1c2536' : '#fff',
+              boxShadow: 'none',
+              color: darkMode ? '#ddd' : '#000',
+              border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
+              padding: '8px',
+              fontSize: '12px',
+              '&:hover': {
+                border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
+              },
+              borderRadius:'.5rem'
+            }),
+            option: (base, state) => ({
+              ...base,
+              backgroundColor: state.isFocused
+                ? (darkMode ? '#007bff' : '#eaeaea')
+                : (darkMode ? '#1c2536' : '#fff'),
+              color: darkMode ? '#fff' : '#000',
+              fontSize: '12px',
+              cursor: 'pointer',
+            }),
+            singleValue: (base) => ({
+              ...base,
+              color: 'inherit'
+            }),
+            multiValue: (base) => ({
+                ...base,
+                backgroundColor:'none'
+            }),
+            menu: (base) => ({
+              ...base,
+              backgroundColor: darkMode ? '#1c2536' : '#fff',
+              zIndex: 9999,
+            }),
+            dropdownIndicator:(base)=>({
+                ...base,
+                padding:'unset'
+            }),
+            placeholder:(base)=>({
+                ...base,
+                padding:'unset',
+                fontSize:'12px'
+            }),
+        });
+
     const getCustomStyle=customStyles(darkMode)
     const handleTaskSubmit = async (e) => {
       e.preventDefault()
@@ -199,7 +213,7 @@ export const Project = ()=>{
           const formattedUsers = result.map(user => ({
             value: user.id, // Dùng ID làm giá trị
             label: (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
                 <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
                 <span>{user.firstname} {user.lastname}</span>
               </div>
