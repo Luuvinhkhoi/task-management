@@ -129,63 +129,65 @@ export const Kanban = () => {
     }, [location.pathname, dispatch, hasUnsavedChanges, tasks]);
     return (
         <DndProvider backend={HTML5Backend}>
-            <div className="kanban">
-                {/* To Do Column */}
-                <KanbanColumn 
-                    status="To do" 
-                    title={t('kanban.todo')} 
-                    projectId={id}
-                    formattedUsers={formattedUsers}
-                    setFormatedUser={setFormatedUser}
-                    users={users}
-                    setUser={setUser}
-                    taskDetailMembers={taskDetailMembers}
-                    setTaskDetailMember={setTaskDetailMember}
-                    assignedUserId={assignedUserId}
-                    setAssignedUserId={setAssignedUserId}
-                    tasks={tasks}
-                    taskMembers={taskMembers}
-                    moveItem={moveItem}
-                    borderColor="#007bff" 
-                />
+            <div className='kanban-parent' style={{height:'calc(100vh - 89px - 69px)', overflowY:'auto'}}>
+                <div className="kanban">
+                    {/* To Do Column */}
+                    <KanbanColumn 
+                        status="To do" 
+                        title={t('kanban.todo')} 
+                        projectId={id}
+                        formattedUsers={formattedUsers}
+                        setFormatedUser={setFormatedUser}
+                        users={users}
+                        setUser={setUser}
+                        taskDetailMembers={taskDetailMembers}
+                        setTaskDetailMember={setTaskDetailMember}
+                        assignedUserId={assignedUserId}
+                        setAssignedUserId={setAssignedUserId}
+                        tasks={tasks}
+                        taskMembers={taskMembers}
+                        moveItem={moveItem}
+                        borderColor="#007bff" 
+                    />
 
-                {/* In Progress Column */}
-                <KanbanColumn 
-                    status="In progress" 
-                    title={t('kanban.inProgress')} 
-                    tasks={tasks}
-                    projectId={id}
-                    formattedUsers={formattedUsers}
-                    setFormatedUser={setFormatedUser}
-                    users={users}
-                    setUser={setUser}
-                    taskDetailMembers={taskDetailMembers}
-                    setTaskDetailMember={setTaskDetailMember}
-                    assignedUserId={assignedUserId}
-                    setAssignedUserId={setAssignedUserId}
-                    taskMembers={taskMembers}
-                    moveItem={moveItem}
-                    borderColor="#f59e0b" 
-                />
+                    {/* In Progress Column */}
+                    <KanbanColumn 
+                        status="In progress" 
+                        title={t('kanban.inProgress')} 
+                        tasks={tasks}
+                        projectId={id}
+                        formattedUsers={formattedUsers}
+                        setFormatedUser={setFormatedUser}
+                        users={users}
+                        setUser={setUser}
+                        taskDetailMembers={taskDetailMembers}
+                        setTaskDetailMember={setTaskDetailMember}
+                        assignedUserId={assignedUserId}
+                        setAssignedUserId={setAssignedUserId}
+                        taskMembers={taskMembers}
+                        moveItem={moveItem}
+                        borderColor="#f59e0b" 
+                    />
 
-                {/* Complete Column */}
-                <KanbanColumn 
-                    status="Complete" 
-                    title={t('kanban.complete')} 
-                    tasks={tasks}
-                    projectId={id}
-                    formattedUsers={formattedUsers}
-                    setFormatedUser={setFormatedUser}
-                    users={users}
-                    setUser={setUser}
-                    taskDetailMembers={taskDetailMembers}
-                    setTaskDetailMember={setTaskDetailMember}
-                    assignedUserId={assignedUserId}
-                    setAssignedUserId={setAssignedUserId}
-                    taskMembers={taskMembers}
-                    moveItem={moveItem}
-                    borderColor="rgb(50, 213, 131)" 
-                />
+                    {/* Complete Column */}
+                    <KanbanColumn 
+                        status="Complete" 
+                        title={t('kanban.complete')} 
+                        tasks={tasks}
+                        projectId={id}
+                        formattedUsers={formattedUsers}
+                        setFormatedUser={setFormatedUser}
+                        users={users}
+                        setUser={setUser}
+                        taskDetailMembers={taskDetailMembers}
+                        setTaskDetailMember={setTaskDetailMember}
+                        assignedUserId={assignedUserId}
+                        setAssignedUserId={setAssignedUserId}
+                        taskMembers={taskMembers}
+                        moveItem={moveItem}
+                        borderColor="rgb(50, 213, 131)" 
+                    />
+                </div>
             </div>
         </DndProvider>
     );
@@ -582,6 +584,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
         const handleSelect = (selectedUsers) => {
             console.log(selectedUsers)
             if (!selectedUsers || selectedUsers.length === 0) {
+                setAssignedUserId([])
                 return;
             }else if(selectedUsers) {
                 const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)

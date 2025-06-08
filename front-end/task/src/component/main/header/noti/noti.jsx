@@ -128,7 +128,7 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
               <div className="noti-expanded" style={{ marginLeft: 20, marginTop: 10 }}>
                 {item.others.map((sub, index) => (
                   sub.isRead?(
-                    <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 16}} >
+                    <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 8}} >
                       <img src={sub.user.avatar?sub.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 30, height: 30, borderRadius: '50%', marginRight: 5 }} />
                       <div style={{display:'flex',fontSize:14, fontWeight:500, justifyContent:'space-between',alignItems:'center', width:'100%'}}>
                         <span>{sub.message}</span>
@@ -146,9 +146,9 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
                       </div>
                     </div>
                   ):(
-                    <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 16}} onClick={()=>handleClick(sub.id)}>
+                    <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 8}} onClick={()=>handleClick(sub.id)}>
                       <img src={sub.user.avatar?sub.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 30, height: 30, borderRadius: '50%', marginRight: 5 }} />
-                      <div style={{display:'flex',fontSize:14, fontWeight:500, justifyContent:'space-between', width:'100%'}}>
+                      <div style={{display:'flex',alignItems:'center',fontSize:14, fontWeight:500, justifyContent:'space-between', width:'100%'}}>
                         <span>{sub.message}</span>
                         <div style={{display:'flex', gap:8, alignItems:'center'}}>
                           <div style={{ fontSize: 12 , minWidth:'70px'}}> {new Intl.DateTimeFormat('en-CA', {

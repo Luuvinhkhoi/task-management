@@ -9,6 +9,20 @@ export const Main = () =>{
   const SOCKET_URL = 'http://localhost:4001';
   const [socket, setSocket] = useState(null);
   const [role, setRole]=useState(null)
+   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1200);
+      if (window.innerWidth >= 1200) {
+        setIsSidebarOpen(false); // reset trạng thái khi không còn mobile
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   useEffect(() => {
       // Tạo socket connection
           const socket = io(SOCKET_URL,{
@@ -49,10 +63,12 @@ export const Main = () =>{
   console.log(role)
   return(
     <div className="main">
-      <SideBar role={role}></SideBar>
       <div style={{height:'100%'}}>
-        <Header socket={socket} role={role}></Header>
-        <Outlet context={{socket, role}}></Outlet>
+        <Header socket={socket} role={role} onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}></Header>
+        <div style={{display:'flex', height:'100vh', width:'100vw'}}>
+          <SideBar role={role} isMobile={isMobile} isSideBarOpen={isSidebarOpen} onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}></SideBar>
+          <Outlet context={{socket, role}}></Outlet>
+        </div>
       </div>
     </div>
   )

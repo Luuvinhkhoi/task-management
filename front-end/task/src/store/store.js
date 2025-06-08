@@ -5,6 +5,7 @@ import settingSliceReducer from './setting'
 import projectSliceReducer from './project'
 import todayTasksSliceReducer from './todayTask'
 import upcomingTasksSliceReducer from './upcomingTask'
+import progressSliceReducer from './progress'
 export const store = configureStore({
     reducer: {
       // Define a top-level state field named `todos`, handled by `todosReducer`
@@ -13,6 +14,7 @@ export const store = configureStore({
       tasks:taskSliceReducer,
       setting:settingSliceReducer,
       todayTasks:todayTasksSliceReducer,
-      upcomingTasks:upcomingTasksSliceReducer
+      upcomingTasks:upcomingTasksSliceReducer,
+      progress:progressSliceReducer
     }
 })

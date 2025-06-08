@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { getAllSetting } from '../../../store/setting'
+import { useSelector } from 'react-redux'
 import './sign-in.css'
 import task from '../../../util/task'
 import { ChevronLeft } from 'lucide-react'
@@ -9,6 +10,7 @@ export const SignIn = ()=>{
     const [emailState, setEmailState]=useState('')
     const [passwordState, setPasswordState]=useState('')    
     const [error, setError] = useState("");
+    const theme=useSelector((state)=>state.setting.darkMode)
     const location=useLocation()
     const navigate=useNavigate()
     const dispatch=useDispatch()
@@ -33,7 +35,7 @@ export const SignIn = ()=>{
         handleLogin(); // Gọi hàm đăng ký
     }
     return (
-        <form onSubmit={handleSubmit} className="login">
+        <form onSubmit={handleSubmit} id="login">
             <div className='login-box'>
                 <div style={{display:'flex', gap:'1rem', marginBottom:'1rem'}} onClick={()=>navigate('/')}>
                     <ChevronLeft></ChevronLeft>
@@ -45,12 +47,12 @@ export const SignIn = ()=>{
                 </div>
                 <div className='login-box-row-2'>
                         <h3>Email</h3>
-                        <div className='login-email-input'>
-                            <input type='email' placeholder='Type your email here' onChange={handleEmailInput}></input>
+                        <div  className='login-email-input'>
+                            <input style={{ color:'black' }}  type='email' placeholder='Type your email here' onChange={handleEmailInput}></input>
                         </div>
                         <h3>Password</h3>
                         <div className='login-password-input'>
-                            <input type='password' placeholder='Type your password here' onChange={handlePasswordInput}></input>
+                            <input style={{ color:`black` }} type='password' placeholder='Type your password here' onChange={handlePasswordInput}></input>
                         </div>
                         <div className='login-button'>
                             <button>Sign In</button>

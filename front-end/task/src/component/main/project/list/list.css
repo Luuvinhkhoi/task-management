@@ -1,7 +1,9 @@
 @import url('../../../../theme.css');
 .list{
-    border-top: 1px solid rgb(29, 41, 57);
+    border-top:  1px solid var(--border);
     padding: 1rem;
+    overflow-y: auto;
+    height: calc(-200px + 100vh); 
 }
 .list h3{
     text-align: start;
@@ -100,4 +102,22 @@
 }
 .taskDetail-footer .delete{
     background-color:#dc2626 ;
+}
+@media screen and (max-width:1200px) {
+    .list{
+        overflow-x: auto;
+    }
+    .list >div{
+        min-width: 1000px;
+
+    }
+}
+@media screen and (max-width:800px) {
+    .list{
+        overflow-x: auto;
+        height: calc(100vh - 190px - 69px) !important
+    }
+    .taskDetail-active{
+        width: 90%;
+    }
 }

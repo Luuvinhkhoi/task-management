@@ -85,11 +85,15 @@ export const Project = ()=>{
             }),
             singleValue: (base) => ({
               ...base,
-              color: 'inherit'
+              color:'inherit'
+            }),
+            multiValueLabel:()=>({
+              color:`${darkMode?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}`
+
             }),
             multiValue: (base) => ({
                 ...base,
-                backgroundColor:'none'
+                backgroundColor:'none',
             }),
             menu: (base) => ({
               ...base,
@@ -177,6 +181,7 @@ export const Project = ()=>{
       console.log(selectedUsers)
       if (!selectedUsers || selectedUsers.length === 0) {
           setMember([]);
+          setAssignedUserId([]);
           return;
       }else if(selectedUsers) {
           const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
@@ -258,16 +263,22 @@ export const Project = ()=>{
                 <div style={{cursor:'pointer'}} className={`projectHeader-${listActive()?'active':'unActive'}`} onClick={()=>navigate(`/project/${param.id}/list`)}>{t('project.List')}</div>
              </div>
              <div className='headerItem'>  
-                <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+                {role==='viewer'?(
+                  <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+                    <div style={{fontWeight:'500', fontSize:16}}>Your role: {role}</div>
+                  </div>
+                ):(
+                  <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
                     <div style={{fontWeight:'500', fontSize:16}}>Your role: {role}</div>
                     <div className='create' onClick={()=>setTaskFormOpen(true)}>{t('project.New task')}</div>
-                </div>
+                  </div>
+                )}
                 <div className={`overlay-${taskFormOpen?'active':'unActive'}`}>
                   <form className={`projectForm-${taskFormOpen?'active':'unActive'}`} onSubmit={handleTaskSubmit} >
                       <div className='close-button' onClick={()=>{setTaskFormOpen(!taskFormOpen)}}><X></X></div>
                       <h3>Create new task</h3>
                       <div className='title'>
-                        <input value={title} placeholder='title'  onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
+                        <input value={title} placeholder='Title'  onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20} required></input>
                       </div>
                       <div className='option'>
                         <div className='select'>
@@ -288,12 +299,13 @@ export const Project = ()=>{
                         </div>
                       </div>
                       <div className='title'>
-                        <input placeholder='Description' value={description} onChange={(e)=>setDescription(e.target.value)} minLength={2} maxLength={200}></input>
+                        <input placeholder='Description' required value={description} onChange={(e)=>setDescription(e.target.value)} minLength={2} maxLength={200}></input>
                       </div>
                       <div className='date'>
                         <div>
                           <p>Start date</p>
-                          <div><input type='datetime-local'  
+                          <div><input type='datetime-local' 
+                                required 
                                 value={startDate}
                                 onChange={(e) => {
                                   const newStart = e.target.value;
@@ -309,6 +321,7 @@ export const Project = ()=>{
                           <p>Due date</p>
                           <div>
                             <input type='datetime-local'  
+                                required
                                 value={dueDate}
                                 onChange={(e) => {
                                   const newDue = e.target.value;
@@ -323,13 +336,14 @@ export const Project = ()=>{
                         </div>
                       </div>
                       <Select 
-                        closeMenuOnSelect={false}
                         components={animatedComponents}
                         value={assignedUserId}
                         isMulti
                         styles={getCustomStyle}
                         options={formattedProjectUser}
                         onChange={handleSelect}
+                        isClearable={true}
+                        required
                       ></Select>
                       
                       <button>Create Task</button>

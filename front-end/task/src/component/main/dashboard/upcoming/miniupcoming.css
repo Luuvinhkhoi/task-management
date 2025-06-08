@@ -7,8 +7,8 @@
   padding: 1rem .5rem;
   min-height: 190px;
   overflow: hidden;
-  max-height: 300px;
-  overflow-y: scroll;
+  max-height: 400px;
+  overflow-y: auto;
 }
 .upcomingTask-header{
   text-align: start;
@@ -43,4 +43,18 @@
 }
 .upcomingTask-item p{
   font-size: 12px;
+  font-weight: 500;
+}
+@media screen and (max-width: 1200px) {
+    #mini-upcoming{
+      margin: .5rem 1rem 1rem .5rem;
+      min-height: 300px;
+    }
+    
+}
+@media screen and (max-width:779px) {
+    #mini-upcoming{
+        margin: 1rem 1rem .5rem 1rem;
+    }
+    
 }

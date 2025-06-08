@@ -1,12 +1,16 @@
 @import url('../../../theme.css');
+.setting-parent{
+    overflow-y: auto;
+    height: calc(-100px + 100vh); 
+    width: 100%;
+}
 #setting{
     width: 95%;
-    align-self: flex-end;
     text-align: start;
 }
 #setting .language{
     padding: 1rem;
-    margin: 2rem 4rem;
+    margin: 1rem 4rem;
 }
 #setting .language select{
     padding: 1rem 4rem 1rem 1rem;
@@ -15,14 +19,21 @@
 }
 #setting .darkMode{
     padding: 1rem;
-    margin: 2rem 4rem;
+    margin: 1rem 4rem;
 }
 #setting .timezone{
     padding: 1rem;
-    margin: 2rem 4rem;
+    margin: 1rem 4rem;
 }
 #setting .timezone select{
     padding: 1rem 4rem 1rem 1rem;
     border-radius: .5rem;
     margin-top: 1rem;
+}
+
+@media screen and (max-width:800px) {
+    .setting-parent{
+        height: calc(100vh - 190px) !important
+    }
+    
 }

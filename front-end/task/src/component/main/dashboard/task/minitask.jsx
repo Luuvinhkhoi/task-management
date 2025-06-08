@@ -11,6 +11,7 @@ import { useTimezone } from '../../../../timezoneContext';
 import { getAllTodayTask } from '../../../../store/todayTask';
 export const Task = ({socket}) =>{
     const todayTask=useSelector(state=>state.todayTasks.tasks||[])
+    const theme=useSelector(state=>state.setting.darkMode)
     const[isClick, setIsClick]=useState(null)
     const {t} = useTranslation()
     const navigate=useNavigate()
@@ -34,25 +35,28 @@ export const Task = ({socket}) =>{
           <div className='task-list' style={{ display: todayTask.length > 0 ? 'grid' : 'block' }} >
             {todayTask.length>0 ? todayTask.slice(0,2).map(task=>
               <div className='task-item' onClick={()=>setIsClick(task.id)}>
+                  <div style={{display:'flex', gap:'1rem'}}>
+                    <div className={`priority-${task.priority.toLowerCase()}`} style={{marginBottom:'.5rem'}}>{t(`list.priority.${task.priority}`)}</div>
+                    <div style={{marginBottom:'.5rem'}} className={`status-${task.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${task.status}`)}</div>
+                  </div>
                   <div style={{display:'flex', gap:'1rem', alignContent:'center', justifyContent:'space-between'}}>
                     <h4>{task.title.length>20?task.title.slice(0,20)+'...':task.title}</h4>
-                    <div className={`priority-${task.priority.toLowerCase()}`} style={{marginBottom:'.5rem'}}>{t(`list.priority.${task.priority}`)}</div>
                   </div>
-                  <p>{task.description.length>70?task.description.slice(0,70)+'...':task.description}</p>
-                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'center'}}>
-                    <div className='task-member' style={{display:'flex', gap:'.5rem'}}>
+                  <p style={{color:`${theme?'#fff':'rgb(75, 85, 99)'}`, marginBottom:'.25rem'}}>{task.description.length>70?task.description.slice(0,70)+'...':task.description}</p>
+                  <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
+                    <div className='task-member' style={{display:'flex', gap:'.25rem'}}>
                         {task.user.length>3?(
                                   <>
                                       {task.user.slice(2).map(member=>
                                           <div>
-                                              <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                              <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px', width: '28px'}} alt="Avatar" />
                                           </div>
                                       )}
                                       <div
                                           style={{
                                               borderRadius: '50%',
-                                              height: '32px',
-                                              width: '32px',
+                                              height: '28px',
+                                              width: '28px',
                                               backgroundColor: '#fff',
                                               display: 'flex',
                                               alignItems: 'center',
@@ -67,14 +71,14 @@ export const Task = ({socket}) =>{
                                   </>
                               ):(task.user.map(member=>
                                   <div>
-                                      <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                      <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                   </div>
                               ))
                             }
                     </div>
                     <div className='due'>
                         <Clock style={{height:'16px',width:'16px'}}></Clock>
-                        <div style={{display:'flex', gap:'.5rem', fontSize:'14px'}}>
+                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>
                                  <div>
                                     {new Intl.DateTimeFormat('en-US', {
                                       hour: 'numeric',

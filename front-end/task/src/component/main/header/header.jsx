@@ -14,10 +14,11 @@ import { AnimatePresence, motion} from 'framer-motion'
 import { useTranslation } from "react-i18next";
 import { useTimezone } from '../../../timezoneContext'
 import { Comment } from '../project/comment/comment';
+import app from '../../../assets/app.png'
 import { TaskDetail } from '../taskDetail/taskDetail'
 import { Notification } from './noti/noti'
-import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot } from 'lucide-react'
-export const Header=({socket, role})=>{
+import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot, AlignJustify } from 'lucide-react'
+export const Header=({socket, role, onToggleSidebar})=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const userId=useSelector(state=>state.userProfile.id)
@@ -149,7 +150,7 @@ export const Header=({socket, role})=>{
         const result = await task.search(new URLSearchParams({name}).toString())
         setResults(result)
         setLoading(true)
-        setOpenSearchBar(true)
+        setOpenSearchBar(!openSearchBar)
     }
     function handleInputChange(event) {
         const newQuery = event.target.value;
@@ -262,158 +263,251 @@ export const Header=({socket, role})=>{
     console.log(role)
     return (
         <div className='header'>
-            <div className='searchBar' onClick={handleActive} ref={searchBarRef}>
-                <input placeholder='Search here' value={searchString} onChange={handleInputChange}></input>
-                <AnimatePresence>
-                    {openSearchBar===true &&(
-                        <motion.div 
-                            ref={dropsearchRef} 
-                           initial={{ height: 0, opacity: 0 }} 
-                           animate={{ height: "auto", opacity: 1 }} 
-                           exit={{ opacity: 0, height: 0 }}
-                           transition={{ duration: 0.3, ease: "easeOut" }}
-                           className='searchDropDown'
-                        >
-                            {results.project.length<1 && results.task.length<1?(
-                                <div style={{display:'flex', alignContent:'center', flexDirection:'column', flexWrap:'wrap'}}>
-                                    <img src={notFound} style={{height:'64px', width:'64px', margin:'0 auto'}}></img>
-                                    <p style={{display:'inline-block'}}>We couldn't find anything</p>
-                                </div>
-                            ):(
-                                <div>
-                                    {results.project.length>=1?(
+            <div className='header-pc'>
+                <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
+                    <AlignJustify className='toggle-button'  onClick={onToggleSidebar}></AlignJustify>
+                    <div className='brand'>
+                        <img src={app} style={{width:'32px', height:'32px'}}></img>
+                        <h3>TASK</h3>
+                    </div>
+                    <div className='searchBar' onClick={handleActive} ref={searchBarRef}>
+                        <input placeholder='Search here' value={searchString} onChange={handleInputChange}></input>
+                        <AnimatePresence>
+                            {openSearchBar===true &&(
+                                <motion.div 
+                                    ref={dropsearchRef} 
+                                    initial={{ height: 0, opacity: 0 }} 
+                                    animate={{ height: "auto", opacity: 1 }} 
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                    className='searchDropDown'
+                                >
+                                    {results.project.length<1 && results.task.length<1?(
+                                        <div style={{display:'flex', alignContent:'center', flexDirection:'column', flexWrap:'wrap'}}>
+                                            <img src={notFound} style={{height:'64px', width:'64px', margin:'0 auto'}}></img>
+                                            <p style={{display:'inline-block'}}>We couldn't find anything</p>
+                                        </div>
+                                    ):(
                                         <div>
-                                            <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
-                                                <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
-                                                <p style={{fontWeight:500}}>Project</p>
-                                            </div>
-                                            {results.project?results.project.map(item=>
-                                                <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={()=>navigate(`/project/${item.id}`)}>
-                                                    <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
-                                                    <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                                            {results.project.length>=1?(
+                                                <div>
+                                                    <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
+                                                        <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
+                                                        <p style={{fontWeight:500}}>Project</p>
+                                                    </div>
+                                                    {results.project?results.project.map(item=>
+                                                        <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={()=>navigate(`/project/${item.id}`)}>
+                                                            <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
+                                                            <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                                                        </div>
+                                                    ):null}
                                                 </div>
                                             ):null}
-                                        </div>
-                                    ):null}
-                                    {results.task.length>=1?(
-                                        <div >
-                                        <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
-                                            <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
-                                            <p style={{fontWeight:500}}>Task</p>
-                                        </div>
-                                        {results.task?results.task.map(item=>
-                                            <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
-                                                <div style={{display:'flex', justifyContent:'space-between'}}>
-                                                    <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
-                                                    <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{item.priority}</div>
+                                            {results.task.length>=1?(
+                                                <div >
+                                                <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
+                                                    <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
+                                                    <p style={{fontWeight:500}}>Task</p>
                                                 </div>
-                                                <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
-                                                                    {new Intl.DateTimeFormat('en-CA', {
-                                                                    year: 'numeric',
-                                                                    month: '2-digit',
-                                                                    day: '2-digit',
-                                                                    timeZone: timezone,
-                                                                    }).format(new Date(item.endedAt))}
-                                                                </div>
-                                                                <div>
-                                                                    {new Intl.DateTimeFormat('en-US', {
-                                                                    hour: 'numeric',
-                                                                    minute: '2-digit',
-                                                                    hour12: true,
-                                                                    timeZone: timezone,
-                                                                    }).format(new Date(item.endedAt))}
-                                                                </div>
-                                                </div>
+                                                {results.task?results.task.map(item=>
+                                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
+                                                        <div style={{display:'flex', justifyContent:'space-between'}}>
+                                                            <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
+                                                            <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{item.priority}</div>
+                                                        </div>
+                                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
+                                                                            {new Intl.DateTimeFormat('en-CA', {
+                                                                            year: 'numeric',
+                                                                            month: '2-digit',
+                                                                            day: '2-digit',
+                                                                            timeZone: timezone,
+                                                                            }).format(new Date(item.endedAt))}
+                                                                        </div>
+                                                                        <div>
+                                                                            {new Intl.DateTimeFormat('en-US', {
+                                                                            hour: 'numeric',
+                                                                            minute: '2-digit',
+                                                                            hour12: true,
+                                                                            timeZone: timezone,
+                                                                            }).format(new Date(item.endedAt))}
+                                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                ):null}
                                             </div>
-                                        ):null}
-                                    </div>
-                                    ):null}
-                                </div>
-                            )}
-                        </motion.div>
-    
-                    )
-                    }
-                </AnimatePresence>
-            </div>
-            {isClick !== null && results.task && (
-                <TaskDetail 
-                    role={projectRole}
-                    overlayId={isClick} 
-                    setOverlayId={setIsClick} 
-                    taskId={isClick} 
-                    socket={socket}
-                    projectId={results.task.find(item => item.id === isClick)?.project_id}
-                />
-            )}  
-            <div style={{display:'flex', gap:'1rem'}}>
-                <div>{dayFormat}</div>
-                <div>{timeFormat}</div>
-            </div>
-            {userName?
-             <div style={{display:'flex', alignItems:'center'}}>
-                <div style={{position:'relative'}}>
-                    <div className='noti' ref={notiRef} onClick={()=>{setOpenNotification(!openNotification), setView(true)}}>
-                        <Bell>
-                        </Bell>
-                        {view?(<div></div>):(<div style={{position:'absolute', bottom:'18px', left:'-10px', backgroundColor:'orange',height:'10px', width:'10px', borderRadius:'1rem' }}></div>)}
+                                            ):null}
+                                        </div>
+                                    )}
+                                </motion.div>
+            
+                            )
+                            }
+                        </AnimatePresence>
                     </div>
-                    <AnimatePresence>
-                            {openNotification==true&&(
+                    {isClick !== null && results.task && (
+                        <TaskDetail 
+                            role={projectRole}
+                            overlayId={isClick} 
+                            setOverlayId={setIsClick} 
+                            taskId={isClick} 
+                            socket={socket}
+                            projectId={results.task.find(item => item.id === isClick)?.project_id}
+                        />
+                    )} 
+                </div> 
+                {userName?
+                <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
+                    <div style={{display:'flex', gap:'1rem'}}>
+                        <div>{dayFormat}</div>
+                        <div>{timeFormat}</div>
+                    </div>
+                    <div style={{position:'relative'}}>
+                        <div className='noti' ref={notiRef} onClick={()=>{setOpenNotification(!openNotification), setView(true)}}>
+                            <Bell>
+                            </Bell>
+                            {view?(<div></div>):(<div style={{position:'absolute', bottom:'18px', left:'-10px', backgroundColor:'orange',height:'10px', width:'10px', borderRadius:'1rem' }}></div>)}
+                        </div>
+                        <AnimatePresence>
+                                {openNotification==true&&(
+                                    <motion.div 
+                                    ref={notiDropRef} 
+                                    initial={{ height: 0, opacity: 0 }} 
+                                    onMouseDown={(e) => e.stopPropagation()}
+                                    animate={{ height: "300px", opacity: 1 }} 
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                    className='notiDropDown'
+                                    >
+                                        <Notification socket={socket} noti={noti} setNoti={setNoti} setIsClick={setIsClick} isClick={isClick}></Notification>
+                                    </motion.div>
+                                )}
+                        </AnimatePresence>
+                    </div>
+                    <div style={{display:'inline-block'}}>
+                        <div className='profile' style={{cursor:'pointer'}} ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
+                            <CircleUser></CircleUser>
+                            <p>{t(`header.Welcome`)} <span>{userName}</span></p>
+                        </div>
+                        <AnimatePresence>
+                            {OpenDropdown==true &&(
                                 <motion.div 
-                                ref={notiDropRef} 
+                                    ref={dropdownRef} 
                                 initial={{ height: 0, opacity: 0 }} 
-                                onMouseDown={(e) => e.stopPropagation()}
-                                animate={{ height: "300px", opacity: 1 }} 
+                                animate={{ height: "auto", opacity: 1 }} 
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.3, ease: "easeOut" }}
-                                className='notiDropDown'
+                                className='profileDropDown'
                                 >
-                                    <Notification socket={socket} noti={noti} setNoti={setNoti} setIsClick={setIsClick} isClick={isClick}></Notification>
+                                    <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>navigate('/profile')}>
+                                        <UserPen></UserPen>
+                                        <p>Edit profile</p>
+                                    </div>
+                                    <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>handleLogout()}>
+                                        <LogOut></LogOut>
+                                        <p>Log out</p>
+                                    </div>
                                 </motion.div>
-                            )}
-                    </AnimatePresence>
-                </div>
-                <div style={{display:'inline-block'}}>
-                    <div className='profile' style={{cursor:'pointer'}} ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
-                        <CircleUser></CircleUser>
-                        <p>{t(`header.Welcome`)} <span>{userName}</span></p>
+            
+                            )
+                            }
+                        </AnimatePresence>
                     </div>
-                    <AnimatePresence>
-                        {OpenDropdown==true &&(
-                            <motion.div 
-                                ref={dropdownRef} 
-                            initial={{ height: 0, opacity: 0 }} 
-                            animate={{ height: "auto", opacity: 1 }} 
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.3, ease: "easeOut" }}
-                            className='profileDropDown'
-                            >
-                                <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>navigate('/profile')}>
-                                    <UserPen></UserPen>
-                                    <p>Edit profile</p>
-                                </div>
-                                <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>handleLogout()}>
-                                    <LogOut></LogOut>
-                                    <p>Log out</p>
-                                </div>
-                            </motion.div>
-        
-                        )
-                        }
-                    </AnimatePresence>
                 </div>
-             </div>
-             :
-             <div id='authOption'>
-                <div className='sign-in'>
-                    <Link to='/sign-in'  className='sign-in-anchor'>Sign in</Link>
-                </div>
-                <div className='sign-up'>
-                    <Link to='/sign-up' className='sign-up-button'>Create account</Link>
-                </div>
-             </div> 
-            }
+                :
+                <div id='authOption'>
+                    <div className='sign-in'>
+                        <Link to='/sign-in'  className='sign-in-anchor'>Sign in</Link>
+                    </div>
+                    <div className='sign-up'>
+                        <Link to='/sign-up' className='sign-up-button'>Create account</Link>
+                    </div>
+                </div> 
+                }
+            </div>
+            <div className='searchBar-mobile' onClick={handleActive} ref={searchBarRef}>
+                        <input placeholder='Search here' value={searchString} onChange={handleInputChange}></input>
+                        <AnimatePresence>
+                            {openSearchBar===true &&(
+                                <motion.div 
+                                    ref={dropsearchRef} 
+                                    initial={{ height: 0, opacity: 0 }} 
+                                    animate={{ height: "auto", opacity: 1 }} 
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeOut" }}
+                                    className='searchDropDown'
+                                >
+                                    {results.project.length<1 && results.task.length<1?(
+                                        <div style={{display:'flex', alignContent:'center', flexDirection:'column', flexWrap:'wrap'}}>
+                                            <img src={notFound} style={{height:'64px', width:'64px', margin:'0 auto'}}></img>
+                                            <p style={{display:'inline-block'}}>We couldn't find anything</p>
+                                        </div>
+                                    ):(
+                                        <div>
+                                            {results.project.length>=1?(
+                                                <div>
+                                                    <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
+                                                        <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
+                                                        <p style={{fontWeight:500}}>Project</p>
+                                                    </div>
+                                                    {results.project?results.project.map(item=>
+                                                        <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={()=>navigate(`/project/${item.id}`)}>
+                                                            <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
+                                                            <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                                                        </div>
+                                                    ):null}
+                                                </div>
+                                            ):null}
+                                            {results.task.length>=1?(
+                                                <div >
+                                                <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
+                                                    <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
+                                                    <p style={{fontWeight:500}}>Task</p>
+                                                </div>
+                                                {results.task?results.task.map(item=>
+                                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
+                                                        <div style={{display:'flex', justifyContent:'space-between'}}>
+                                                            <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
+                                                            <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{item.priority}</div>
+                                                        </div>
+                                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
+                                                                            {new Intl.DateTimeFormat('en-CA', {
+                                                                            year: 'numeric',
+                                                                            month: '2-digit',
+                                                                            day: '2-digit',
+                                                                            timeZone: timezone,
+                                                                            }).format(new Date(item.endedAt))}
+                                                                        </div>
+                                                                        <div>
+                                                                            {new Intl.DateTimeFormat('en-US', {
+                                                                            hour: 'numeric',
+                                                                            minute: '2-digit',
+                                                                            hour12: true,
+                                                                            timeZone: timezone,
+                                                                            }).format(new Date(item.endedAt))}
+                                                                        </div>
+                                                        </div>
+                                                    </div>
+                                                ):null}
+                                            </div>
+                                            ):null}
+                                        </div>
+                                    )}
+                                </motion.div>
+            
+                            )
+                            }
+                        </AnimatePresence>
+            </div>
+                    {isClick !== null && results.task && (
+                        <TaskDetail 
+                            role={projectRole}
+                            overlayId={isClick} 
+                            setOverlayId={setIsClick} 
+                            taskId={isClick} 
+                            socket={socket}
+                            projectId={results.task.find(item => item.id === isClick)?.project_id}
+                        />
+                    )} 
         </div>
     )
 }

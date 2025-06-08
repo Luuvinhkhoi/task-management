@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './sign-up.css'
 import task from '../../../util/task'
 import { ChevronLeft } from 'lucide-react'
+import { useSelector } from 'react-redux'
 import {Link, useNavigate, useLocation} from 'react-router-dom'
 export const SignUp = ()=>{
     const [firstnameState, setFirstnameState]=useState('')
@@ -9,6 +10,7 @@ export const SignUp = ()=>{
     const [emailState, setEmailState]=useState('')
     const [passwordState, setPasswordState]=useState('')    
     const [error, setError] = useState("");
+    const theme=useSelector((state)=>state.setting.darkMode)
     const location=useLocation()
     const navigate=useNavigate()
 
@@ -38,7 +40,7 @@ export const SignUp = ()=>{
         handleSignUp(); // Gọi hàm đăng ký
     }
     return (
-        <form onSubmit={handleSubmit} className="sign-up">
+        <form onSubmit={handleSubmit} id="sign-up">
             <div className='sign-up-box'>
                 <div style={{display:'flex', gap:'1rem', marginBottom:'1rem'}} onClick={()=>navigate('/')}>
                     <ChevronLeft></ChevronLeft>
@@ -51,25 +53,25 @@ export const SignUp = ()=>{
                 <div className='sign-up-box-row-2'>
                         <h3>Email</h3>
                         <div className='sign-up-email-input'>
-                            <input type='email' placeholder='Type your email here' onChange={handleEmailInput}></input>
+                            <input style={{ color:`black` }} type='email' placeholder='Type your email here' onChange={handleEmailInput}></input>
                         </div>
                         <div className='sign-up-name'>
                             <div>
                                 <h3>Firstname</h3>
                                 <div className='sign-up-user-name-input'> 
-                                    <input placeholder='Type your user name here' onChange={handleFirstnameInput} required minLength={2} maxLength={30}></input>
+                                    <input style={{ color:`black` }} placeholder='Type your user name here' onChange={handleFirstnameInput} required minLength={2} maxLength={30}></input>
                                 </div>
                             </div>
                             <div>
                                 <h3>Lastname</h3>
                                 <div className='sign-up-user-name-input'> 
-                                    <input placeholder='Type your user name here' onChange={handleLastnameInput} required minLength={2} maxLength={30}></input>
+                                    <input style={{ color:`black` }} placeholder='Type your user name here' onChange={handleLastnameInput} required minLength={2} maxLength={30}></input>
                                 </div>
                             </div>
                         </div>
                         <h3>Password</h3>
                         <div className='sign-up-password-input'>
-                            <input type='password' placeholder='Type your password here' onChange={handlePasswordInput}></input>
+                            <input style={{ color:`black` }} type='password' placeholder='Type your password here' onChange={handlePasswordInput}></input>
                         </div>
                         <div className='sign-up-button'>
                             <button>Sign Up</button>

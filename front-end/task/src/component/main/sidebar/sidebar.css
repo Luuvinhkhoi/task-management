@@ -1,6 +1,7 @@
 .sideBar{
     font-weight: 500;
     height: 100%;
+    border-right:1px solid var(--border);
 }
 .sideBar .brand{
     width: 50%;
@@ -13,8 +14,6 @@
 }
 .sideBar .menu{
     height: calc(100% - 100px);
-    border-right:2px solid var(--border);
-
 }
 .sideBar .menuItem{
     width: 90%;
@@ -172,7 +171,7 @@
     padding: 1rem;
     border-radius: .5rem;
     font-size: 14px;
-    height: 100px;
+    max-height: 200px;
     overflow-y: scroll;
 }
 .sideBar .projectForm-active .member span{
@@ -232,4 +231,21 @@
 }
 .see-more-active:hover{
     background-color:rgb(221, 222, 225);
+}
+.sideBar.mobile {
+    position: absolute;
+    z-index: 100;
+    background-color: var(--background-color);
+    transition: left 0.3s ease-in-out
+}
+.sideBar.mobile.open {
+  left: 0;
+}
+.sideBar.mobile.closed {
+  left: -300px;
+}
+@media screen and (max-width:1200px) {
+    .sideBar .brand{
+        display: none;
+    }
 }

@@ -2,6 +2,7 @@
 .profile{
     text-align: left;
     padding: 1rem;
+    width: 100%;
 }
 .profileHeader{
     display: flex;
@@ -38,8 +39,6 @@
 }
 .profileBody div:first-child >div{
     display: grid;
-    grid-template-columns: 2fr 1fr;
-    grid-row: 1fr 1fr;
     gap: 1rem;
 }
 .profileBody >div{

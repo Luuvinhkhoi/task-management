@@ -6,6 +6,10 @@
   min-height: 100vh;
   font-family: 'Montserrat';
 }
+html{
+  height: 100vh;
+  overflow: hidden;
+}
 .main{
   height: 100vh;
 }
@@ -66,4 +70,22 @@ img{
 
 .read-the-docs {
   color: #888;
+}
+/* Cho toàn bộ trang hoặc một phần tử cụ thể */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #555; /* Màu của thanh cuộn */
+  border-radius: 10px; /* Bo tròn góc */
+  border: 2px solid transparent; /* Tạo khoảng cách với track */
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #888; /* Màu khi hover */
 }

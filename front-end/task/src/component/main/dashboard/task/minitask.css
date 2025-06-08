@@ -26,17 +26,18 @@
 }
 .task-item{
     display: grid;
-    grid-template-rows: 1fr 2.5fr 1fr;
-    max-height: 120px;
-    gap:.5rem;
+    grid-template-rows: 1fr 1fr 2.5fr 1fr;
+    gap:4px;
+    max-height: 130px;
     text-align: start;
-    padding: 1rem .5rem;
+    padding: 1.5rem .5rem;
     border-radius: 1rem;
     background-color: var(--task-item-bg);
     cursor: pointer;
 }
 .task-item p{
     font-size: 12px;
+    font-weight: 500;
 }
 .task-progress{
     background-color: #fff;
@@ -65,4 +66,10 @@
     background-color: var(--task-bg);
     padding: 4px 8px;
     border-radius: 1rem;
+}
+@media screen and (max-width: 1279px) {
+    #task{
+        min-height: 300px;
+    }
+    
 }

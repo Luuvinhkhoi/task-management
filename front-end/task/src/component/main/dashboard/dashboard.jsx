@@ -7,13 +7,15 @@ import { Task } from './task/minitask';
 import { Progress } from './progress/progress';
 import { MiniUpcoming } from './upcoming/miniUpcoming';
 import {  Distribution } from './distribution/distribution';
+import { fetchProgress } from '../../../store/progress';
 import task from '../../../util/task';
 export const Dashboard = () =>{
   const todayTask=useSelector(state=>state.todayTasks.tasks||[])
+  const progress=useSelector(state=>state.progress.progress||[])
   const upcomingTask=useSelector(state=>state.upcomingTasks.tasks||[])
   const projects=useSelector(state=>state.projects.projects)
   const [tasks, setTask]=useState([])
-  const [progress, setProgress]=useState([])
+  const dispatch=useDispatch()
   const { socket } = useOutletContext();
   const {role}=useOutletContext
   useEffect(() => {
@@ -46,28 +48,27 @@ export const Dashboard = () =>{
     getTask()
   },[todayTask, upcomingTask])
   useEffect(()=>{
-     const fetchProgress=async ()=>{
+     const fetch=async ()=>{
        try{
-        const result=await task.getProjectProgress()
-        if(result){
-          setProgress(result)
-        }
+        dispatch(fetchProgress())
        }catch(error){
         console.log(error)
        }
      }
-     fetchProgress()
+     fetch()
   }, [])
   return(
-    <div className='dashboard'>
+    <div style={{height:'95%',width:'100%', overflowY:'auto'}}>
+      <div className='dashboard'>
         <div id='row1'>
           <Task socket={socket}></Task>
           <Distribution tasks={tasks}></Distribution>
         </div>
         <div id='row2'>
           <Progress progress={progress}></Progress>
-          <MiniUpcoming></MiniUpcoming>
+          <MiniUpcoming socket={socket}></MiniUpcoming>
         </div>
+      </div>
     </div>
   )
 }

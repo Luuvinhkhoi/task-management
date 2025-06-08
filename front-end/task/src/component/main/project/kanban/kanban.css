@@ -4,7 +4,9 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 1.5rem;
     padding: 1rem;
-    border-top:1px solid rgb(29, 41, 57);
+    border-top: 1px solid var(--border);
+    width: 95%;
+    overflow-y: auto;
 }
 .kanbanColumn{
     min-height: 400px;
@@ -122,4 +124,20 @@
 }
 .taskDetail-footer .delete{
     background-color:#dc2626 ;
+}
+@media screen and (max-width:1200px) {
+    .kanban{
+        overflow-x: auto;
+    }
+    .kanbanColumn{
+        min-width: 270px;
+    }
+}
+@media screen and (max-width:800px) {
+    .kanban-parent{
+        height: calc(100vh - 160px - 69px) !important
+    }
+    .taskDetail-active{
+        width: 90%;
+    }
 }

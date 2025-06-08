@@ -1,11 +1,14 @@
 import './distribution.css';
 import {useState, useEffect} from 'react';
 import task from '../../../../util/task';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, Label,Tooltip, Legend, ResponsiveContainer } from 'recharts';
 // Giả lập các ngày có task và trạng thái
 export const Distribution = ({tasks}) => {
   const {t}=useTranslation()
+  const theme=useSelector((state)=>state.setting.darkMode)
+  console.log(tasks)
   const getStatusCounts = (data) => {
     const counts = data.reduce((acc, { status }) => {
       const key = status;
@@ -42,7 +45,7 @@ export const Distribution = ({tasks}) => {
   return(
     <div id='distribution'>
        <h3 style={{textAlign:'start'}}>{t('dashboard.statusOverview')}</h3>
-       <ResponsiveContainer width="100%" height='95%' maxHeight='300px'>
+       <ResponsiveContainer width="100%" height='85%' maxHeight='300px'>
         <PieChart>
           <Pie
             data={chartData}
@@ -52,14 +55,36 @@ export const Distribution = ({tasks}) => {
             cy="50%"
             innerRadius={70}
             outerRadius={100}
-            label={({ name, value }) => `${name}: ${value}`}
+            label={false}
           >
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}
+            ))}       
+            <Label
+              value={`Total: ${tasks.length}`}
+              position="center"
+              style={{ fontSize: '16px', fontWeight: 'bold', fill:`${theme?'white':'black'}` }}
+            />
           </Pie>
-          <Tooltip />
-          <Legend />
+          <Tooltip
+            contentStyle={{
+              border: 'none',
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+              borderRadius: '8px',
+              fontSize: '14px',
+              color: '#333',
+            }}
+            itemStyle={{
+              padding: 0,
+              margin: 0,
+            }}
+            formatter={(value, name) => [`${value}`, `${name}`]}
+          />          
+
+          <Legend 
+            
+          />        
         </PieChart>
        </ResponsiveContainer>
     </div>

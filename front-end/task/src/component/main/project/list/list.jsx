@@ -495,7 +495,7 @@ export const List = ()=>{
                                 <>
                                     {task.members.slice(2).map(member=>
                                         <div>
-                                            <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                            <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                         </div>
                                     )}
                                     <div
@@ -517,7 +517,7 @@ export const List = ()=>{
                                 </>
                             ):(task.members.map(member=>
                                 <div>
-                                    <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
+                                    <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                 </div>
                             ))
                             }
@@ -680,7 +680,7 @@ export const List = ()=>{
                                 <div style={{maxHeight:'150px', overflowY:'scroll'}}>
                                     {taskDetailMembers.map(user=>
                                         <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
-                                            <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
+                                            <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'28px', height:'28px', borderRadius:'10rem'}}></img>
                                             <div>
                                                 <span>{user.firstname}</span>
                                                 <span> </span>

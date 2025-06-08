@@ -1,6 +1,8 @@
 @import url('../../../theme.css');
-.sign-up{
+#sign-up{
     place-items: center;
+    overflow-y: auto;
+    height: 100vh;
 }
 
 .sign-up-box{
@@ -9,6 +11,7 @@
     border-radius: 0.5rem;
     width: 30%;
     text-align: start;
+    margin: 0 auto;
 }
 .sign-up-box-row-1 span{
     font-weight: 600;
@@ -94,4 +97,14 @@
     text-decoration: none;
     color: var(--button-bg);
     font-weight: 500;
+}
+@media screen and (max-width:1000px) {
+    .sign-up-box{
+        width: 50%;
+    }
+}
+@media screen and (max-width:700px) {
+    .sign-up-box{
+        width: 70%;
+    }
 }

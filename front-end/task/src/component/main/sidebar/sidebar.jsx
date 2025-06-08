@@ -9,12 +9,13 @@ import './sidebar.css'
 import app from '../../../assets/app.png'
 import { useSelector } from 'react-redux'
 import Select from 'react-select'
-import makeAnimated from 'react-select/animated';
+import makeAnimated, { MultiValue } from 'react-select/animated';
 import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next';
 import { fetchProjects } from '../../../store/project'
 import { RenderDropdown } from './optionMenu'
-export const SideBar = ({role})=>{
+import { fetchProgress } from '../../../store/progress'
+export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
    let location=useLocation()
    const theme=useSelector((state)=>state.setting.darkMode)
    const userId=useSelector((state)=>state.userProfile.id)
@@ -48,6 +49,15 @@ export const SideBar = ({role})=>{
    const [formattedUser, setFormatedUser]=useState([])
    const [formattedProjectUser, setFormatedProjectUser]=useState([])
    const [initialProjectUSer, setInitialProjectUser]=useState()
+   const classes = ['sideBar'];
+    if (isMobile) {
+      classes.push('mobile'); // add mobile class
+      if (isSideBarOpen) {
+        classes.push('open');
+      } else {
+        classes.push('closed');
+      }
+    }
    const [isOpen, setIsOpen]=useState('unActive')
    const permission={admin:'Admin', editor:'Editor', viewer:'Viewer'}
    const navigate=useNavigate()
@@ -60,7 +70,7 @@ export const SideBar = ({role})=>{
         color: darkMode ? '#ddd' : '#000',
         border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
         padding: '8px',
-        fontSize: '14px',
+        fontSize: '12px',
         '&:hover': {
           border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
         },
@@ -72,8 +82,17 @@ export const SideBar = ({role})=>{
           ? (darkMode ? '#007bff' : '#eaeaea')
           : (darkMode ? '#1c2536' : '#fff'),
         color: darkMode ? '#fff' : '#000',
-        fontSize: '14px',
+        fontSize: '12px',
         cursor: 'pointer',
+      }),
+      multiValueLabel:(base)=>({
+        ...base,
+        color:`${darkMode?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}`
+
+      }),
+      multiValue:(base)=>({
+        ...base,
+        backgroundColor:'none'
       }),
       singleValue: (base) => ({
         ...base,
@@ -260,6 +279,7 @@ export const SideBar = ({role})=>{
         setProjectFormOpen(!projectFormOpen)
         await task.deleteProject(id)
         dispatch(fetchProjects())
+        dispatch(fetchProgress())
       } catch(error){
         setTimeout(()=>{setLoading(false),setError(true)},1000 )
       }
@@ -286,13 +306,13 @@ export const SideBar = ({role})=>{
    console.log(projectUsers)
    console.log(assignedUserId)
    return (
-        <div className="sideBar">
+        <div className={classes.join(' ')}>
            <div className='brand'>
                <img src={app} style={{width:'48px', height:'48px'}}></img>
                <h3>TASK</h3>
            </div>
            <div className='menu'>
-               <div onClick={()=>navigate('/')} className={`menuItem ${isActive('/')?'active':''}`}>
+               <div onClick={()=>{navigate('/'), onToggleSidebar()}} className={`menuItem ${isActive('/')?'active':''}`}>
                   <div>
                      <LayoutDashboard></LayoutDashboard>
                      {t('sideBar.dashboard')}
@@ -324,7 +344,7 @@ export const SideBar = ({role})=>{
                            
                             {projects.map((project)=>
                              <div key={project.id} style={{position:'relative'}} className={isSubActive(`/project/${project.id}`)|| isSubActive(`/project/${project.id}/list`)? 'sub-active' : ''} 
-                             onClick={(e)=>{e.stopPropagation(), setOptionFormOpen(null), navigate( `/project/${project.id}`)}}
+                             onClick={(e)=>{e.stopPropagation(), setOptionFormOpen(null), navigate( `/project/${project.id}`), onToggleSidebar()}}
                              >
                                  <div style={{display:'flex', alignItems:'center', width:'100%', justifyContent:'space-between'}}><li>{project.title}</li>
                                  <Ellipsis 
@@ -459,6 +479,7 @@ export const SideBar = ({role})=>{
                                                 styles={getCustomStyle}
                                                 options={formattedUser}
                                                 onChange={handleSelect}
+                                                required
                                               ></Select>
                                             </div>
                                             <div className='member'>
@@ -499,7 +520,7 @@ export const SideBar = ({role})=>{
                   </AnimatePresence>
                 
                </div>
-               <div onClick={()=>navigate('/setting')} className={`menuItem ${isActive('/setting')?'active':''}`}>
+               <div onClick={()=>{navigate('/setting'), onToggleSidebar()}} className={`menuItem ${isActive('/setting')?'active':''}`}>
                   <div>
                      <Settings></Settings>
                      {t('sideBar.setting')}
@@ -555,6 +576,7 @@ export const SideBar = ({role})=>{
                                         styles={getCustomStyle}
                                         options={formattedUser}
                                         onChange={handleSelect}
+                                        required
                                       ></Select>
                                     </div>
                                     <div className='member'>

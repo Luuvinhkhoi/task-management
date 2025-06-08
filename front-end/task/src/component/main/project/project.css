@@ -1,5 +1,7 @@
 @import url('../../../theme.css');
-
+.project{
+    width: 100%;
+}
 .project .projectHeader{
     display: flex;
     width: 90%;
@@ -148,4 +150,7 @@
     color: #fff;
     cursor: pointer;
 
+}
+@media screen and (max-width:1200px) {
+    
 }

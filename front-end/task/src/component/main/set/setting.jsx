@@ -93,37 +93,39 @@ export const Setting = () => {
     },
   }));
   return (
-    <form onSubmit={handleSubmit} id='setting'>
-      <div className='language'>
-        <h2>Language</h2>
-        <select id="language-select" onChange={changeLang} value={i18n.language}>
-          <option value="en">English</option>
-          <option value="vi">Vietnamese</option>
-        </select>
-      </div>
-      <div className='darkMode'>
-        <h2>Dark mode</h2>
-        <FormControlLabel
-          control={<MaterialUISwitch 
-            checked={darkMode}
-            onClick={() => {
-              console.log("Switch clicked by user");
-              dispatch(toggleDarkMode());
-            }}            
-            sx={{ m: 1 }}   />}
-        />
-      </div>
-      <div className='timezone'>
-        <h2>Timezone Setting</h2>
-        <select value={timezone} onChange={(e) => changeTimezone(e.target.value)}>
-          {timezones.map((tz) => (
-            <option key={tz} value={tz}>
-              {tz}
-            </option>
-          ))}
-        </select>
-      </div>
-      <button style={{color:'#fff',marginLeft:'5rem', backgroundColor:'#007bff'}}>Save Setting</button>
-    </form>
+    <div className='setting-parent'>
+      <form onSubmit={handleSubmit} id='setting'>
+        <div className='language'>
+          <h2>Language</h2>
+          <select id="language-select" onChange={changeLang} value={i18n.language}>
+            <option value="en">English</option>
+            <option value="vi">Vietnamese</option>
+          </select>
+        </div>
+        <div className='darkMode'>
+          <h2>Dark mode</h2>
+          <FormControlLabel
+            control={<MaterialUISwitch 
+              checked={darkMode}
+              onClick={() => {
+                console.log("Switch clicked by user");
+                dispatch(toggleDarkMode());
+              }}            
+              sx={{ m: 1 }}   />}
+          />
+        </div>
+        <div className='timezone'>
+          <h2>Timezone Setting</h2>
+          <select value={timezone} onChange={(e) => changeTimezone(e.target.value)}>
+            {timezones.map((tz) => (
+              <option key={tz} value={tz}>
+                {tz}
+              </option>
+            ))}
+          </select>
+        </div>
+        <button style={{color:'#fff',marginLeft:'5rem', backgroundColor:'#007bff'}}>Save Setting</button>
+      </form>
+    </div>
   );
 };
