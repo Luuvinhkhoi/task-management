@@ -31,11 +31,9 @@ export const Main = () =>{
           setSocket(socket)
           // Xử lý các sự kiện socket
           socket.on('connect', () => {
-            console.log('Socket connected:', socket.id);
           })
         
           socket.on('connect_error', (error) => {
-            console.error('Socket connection error:', error.message);
           });
           socket.on()
           
@@ -52,15 +50,12 @@ export const Main = () =>{
     async function setUserRole(){
         try{
             const result=await task.getAllUserRole()
-            console.log('hihi')
             setRole(result)
         }catch(error){
-            console.log(error)
         }
     }
     setUserRole()
   },[])
-  console.log(role)
   return(
     <div className="main">
       <div style={{height:'100%'}}>

@@ -184,7 +184,6 @@ export const List = ()=>{
           const formattedUsersId=assignedUserId.map(user=>user.value)
           const file = event.target.files[0]; // Lấy file người dùng chọn
           if (file) {
-            console.log("Selected file: ", file);
             try{
                const result=await task.uploadAttachment(file, taskId)
                const data={
@@ -362,18 +361,15 @@ export const List = ()=>{
             }
     }
     const handleSelect = (selectedUsers) => {
-        console.log(selectedUsers)
         if (!selectedUsers || selectedUsers.length === 0) {
             return;
         }else if(selectedUsers) {
             const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
             const userMap = new Map(users.map(user => [user.id, user]));
             const selected= assignedIds.map(id => userMap.get(id));
-            console.log(selectedUsers)
             setAssignedUserId(selectedUsers);
             setTaskDetailMember(selected)
         } else {
-            console.log('❌ selectedUsers is null or empty');
             // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
             setAssignedUserId([]);
         }
@@ -460,16 +456,10 @@ export const List = ()=>{
           const preselectedUsers = formattedUsers.filter(option =>
             taskDetailMembers.some(user => user.id === option.value)
           );
-          console.log('❌ selectedUsers is null or empty');
 
           setAssignedUserId(preselectedUsers);
         }
     }, [taskDetailMembers, formattedUsers]);
-    useEffect(() => {
-        console.log("✅ assignedUserId updated:", assignedUserId);
-    }, [assignedUserId]);
-    console.log(mergeTask)
-    console.log(formattedUsers)
     return (
         <div className='list'>
            <h3>List</h3> 

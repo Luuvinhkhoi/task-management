@@ -117,8 +117,6 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
     }
     const handleCreateProjectSubmit = async(e)=>{
       e.preventDefault()
-      console.log(assignedUserId)
-      console.log(userRole)
       try{
         await task.createProject(title, startDate, dueDate,assignedUserId)
         dispatch(fetchProjects())
@@ -163,16 +161,10 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
       setOptionFormOpen(id)
    };
    const handleSelect = (selectedUsers) => {
-      console.log(selectedUsers)
       if(selectedUsers) {
           const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
           const userMap = new Map(users.map(user => [user.id, user]));
           const selected= assignedIds.map(id => userMap.get(id));
-          console.log(formattedUser)
-          console.log(assignedIds)
-          console.log(userMap)
-          console.log(selected)
-          console.log(assignedIds)
           setFormatedProjectUser(selectedUsers)
           setProjectUser(selected)
           const assignedWithRole = assignedIds.map(id => ({
@@ -181,7 +173,6 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
           }));
           setAssignedUserId(assignedWithRole)
       } else {
-          console.log('❌ selectedUsers is null or empty');
           // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
           setAssignedUserId([]);
       }
@@ -192,26 +183,20 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
         if(role[i].role!=='admin'){
           setCheckViewerPermission(projectId)
           setOptionFormOpen(false)
-          console.log('check')
         }
       }
     }
    }
    const handleSelectRole=(newIndex, newRole)=>{
-      console.log(newIndex)
       let updatedMembers=[...userRole]
       updatedMembers[newIndex]=newRole
       setUserRole(updatedMembers);
-      console.log(userRole)
-      console.log(assignedUserId)
       let assignedWithRole = [...assignedUserId]
       assignedWithRole[newIndex].role=newRole
       setAssignedUserId(assignedWithRole)
-      console.log(assignedUserId)
    }
    const handleCreateProject=async()=>{
       const result = await task.getAllUser()
-      console.log(result)
       setUser(result)
       const formatted =result.map(user => ({
         value: user.id, // Dùng ID làm giá trị
@@ -222,7 +207,6 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
             </div>
         )// Dùng username làm tên hiển thị
       }));
-      console.log(formatted)
       setFormatedUser(formatted)
       setProjectUser([])
       setTitle("")
@@ -301,10 +285,6 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
     useEffect(()=>{
           dispatch(fetchProjects())
     },[])
-   console.log(formattedUser)
-   console.log(formattedProjectUser)
-   console.log(projectUsers)
-   console.log(assignedUserId)
    return (
         <div className={classes.join(' ')}>
            <div className='brand'>

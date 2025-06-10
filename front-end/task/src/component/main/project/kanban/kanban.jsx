@@ -38,7 +38,6 @@ export const Kanban = () => {
     const [formattedUsers, setFormatedUser]=useState([])
     const [taskDetailMembers, setTaskDetailMember]=useState([])
     const [assignedUserId, setAssignedUserId] = useState([]);
-    console.log(formattedUsers)
     // Hàm di chuyển item khi kéo thả
     const moveItem = (id, newStatus) => {
         try{
@@ -51,9 +50,6 @@ export const Kanban = () => {
               async function getAllUser(){
                 try{
                   const result = await task.getAllUser()
-                  console.log(result)
-                  console.log('hihihihihihihih')
-
                   const formatted = await result.map(user => ({
                     value: user.id, // Dùng ID làm giá trị
                     label: (
@@ -64,12 +60,10 @@ export const Kanban = () => {
                       )// Dùng username làm tên hiển thị
                     }));
                   setUser(result)
-                  console.log(formatted)
                   const result2 = await task.getUserByProjectId(id)
                   const formattedProjectUser = result2.map(user =>
                         formatted.find(u => u.value === user.id)
                   ).filter(Boolean); 
-                  console.log(formattedProjectUser)// Loại bỏ phần tử undefined nếu không tìm thấy
                   setFormatedUser(formattedProjectUser)
                 } catch(error){
                   console.log(error)
@@ -211,7 +205,6 @@ const KanbanColumn = ({
     assignedUserId,
     setAssignedUserId
 })=> {
-    console.log(formattedUsers)
     const {role}=useOutletContext()
     const isDroppable = role !== 'viewer';
     const [{ isOver }, drop] = useDrop({
@@ -312,7 +305,6 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
         const [dueDate, setDueDate] = useState("");
         const [isSelecting, setIsSelecting] = useState(false);
         const [deleteAttachment, setDeleteAttachment]=useState(false)
-        console.log(formattedUsers)
         const tabs=[
             { value: 'Detail', label: 'Detail' },
             { value: 'Comment', label: 'Comment' },
@@ -436,7 +428,6 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
           const formattedUsersId=assignedUserId.map(user=>user.value)
           const file = event.target.files[0]; // Lấy file người dùng chọn
           if (file) {
-            console.log("Selected file: ", file);
             try{
                const result=await task.uploadAttachment(file, id)
                const data={
@@ -477,7 +468,6 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
           }
         };
         
-        console.log(taskDetail)
 
         async function getTaskDetail(task_id){
             try{
@@ -582,7 +572,6 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
             }
         }
         const handleSelect = (selectedUsers) => {
-            console.log(selectedUsers)
             if (!selectedUsers || selectedUsers.length === 0) {
                 setAssignedUserId([])
                 return;
@@ -590,11 +579,9 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                 const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
                 const userMap = new Map(users.map(user => [user.id, user]));
                 const selected= assignedIds.map(id => userMap.get(id));
-                console.log(selectedUsers)
                 setAssignedUserId(selectedUsers);
                 setTaskDetailMember(selected)
             } else {
-                console.log('❌ selectedUsers is null or empty');
                 // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
                 setAssignedUserId([]);
             }
@@ -677,25 +664,18 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                 setError(true)
             }
         }
-        console.log(users)
         useEffect(() => {
             if (taskDetailMembers.length > 0 && users.length > 0) {
               const preselectedUsers = formattedUsers.filter(option =>
                 taskDetailMembers.some(user => user.id === option.value)
               );
-              console.log('❌ selectedUsers is null or empty');
        
               setAssignedUserId(preselectedUsers);
             }else{
-                console.log('❌ selectedUsers is null or empty');
             }
 
         }, [taskDetailMembers, formattedUsers]);
         
-        console.log(role)
-        console.log(taskDetailMembers)
-        console.log(assignedUserId)
-        console.log(taskItem)
     return (
       <div>
         <div 

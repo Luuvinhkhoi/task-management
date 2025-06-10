@@ -4,7 +4,6 @@ const db= require('../Model/models');
 class CommentService {
   static async createComment(taskId, content , userId) {
     try{
-      console.log(taskId, content, userId)
 
       const newComment = await db.Comment.create({
         task_id:taskId,

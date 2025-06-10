@@ -20,7 +20,6 @@ export const Task = ({socket}) =>{
     useEffect(()=>{
       dispatch(getAllTodayTask())
     },[])
-    console.log(todayTask)
     return(
         <div id='task'>
           <div className='task-header'>

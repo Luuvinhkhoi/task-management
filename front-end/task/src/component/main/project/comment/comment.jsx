@@ -64,7 +64,6 @@ export const Comment=({role,projectId,assignedUserId,socket,taskId})=>{
         e.preventDefault()
         const formattedUsersId=assignedUserId.map(user=>user.value)
         try{
-          console.log('hihi')
           const data={
             taskId:taskId,
             content:newComment, 

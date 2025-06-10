@@ -139,7 +139,6 @@ const getAllProject=async(userId)=>{
             }
         }
       )))
-      console.log(result)
       const plainResult =await result.map(project => project.get({ plain: true }))  
       return plainResult
     } catch (error){

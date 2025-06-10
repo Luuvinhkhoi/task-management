@@ -1,21 +1,15 @@
 class Socket {
   static async connection(socket) {
-    console.log('User connected:', socket.user);
     socket.join(`user-${socket.user}`);
     socket.on('join-task', (roomName) => {
       socket.join( `task-${roomName}`);
-      console.log(`User ${socket.id} joined room ${roomName}`);
       });
     socket.on('leave-room', (taskId) => {
       socket.leave(`task-${taskId}`);
-      console.log(`User ${socket.user?.username || socket.id} left room for task: ${taskId}`);
     });
     socket.on('new-comment', async (data) => {
-      console.log('receive comment')
       try {
         // Gửi lại comment mới cho tất cả client
-        console.log('receive comment')
-        console.log(data)
         _io.to(`task-${data.taskId}`).emit('receive-comment', data);
         data.assignedUserId.forEach(userId => {
           if (userId !== data.actorId) {
@@ -28,7 +22,6 @@ class Socket {
               createdAt:data.createdAt,
               projectId:data.projectId
             });
-            console.log('Emitting to user room:', `user-${userId}`);
           }
         });
       } catch (err) {
@@ -38,7 +31,6 @@ class Socket {
     });
     socket.on('new-task',async(data)=>{
       const {notiId, taskId, assignedUserId, user,actorId,message, projectId, createdAt} = data;
-      console.log('hehe', data)
       try{
         assignedUserId.forEach(userId => {
           if (userId !== actorId) {
@@ -50,7 +42,6 @@ class Socket {
               createdAt:createdAt,
               projectId:projectId
             });
-            console.log('Emitting to user room:', `user-${userId}`);
 
           }
         });
@@ -60,7 +51,6 @@ class Socket {
     })
     socket.on('new-update', async (data) => {
       const {notiId, taskId, assignedUserId, user,actorId,message, projectId, createdAt} = data;
-      console.log('hehe', data)
       try{
         assignedUserId.forEach(userId => {
           if (userId !== actorId) {
@@ -72,7 +62,6 @@ class Socket {
               createdAt:createdAt,
               projectId:projectId
             });
-            console.log('Emitting to user room:', `user-${userId}`);
 
           }
         });
@@ -81,7 +70,6 @@ class Socket {
       }
     })
     socket.on('disconnect', () => {
-      console.log('User disconnected');
     });
 
   }

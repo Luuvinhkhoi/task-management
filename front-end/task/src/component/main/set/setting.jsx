@@ -108,7 +108,6 @@ export const Setting = () => {
             control={<MaterialUISwitch 
               checked={darkMode}
               onClick={() => {
-                console.log("Switch clicked by user");
                 dispatch(toggleDarkMode());
               }}            
               sx={{ m: 1 }}   />}

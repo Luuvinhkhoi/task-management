@@ -178,7 +178,6 @@ export const Project = ()=>{
     };
     
     const handleSelect = (selectedUsers) => {
-      console.log(selectedUsers)
       if (!selectedUsers || selectedUsers.length === 0) {
           setMember([]);
           setAssignedUserId([]);
@@ -187,11 +186,9 @@ export const Project = ()=>{
           const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
           const userMap = new Map(users.map(user => [user.id, user]));
           const selected= assignedIds.map(id => userMap.get(id));
-          console.log(selected)
           setAssignedUserId(selectedUsers);
           setMember(selected);
       } else {
-          console.log('❌ selectedUsers is null or empty');
           // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
           setAssignedUserId([]);
       }
@@ -210,7 +207,6 @@ export const Project = ()=>{
       }
       setUserRole()
     },[projectId])
-    console.log(role)
     useEffect(()=>{
       async function getAllUser(){
         try{
@@ -254,7 +250,6 @@ export const Project = ()=>{
       getUserByProjectId()
     },[param.id])
     
-    console.log(formattedProjectUser)
     return (
         <div className="project">
            <div className='projectHeader'>

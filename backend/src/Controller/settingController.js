@@ -10,9 +10,6 @@ const getSetting=async(req, res)=>{
 const updateSetting=async(req, res)=>{
      try{
           const {language, theme, timezone}=req.body.updateData
-          console.log(req.body),
-          console.log(language)
-          console.log(timezone)
           const result=await service.updateSetting(req.user.id, language, theme, timezone)
           res.status(201).json('success')  
      }catch(error){

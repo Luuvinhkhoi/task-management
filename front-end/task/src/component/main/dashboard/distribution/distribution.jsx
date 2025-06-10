@@ -8,7 +8,7 @@ import { PieChart, Pie, Cell, Label,Tooltip, Legend, ResponsiveContainer } from 
 export const Distribution = ({tasks}) => {
   const {t}=useTranslation()
   const theme=useSelector((state)=>state.setting.darkMode)
-  console.log(tasks)
+
   const getStatusCounts = (data) => {
     const counts = data.reduce((acc, { status }) => {
       const key = status;

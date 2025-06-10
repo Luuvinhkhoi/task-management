@@ -31,9 +31,7 @@ const search=async(userId,query)=>{
         group: ['Project.id'],
       })
     ))
-    console.log(projectResult)
     const plainResult = projectResult.filter(project => project !== null).map(project => project.get({ plain: true }));
-    console.log(plainResult)
     const taskByUserId=await db.TaskMember.findAll(
       {
         where:{

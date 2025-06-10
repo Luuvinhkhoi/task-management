@@ -189,7 +189,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
             setTaskDetailOpen(true)
 
             } catch(error){
-            console.log(error)
+                console.log(error)
         }
     }
     useEffect(()=>{getTaskDetail(taskId)},[])
@@ -201,7 +201,6 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
             const formattedUsersId=assignedUserId.map(user=>user.value)
             const file = event.target.files[0]; // Lấy file người dùng chọn
             if (file) {
-            console.log("Selected file: ", file);
             try{
                 await task.uploadAttachment(file, id)
                 const data={
@@ -237,11 +236,10 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                 socket.emit('new-update', socketData)
                 getTaskDetail(id)
             } catch (error) {
-                console.error('Error uploading file:', error);
+                console.log(error)
             }
             }
     };
-    console.log(`role:${role}`)
     const handleSaveEdit=async()=>{
             try{
                 const formattedUsersId=assignedUserId.map(user=>user.value)
@@ -332,18 +330,15 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                 }
     }
     const handleSelect = (selectedUsers) => {
-            console.log(selectedUsers)
             if (!selectedUsers || selectedUsers.length === 0) {
                 return;
             }else if(selectedUsers) {
                 const assignedIds = selectedUsers.map((user) => user.value); // Chỉ lấy giá trị (ID)
                 const userMap = new Map(users.map(user => [user.id, user]));
                 const selected= assignedIds.map(id => userMap.get(id));
-                console.log(selectedUsers)
                 setAssignedUserId(selectedUsers);
                 setTaskDetailMember(selected)
             } else {
-                console.log('❌ selectedUsers is null or empty');
                 // Nếu không có user nào được chọn (selectedUsers = null khi xóa hết)
                 setAssignedUserId([]);
             }
@@ -374,7 +369,6 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                 setAssignedUserId(preselectedUsers);
             }
     }, [taskDetailMembers, formattedUsers]);
-    console.log(assignedUserId)
 
     useEffect(()=>{
         async function getAllUser(){
@@ -401,8 +395,6 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
         }
         getAllUser()
     },[])
-    console.log(taskId)
-    console.log(taskDetailMembers)
     return(
         <div className={`overlay-${overlayId===taskId?'active':'unActive'}`}>
             <div className={`overlay-${overlay?'active':'unActive'}`}>
@@ -476,7 +468,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
             ):(taskDetail&&status&&priority?taskDetail.map(item=>{
                 return role==='viewer'?(
                     <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
-                        <div className='close-button' onClick={()=>{setTaskDetailOpen(null), setIsOpenTab('Detail'), console.log("Closing overlay"),setOverlayId(null)}}><X></X></div>
+                        <div className='close-button' onClick={()=>{setTaskDetailOpen(null), setIsOpenTab('Detail'),setOverlayId(null)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'4px 8px', fontSize:14}}>
                                 {priority}
@@ -615,7 +607,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                     </div>
                 ):(
                     <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
-                        <div className='close-button' onClick={()=>{setTaskDetailOpen(null), setIsOpenTab('Detail'), console.log("Closing overlay"),setOverlayId(null)}}><X></X></div>
+                        <div className='close-button' onClick={()=>{setTaskDetailOpen(null), setIsOpenTab('Detail'),setOverlayId(null)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
                                 <Select

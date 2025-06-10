@@ -66,7 +66,6 @@ export const Header=({socket, role, onToggleSidebar})=>{
     useEffect(()=>{
         if (!socket) return; 
         socket.on('notification', (data) => {
-            console.log('Thông báo:', data.message);
             setView(false)
             setNoti(prev=>[data,...prev])
         });
@@ -117,10 +116,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
     };
     async function getRole(projectId){
         try{
-            console.log(role)
-            console.log(projectId)
             const result=role.find(item=>item.projectId===projectId)
-            console.log(result)
             setProjectRole(result.role)
         }catch(error){
             console.log(error)
@@ -169,7 +165,6 @@ export const Header=({socket, role, onToggleSidebar})=>{
               const preselectedUsers = formattedUsers.filter(option =>
                 taskDetailMembers.some(user => user.id === option.value)
               );
-              console.log('❌ selectedUsers is null or empty');
     
               setAssignedUserId(preselectedUsers);
             }
@@ -260,7 +255,6 @@ export const Header=({socket, role, onToggleSidebar})=>{
           if (timeoutId) clearTimeout(timeoutId);
         };
       }, [timeoutId]);
-    console.log(role)
     return (
         <div className='header'>
             <div className='header-pc'>

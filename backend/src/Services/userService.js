@@ -56,7 +56,6 @@ const getUserByProjectId= async(projectId)=>{
       }}
     )
     const plainResult =await result.map(user => user.get({ plain: true }))
-    console.log(plainResult)
     const result2= await Promise.all(plainResult.map(item=>db.User.findByPk(item.userId)))
     const plainResult2 =await result2.map(user => user.get({ plain: true }))
     const merge=plainResult2.map((user, index)=>
@@ -97,7 +96,6 @@ const getUserRole=async(userId, projectId)=>{
         }
       }
     )
-    console.log(result)
     const plainResult=await result.map(item=>item.get({plain:'true'}))
     return plainResult
   } catch (error){
