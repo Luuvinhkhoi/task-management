@@ -1,4 +1,3 @@
-const connection = require ('./src/config/connectDb');
 const express=require('express');
 const authRouter=require('./src/Routes/auth')
 const session = require("express-session")
@@ -30,7 +29,6 @@ const io = new Server(server, {
   }
 });
 global._io=io
-connection()
 app.use(express.json())
 
 const sessionMiddleware=session({
