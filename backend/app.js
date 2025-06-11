@@ -75,6 +75,5 @@ app.use('/setting', isAuthenticated, settingRouter)
 app.use('/comment', commentRouter)
 app.use('/search',isAuthenticated,searchRouter)
 app.use('/notification', isAuthenticated, notificationRouter)
-db.sequelize.sync().then(() => {
-  server.listen(port, () => console.log(`Server listening on port ${port}`));
-});
+server.listen(port, () => console.log(`Server listening on port ${port}`));
+
