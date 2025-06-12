@@ -37,7 +37,6 @@ export const getAllTask=createAsyncThunk(
 export const updateTaskStatus=createAsyncThunk(
     'task/updateTaskStatus',
     async(tasks,thunkAPI)=>{
-        console.log(tasks)
         const result=await task.updateTaskStatus(tasks)
     }
 )

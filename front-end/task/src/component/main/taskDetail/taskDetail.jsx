@@ -481,7 +481,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                             <p style={{border: 'none',outline: 'none', boxShadow: 'none', fontWeight:700, fontSize:28}}>{title}</p>
                         </div>
                         <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
-                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                            <div style={{display:'flex', gap:'.5rem'}}><p>Start date: </p>
                                 <div style={{display:'flex', gap:'.5rem', fontSize:'14px', fontWeight:'500'}}>
                                     <div>
                                         {new Intl.DateTimeFormat('en-CA', {
@@ -502,7 +502,8 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                 </div>
                             </div>
 
-                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                            <div style={{display:'flex', gap:'.5rem'}}>
+                                <p>Due date:</p> 
                                 <div style={{display:'flex', gap:'.5rem', fontSize:'14px',fontWeight:'500'}}>
                                     <div>
                                         {new Intl.DateTimeFormat('en-CA', {
@@ -631,8 +632,9 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         <div className='title'>
                             <input value={title} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none'}}></input>
                         </div>
-                        <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
-                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                        <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)',width:'100%'}}>
+                            <div style={{display:'flex', gap:'.5rem'}}>
+                                <p style={{minWidth:80}}>Start date: </p>
                                 <input type='datetime-local'
                                         value={toDateTimeLocal(startDate)}
                                         onChange={(e) => {
@@ -647,7 +649,8 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                 >  
                                 </input>
                             </div>
-                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                            <div style={{display:'flex', gap:'.5rem'}}>
+                                <p style={{minWidth:'80px'}}>Due date:</p> 
                                 <input type='datetime-local'
                                         value={toDateTimeLocal(dueDate)}
                                         onChange={(e) => {
@@ -675,10 +678,10 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                             ))}
                         </div>
                         {isOpenTab==='Detail'?<div className='taskDetail-body'>
-                            <div className='body-item'>
+                            <div className='body-item' style={{padding:'1rem 1rem 0 1rem'}}>
                                 <h4>Description</h4>
                                 <div>
-                                    <input value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
+                                    <textarea value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></textarea>
                                 </div>
                             </div>
                             <div className='body-item'>

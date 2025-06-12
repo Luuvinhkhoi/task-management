@@ -91,8 +91,9 @@
 .taskDetail-active .status-priority input{
     display: inline;
 }
-.taskDetail-active .title input{
+.taskDetail-active .title textarea{
     border: none;
+    width: 100%;
     font-size: 1.75rem;
     font-weight: 700;
 }

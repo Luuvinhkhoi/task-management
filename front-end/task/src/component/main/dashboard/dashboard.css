@@ -10,7 +10,7 @@
 .dashboard #row1{
     display: grid;
     grid-template-columns: 1fr 1fr;
-    min-height: 300px;
+    min-height: 350px;
 }
 .dashboard #row2{
     display: grid;

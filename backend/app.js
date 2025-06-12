@@ -12,15 +12,14 @@ const uploadRouter = require('./src/Routes/upload');
 const commentRouter=require('./src/Routes/comment')
 const notificationRouter=require('./src/Routes/notification')
 const settingRouter=require('./src/Routes/setting')
+const dotenv = require("dotenv");
 const Socket=require('./src/Controller/socketController')
 const s3Router=require('./src/Routes/s3')
 const searchRouter=require('./src/Routes/search')
 const db=require('./src/Model/models')
-const port=4001
 const app=express()
 const store = new session.MemoryStore();
 const server = http.createServer(app);
-
 const io = new Server(server, {
   cors: {
     origin: "http://localhost:5173",
@@ -38,6 +37,7 @@ const sessionMiddleware=session({
       resave: false,
       store,
 })
+dotenv.config()
 app.use(sessionMiddleware)
 app.use(cors({
   origin: "http://localhost:5173",
@@ -75,5 +75,5 @@ app.use('/setting', isAuthenticated, settingRouter)
 app.use('/comment', commentRouter)
 app.use('/search',isAuthenticated,searchRouter)
 app.use('/notification', isAuthenticated, notificationRouter)
-server.listen(port, () => console.log(`Server listening on port ${port}`));
+server.listen(process.env.PORT||4001, () => console.log(`Server listening on port ${process.env.PORT}`));
 

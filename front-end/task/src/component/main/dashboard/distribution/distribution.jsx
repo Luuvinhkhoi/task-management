@@ -45,7 +45,7 @@ export const Distribution = ({tasks}) => {
   return(
     <div id='distribution'>
        <h3 style={{textAlign:'start'}}>{t('dashboard.statusOverview')}</h3>
-       <ResponsiveContainer width="100%" height='85%' maxHeight='300px'>
+       <ResponsiveContainer width="100%" height='100%' maxHeight='300px'>
         <PieChart>
           <Pie
             data={chartData}

@@ -19,6 +19,7 @@ export const Project = ()=>{
     const avatar=useSelector((state)=>state.userProfile.avatar)
     const {socket}=useOutletContext()
     const dispatch=useDispatch()
+    const theme = useSelector((state) => state.setting.darkMode);
     const darkMode = useSelector((state) => state.setting.darkMode);
     const animatedComponents = makeAnimated();
     const [isActive, setActive]=useState()

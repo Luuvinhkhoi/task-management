@@ -58,6 +58,11 @@ export const Header=({socket, role, onToggleSidebar})=>{
     const notiRef=useRef(null)
     const notiDropRef=useRef(null)
     const searchBarRef=useRef(null)
+    const searchBarPCRef = useRef(null);
+    const searchBarMobileRef = useRef(null);
+    const [openSearchBarPC, setOpenSearchBarPC] = useState(false);
+    const [openSearchBarMobile, setOpenSearchBarMobile] = useState(false);
+
     const dropsearchRef=useRef(null)
     const { timezone } = useTimezone();
     const [date, setDate] = useState(new Date());
@@ -141,12 +146,19 @@ export const Header=({socket, role, onToggleSidebar})=>{
         setResults(result)
         setLoading(false)
     }
-    async function handleActive(event){
+    async function handleSearchBarPcActive(event){
         const name=searchString
         const result = await task.search(new URLSearchParams({name}).toString())
         setResults(result)
         setLoading(true)
-        setOpenSearchBar(!openSearchBar)
+        setOpenSearchBarPC(!openSearchBarPC)
+    }
+    async function handleSearchBarMobileActive(event){
+        const name=searchString
+        const result = await task.search(new URLSearchParams({name}).toString())
+        setResults(result)
+        setLoading(true)
+        setOpenSearchBarMobile(!openSearchBarMobile)
     }
     function handleInputChange(event) {
         const newQuery = event.target.value;
@@ -238,11 +250,13 @@ export const Header=({socket, role, onToggleSidebar})=>{
         };
         window.addEventListener("scroll", handleScroll);
         const handleClickOutside = (event) => {
-            if (searchBarRef.current && !searchBarRef.current.contains(event.target)) {
-              setOpenSearchBar(false); // Đóng thanh tìm kiếm
+            if (searchBarPCRef.current && !searchBarPCRef.current.contains(event.target)) {
+                setOpenSearchBarPC(false);
+            }
+            if (searchBarMobileRef.current && !searchBarMobileRef.current.contains(event.target)) {
+                setOpenSearchBarMobile(false);
             }
         };
-      
         document.addEventListener("mousedown", handleClickOutside);
 
         return () => {
@@ -264,10 +278,10 @@ export const Header=({socket, role, onToggleSidebar})=>{
                         <img src={app} style={{width:'32px', height:'32px'}}></img>
                         <h3>TASK</h3>
                     </div>
-                    <div className='searchBar' onClick={handleActive} ref={searchBarRef}>
-                        <input placeholder='Search here' value={searchString} onChange={handleInputChange}></input>
+                    <div className='searchBar'  ref={searchBarPCRef}>
+                        <input placeholder='Search here'  onClick={handleSearchBarPcActive}  value={searchString} onChange={handleInputChange}></input>
                         <AnimatePresence>
-                            {openSearchBar===true &&(
+                            {openSearchBarPC===true &&(
                                 <motion.div 
                                     ref={dropsearchRef} 
                                     initial={{ height: 0, opacity: 0 }} 
@@ -418,10 +432,10 @@ export const Header=({socket, role, onToggleSidebar})=>{
                 </div> 
                 }
             </div>
-            <div className='searchBar-mobile' onClick={handleActive} ref={searchBarRef}>
-                        <input placeholder='Search here' value={searchString} onChange={handleInputChange}></input>
+            <div className='searchBar-mobile' ref={searchBarMobileRef}>
+                        <input placeholder='Search here'  onClick={handleSearchBarMobileActive}  value={searchString} onChange={handleInputChange}></input>
                         <AnimatePresence>
-                            {openSearchBar===true &&(
+                            {openSearchBarMobile===true &&(
                                 <motion.div 
                                     ref={dropsearchRef} 
                                     initial={{ height: 0, opacity: 0 }} 

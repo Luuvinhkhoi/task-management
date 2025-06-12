@@ -16,8 +16,6 @@ const settingSlice = createSlice({
       state.darkMode = !state.darkMode;
       localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
       document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark' : 'light');
-      console.log(state.darkMode)
-      console.log(localStorage.getItem('theme'))
     },
     setDarkMode: (state, action) => {
       state.darkMode = action.payload;
@@ -26,15 +24,11 @@ const settingSlice = createSlice({
     },
     setSetting:(state, action)=>{
       if(localStorage.getItem('theme')!==action.payload.darkMode){
-        console.log(localStorage.getItem('theme'))
-        console.log(state.darkMode)
         state.darkMode=!state.darkMode;
         localStorage.setItem('theme', state.darkMode ? 'dark' : 'light');
         document.documentElement.setAttribute('data-theme', state.darkMode ? 'dark' : 'light');
       }else{
-        console.log(localStorage.getItem('theme'))
       }
-      console.log(action.payload )
       state.language=action.payload.language
       action.payload.timeZone!==state.timezone ? state.timezone=action.payload.timezone : state.timezone
     },
@@ -51,7 +45,6 @@ export const getAllSetting=createAsyncThunk(
   'setting/getSetting',
   async(_,thunkAPI)=>{
     const result=await task.getSetting()
-    console.log(result)
     await thunkAPI.dispatch(setSetting({
       darkMode:result.theme,
       language:result.language,
