@@ -41,7 +41,7 @@ dotenv.config()
 app.use(sessionMiddleware)
 app.use(cors({
   origin: [
-    'https://master.d2jsu35to5wcgl.amplifyapp.com/',
+    'https://master.d2jsu35to5wcgl.amplifyapp.com',
     'http://localhost:5173', // Cho development
   ],
   methods: ['GET', 'POST','PATCH', 'PUT', 'DELETE'], // Chỉ cho phép các phương thức này
