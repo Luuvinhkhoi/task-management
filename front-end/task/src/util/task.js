@@ -1,4 +1,8 @@
-const baseUrl='http://localhost:4001'
+const baseUrl=
+  import.meta.env.MODE=== "development"
+    ? import.meta.env.VITE_BASE_URL_DEV
+    : import.meta.env.VITE_BASE_URL_PROD;
+console.log('BASE_URL:', import.meta.env.VITE_BASE_URL_DEV);
 let task={
     signIn(email, password){
         return fetch(`${baseUrl}/auth/login`,{
