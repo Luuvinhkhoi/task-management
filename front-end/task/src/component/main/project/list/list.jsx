@@ -5,7 +5,6 @@ import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from 'react-redux'
 import { useOutletContext, useParams } from 'react-router-dom';
 import { getAllTask, updateTaskStatus } from '../../../../store/task';
-import { FaFilePdf, FaDownload, FaGoogleDrive, FaPlus } from "react-icons/fa";
 import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { motion } from 'framer-motion';
@@ -697,9 +696,7 @@ export const List = ()=>{
                                     return (
                                         <div key={index} className="attachment-box">
                                         <div style={{ display: 'flex', alignItems:'center', gap: '8px' }}>
-                                            {isGoogleDrive ? (
-                                            <FaGoogleDrive size={24} />
-                                            ) : isPdf ? (
+                                            {isPdf ? (
                                             <img src={pdf} style={{height:'32px', width:'28px'}} />
                                             ) : isDoc ? (
                                             <img src={word} style={{height:'24px', width:'24px'}} />
@@ -856,16 +853,13 @@ export const List = ()=>{
                                 </div>
                                 <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
                                 {item.attachment.map((file, index) => {
-                                    const isGoogleDrive = file.url.includes("drive.google.com");
                                     const isPdf = file.url.endsWith(".pdf");
                                     const isDoc = file.url.endsWith(".docx");
                                     const isExcel=file.url.endsWith('.xlsx')
                                     return (
                                         <div key={index} className="attachment-box">
                                         <div style={{ display: 'flex', alignItems:'center', gap: '8px' }}>
-                                            {isGoogleDrive ? (
-                                            <FaGoogleDrive size={24} />
-                                            ) : isPdf ? (
+                                            {isPdf ? (
                                             <img src={pdf} style={{height:'32px', width:'28px'}} />
                                             ) : isDoc ? (
                                             <img src={word} style={{height:'24px', width:'24px'}} />
