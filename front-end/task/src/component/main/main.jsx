@@ -5,7 +5,7 @@ import { useEffect, useRef,useState } from "react"
 import './main.css'
 import {io} from 'socket.io-client'
 import task from "../../util/task"
-import { Auth } from 'aws-amplify';
+import { Auth } from 'aws-amplify/auth';
 
 export const Main = async () =>{
   const SOCKET_URL =import.meta.env.VITE_SOCKET_URL || 'http://localhost:4001';
