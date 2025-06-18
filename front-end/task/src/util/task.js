@@ -1,5 +1,4 @@
 import { getJWT } from '../auth/getJWT'
-const token = await getJWT();
 const baseUrl=
   import.meta.env.MODE=== "development"
     ? import.meta.env.VITE_BASE_URL_DEV
