@@ -1,15 +1,4 @@
-import { fetchAuthSession } from 'aws-amplify/auth';
-
-const getJWT = async () => {
-  try {
-    const session = await fetchAuthSession();
-    const idToken = session.tokens?.idToken?.toString(); // hoặc accessToken
-    return idToken;
-  } catch (error) {
-    console.error('Cannot fetch JWT:', error);
-    return null;
-  }
-};
+import { getJWT } from '../auth/getJWT'
 const token = await getJWT();
 const baseUrl=
   import.meta.env.MODE=== "development"
@@ -17,7 +6,8 @@ const baseUrl=
     : import.meta.env.VITE_BASE_URL_PROD;
 console.log('BASE_URL:', import.meta.env.VITE_BASE_URL_DEV);
 let task={
-    signIn(email, password){
+    async signIn(email, password){
+        const token = await getJWT();
         return fetch(`${baseUrl}/auth/login`,{
             method:'POST',
             headers: {
@@ -43,7 +33,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    signUp(email, password, firstname, lastname){
+    async signUp(email, password, firstname, lastname){
+        const token = await getJWT();
         return fetch(`${baseUrl}/auth/signUp`,{
             method:'POST',
             headers: {
@@ -71,7 +62,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getUserProfile(){
+    async getUserProfile(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/auth`,{
             method:'GET',
             headers:{
@@ -91,7 +83,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    logOut(){
+    async logOut(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/auth/logout`,{
             method:'POST',
             headers:{
@@ -111,7 +104,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    createProject(title, startDate, endDate, assignedUserId){
+    async createProject(title, startDate, endDate, assignedUserId){
+        const token = await getJWT();
         return fetch(`${baseUrl}/project`,{
             method:'POST',
             headers: {
@@ -139,7 +133,8 @@ let task={
         });
     }
     ,
-    getAllProject(){
+    async getAllProject(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/project`,{
             method:'GET',
             headers:{
@@ -159,7 +154,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getProjectById(id){
+    async getProjectById(id){
+        const token = await getJWT();
         return fetch(`${baseUrl}/project/${id}`,{
             method:'GET',
             headers:{
@@ -179,7 +175,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getProjectProgress(){
+    async getProjectProgress(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/project/progress`,{
             method:'GET',
             headers:{
@@ -200,7 +197,8 @@ let task={
         });
     }
     ,
-    updateProject(updateData){
+    async updateProject(updateData){
+        const token = await getJWT();
         return fetch(`${baseUrl}/project`, {
             method: 'PATCH',
             headers: {
@@ -217,7 +215,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    deleteProject(id){
+    async deleteProject(id){
+        const token = await getJWT();
         return fetch(`${baseUrl}/project/${id}`, {
             method: 'DELETE',
             headers: {
@@ -231,7 +230,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    createTask(title, description, status, priority, startDate, dueDate, assignedUserId, projectId){
+    async createTask(title, description, status, priority, startDate, dueDate, assignedUserId, projectId){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task`,{
             method:'POST',
             headers: {
@@ -262,7 +262,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getAllTask(id){
+    async getAllTask(id){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task/project/${id}`,{
             method:'GET',
             headers:{
@@ -282,7 +283,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getTaskDetail(id){
+    async getTaskDetail(id){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task/${id}`,{
             method:'GET',
             headers:{
@@ -303,7 +305,8 @@ let task={
         });
     }
     ,
-    getTodayTask(){
+    async getTodayTask(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task/today`,{
             method:'GET',
             headers:{
@@ -323,7 +326,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getUpcomingTask(){
+    async getUpcomingTask(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task/upcoming`,{
             method:'GET',
             headers:{
@@ -343,7 +347,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getAllTaskForUser(){
+    async getAllTaskForUser(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task/user`,{
             method:'GET',
             headers:{
@@ -364,7 +369,8 @@ let task={
         });
     }
     ,
-    updateTaskStatus(task){
+    async updateTaskStatus(task){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task`,{
             method:'PUT',
             headers: {
@@ -388,7 +394,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    deleteTask(id){
+    async deleteTask(id){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task/${id}`,{
             method:'DELETE',
             headers:{
@@ -407,7 +414,8 @@ let task={
         })
     }
     ,
-    getAllUser(){
+    async getAllUser(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/user`,{
             method:'GET',
             headers:{
@@ -427,7 +435,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    getUserByProjectId(projectId){
+    async getUserByProjectId(projectId){
+        const token = await getJWT();
         return fetch(`${baseUrl}/user/${projectId}`,{
             method:'GET',
             headers:{
@@ -447,7 +456,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    uploadAvatar(file){
+    async uploadAvatar(file){
+        const token = await getJWT();
         const formData = new FormData();
         formData.append('image', file);
         return fetch(`${baseUrl}/upload/image`, {
@@ -465,7 +475,8 @@ let task={
           return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    updateProfile(updateData){
+    async updateProfile(updateData){
+        const token = await getJWT();
         return fetch(`${baseUrl}/user`, {
             method: 'PATCH',
             headers: {
@@ -482,7 +493,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
           });
     },
-    getSetting(){
+    async getSetting(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/setting`,{
             method:'GET',
             headers:{
@@ -502,7 +514,8 @@ let task={
             console.log(networkError.message);
         });
     },
-    updateUserSetting(updateData){
+    async updateUserSetting(updateData){
+        const token = await getJWT();
         return fetch(`${baseUrl}/setting`, {
             method: 'PATCH',
             headers: {
@@ -519,7 +532,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
           });
     },
-    getPresignedUrl(key){
+    async getPresignedUrl(key){
+        const token = await getJWT();
         return fetch(`${baseUrl}/s3/download/${key}`, {
             method: 'GET',
             headers:{
@@ -532,7 +546,8 @@ let task={
             return response.json(); 
           });
     },
-    deleteAttachment(key, id){
+    async deleteAttachment(key, id){
+        const token = await getJWT();
         return fetch(`${baseUrl}/s3/delete/${key}`, {
             method: 'DELETE',
             headers: {
@@ -550,7 +565,8 @@ let task={
         });
     }
     ,
-    uploadAttachment(file, id){
+    async uploadAttachment(file, id){
+        const token = await getJWT();
         const formData = new FormData();
         formData.append('file', file);
         formData.append('task_id', id)
@@ -569,7 +585,8 @@ let task={
           return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    updateTaskDetail(updateData){
+    async updateTaskDetail(updateData){
+        const token = await getJWT();
         return fetch(`${baseUrl}/task`, {
             method: 'PATCH',
             credentials: 'include',
@@ -587,7 +604,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    getComment(taskId){
+    async getComment(taskId){
+        const token = await getJWT();
         return fetch(`${baseUrl}/comment/${taskId}`, {
             method: 'GET',
           }).then(response => {
@@ -597,7 +615,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    createNewComment(data){
+    async createNewComment(data){
+        const token = await getJWT();
         return fetch(`${baseUrl}/comment`, {
             method: 'POST',
             headers: {
@@ -612,18 +631,21 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    search(query){
+    async search(query){
+        const token = await getJWT();
         return fetch(`${baseUrl}/search?${query}`, {
             method: 'GET',
-            credentials: 'include'
+            headers: {
+                'Authorization': `Bearer ${token}`,
+            },
           }).then(response => {
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    createNoti(data){
+    async createNoti(data){
+        const token = await getJWT();
         return fetch(`${baseUrl}/notification`, {
             method: 'POST',
-            credentials: 'include',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -636,7 +658,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    getAllNoti(){
+    async getAllNoti(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/notification`, {
             method: 'GET',
             headers:{
@@ -649,7 +672,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    updateNoti(data){
+    async updateNoti(data){
+        const token = await getJWT();
         return fetch(`${baseUrl}/notification`, {
             method: 'PATCH',
             credentials: 'include',
@@ -665,7 +689,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    getUserRole(projectId){
+    async getUserRole(projectId){
+        const token = await getJWT();
         return fetch(`${baseUrl}/user/role/${projectId}`, {
             method: 'GET',
             headers:{
@@ -678,7 +703,8 @@ let task={
             return response.json(); // Chờ và lấy dữ liệu trả về từ server
         });
     },
-    getAllUserRole(){
+    async getAllUserRole(){
+        const token = await getJWT();
         return fetch(`${baseUrl}/user/role`, {
             method: 'GET',
             headers:{
