@@ -5,8 +5,10 @@ import { useEffect, useRef,useState } from "react"
 import './main.css'
 import {io} from 'socket.io-client'
 import task from "../../util/task"
-export const Main = () =>{
-  const SOCKET_URL = 'http://localhost:4001';
+import { Auth } from 'aws-amplify';
+
+export const Main = async () =>{
+  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:4001';
   const [socket, setSocket] = useState(null);
   const [role, setRole]=useState(null)
    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -23,28 +25,39 @@ export const Main = () =>{
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-  useEffect(() => {
-      // Tạo socket connection
-          const socket = io(SOCKET_URL,{
-            withCredentials:true
-          })
-          setSocket(socket)
-          // Xử lý các sự kiện socket
-          socket.on('connect', () => {
-          })
-        
-          socket.on('connect_error', (error) => {
-          });
-          socket.on()
-          
-          // Cleanup khi component unmount
-          return () => {
-            // Ngắt các event listener nếu có
-            socket.off();
+useEffect(() => {
+  async function connectSocket() {
+    try {
+      const token = (await Auth.currentSession()).getIdToken().getJwtToken();
 
-            // Đóng kết nối socket
-            socket.disconnect();
-          };
+      const socketInstance = io(SOCKET_URL, {
+        auth: {
+          token
+        },
+        transports: ['websocket'], // khuyên dùng
+        secure: true
+      });
+
+      setSocket(socketInstance);
+
+      socketInstance.on('connect', () => {
+        console.log('Socket connected');
+      });
+
+      socketInstance.on('connect_error', err => {
+        console.error('Socket error:', err.message);
+      });
+
+    } catch (error) {
+      console.error('Lỗi khi lấy token từ Amplify:', error);
+    }
+  }
+
+  connectSocket();
+
+  return () => {
+    if (socket) socket.disconnect();
+  };
   }, []);
   useEffect(()=>{
     async function setUserRole(){
