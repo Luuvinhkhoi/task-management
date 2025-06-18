@@ -8,7 +8,7 @@ import task from "../../util/task"
 import { Auth } from 'aws-amplify';
 
 export const Main = async () =>{
-  const SOCKET_URL = process.env.REACT_APP_SOCKET_URL || 'http://localhost:4001';
+  const SOCKET_URL =import.meta.env.VITE_SOCKET_URL || 'http://localhost:4001';
   const [socket, setSocket] = useState(null);
   const [role, setRole]=useState(null)
    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
