@@ -5,9 +5,8 @@ import { useEffect, useRef,useState } from "react"
 import './main.css'
 import {io} from 'socket.io-client'
 import task from "../../util/task"
-import { Auth } from 'aws-amplify/auth';
-
-export const Main = async () =>{
+import { fetchAuthSession } from "aws-amplify/auth"
+export const Main = () =>{
   const SOCKET_URL =import.meta.env.VITE_SOCKET_URL || 'http://localhost:4001';
   const [socket, setSocket] = useState(null);
   const [role, setRole]=useState(null)
@@ -25,39 +24,45 @@ export const Main = async () =>{
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
-useEffect(() => {
+  useEffect(() => {
   async function connectSocket() {
-    try {
-      const token = (await Auth.currentSession()).getIdToken().getJwtToken();
+      try {
+        const session = await fetchAuthSession();
+        const token = session.tokens?.idToken?.toString();
 
-      const socketInstance = io(SOCKET_URL, {
-        auth: {
-          token
-        },
-        transports: ['websocket'], // khuyên dùng
-        secure: true
-      });
+        if (!token) {
+          console.warn('No token available. User might not be signed in.');
+          return;
+        }
 
-      setSocket(socketInstance);
+        const socketInstance = io(SOCKET_URL, {
+          auth: {
+            token
+          },
+          transports: ['websocket'],
+          secure: true
+        });
 
-      socketInstance.on('connect', () => {
-        console.log('Socket connected');
-      });
+        setSocket(socketInstance);
 
-      socketInstance.on('connect_error', err => {
-        console.error('Socket error:', err.message);
-      });
+        socketInstance.on('connect', () => {
+          console.log('Socket connected');
+        });
 
-    } catch (error) {
-      console.error('Lỗi khi lấy token từ Amplify:', error);
+        socketInstance.on('connect_error', err => {
+          console.error('Socket error:', err.message);
+        });
+
+      } catch (error) {
+        console.error('Lỗi khi lấy token từ Amplify:', error);
+      }
     }
-  }
 
-  connectSocket();
+    connectSocket();
 
-  return () => {
-    if (socket) socket.disconnect();
-  };
+    return () => {
+      if (socket) socket.disconnect();
+    };
   }, []);
   useEffect(()=>{
     async function setUserRole(){
