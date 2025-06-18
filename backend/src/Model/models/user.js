@@ -7,14 +7,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
-    email: {
+    cognitoId: {
       type: DataTypes.STRING,
       allowNull: false,
       unique: true
     },
-    password: {
+    email: {
       type: DataTypes.STRING,
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     firstname: DataTypes.STRING,
     lastname: DataTypes.STRING,  

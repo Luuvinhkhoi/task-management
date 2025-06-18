@@ -4,6 +4,7 @@ import task from '../../../util/task'
 import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import notFound from '../../../assets/notFound.png'
+import { useAuth } from '../../../authContext'
 import { Link } from 'react-router-dom'
 import {X} from 'lucide-react'
 import { Download, Paperclip, Trash2, FilePenLine } from 'lucide-react';
@@ -51,6 +52,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
     const [assignedUserId, setAssignedUserId] = useState([]);
     const [users, setUser]=useState([])//list of user
     const [view, setView]=useState(true)
+    const { user, signOut } = useAuth();
     const [deleteAttachment, setDeleteAttachment]=useState(false)
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
@@ -363,7 +365,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                         />
                     )} 
                 </div> 
-                {userName?
+                {/*{userName?*/}
                 <div style={{display:'flex', alignItems:'center', gap:'1rem'}}>
                     <div style={{display:'flex', gap:'1rem'}}>
                         <div>{dayFormat}</div>
@@ -410,7 +412,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                         <UserPen></UserPen>
                                         <p>Edit profile</p>
                                     </div>
-                                    <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>handleLogout()}>
+                                    <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={signOut}>
                                         <LogOut></LogOut>
                                         <p>Log out</p>
                                     </div>
@@ -421,7 +423,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                         </AnimatePresence>
                     </div>
                 </div>
-                :
+                {/*:
                 <div id='authOption'>
                     <div className='sign-in'>
                         <Link to='/sign-in'  className='sign-in-anchor'>Sign in</Link>
@@ -430,7 +432,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                         <Link to='/sign-up' className='sign-up-button'>Create account</Link>
                     </div>
                 </div> 
-                }
+                }*/}
             </div>
             <div className='searchBar-mobile' ref={searchBarMobileRef}>
                         <input placeholder='Search here'  onClick={handleSearchBarMobileActive}  value={searchString} onChange={handleInputChange}></input>

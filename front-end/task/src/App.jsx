@@ -17,6 +17,7 @@ import { Profile } from './component/main/profile/profile.jsx'
 import { Upcoming } from './component/main/dashboard/upcoming/upcoming.jsx'
 import './i18n'
 import './App.css'
+import { AuthProvider } from './authenProvider.jsx';
 import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements} from 'react-router-dom'
 import { TimezoneProvider } from './timezoneContext.jsx';
 import { fetchProjects } from './store/project.js';
@@ -64,7 +65,9 @@ function App() {
   ))
   return (
     <TimezoneProvider>
-        <RouterProvider router={router}></RouterProvider>
+        <AuthProvider>
+          <RouterProvider router={router}></RouterProvider>
+        </AuthProvider>
     </TimezoneProvider>
   )
 }

@@ -1,3 +1,16 @@
+import { fetchAuthSession } from 'aws-amplify/auth';
+
+const getJWT = async () => {
+  try {
+    const session = await fetchAuthSession();
+    const idToken = session.tokens?.idToken?.toString(); // hoặc accessToken
+    return idToken;
+  } catch (error) {
+    console.error('Cannot fetch JWT:', error);
+    return null;
+  }
+};
+const token = await getJWT();
 const baseUrl=
   import.meta.env.MODE=== "development"
     ? import.meta.env.VITE_BASE_URL_DEV
@@ -7,9 +20,9 @@ let task={
     signIn(email, password){
         return fetch(`${baseUrl}/auth/login`,{
             method:'POST',
-            credentials:'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`,
             },
             body: JSON.stringify({
                 email: email,
@@ -33,9 +46,9 @@ let task={
     signUp(email, password, firstname, lastname){
         return fetch(`${baseUrl}/auth/signUp`,{
             method:'POST',
-            credentials:'include',
             headers: {
-                'Content-Type': 'application/json'
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
                 email: email,
@@ -61,7 +74,9 @@ let task={
     getUserProfile(){
         return fetch(`${baseUrl}/auth`,{
             method:'GET',
-            credentials: 'include'
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -79,7 +94,9 @@ let task={
     logOut(){
         return fetch(`${baseUrl}/auth/logout`,{
             method:'POST',
-            credentials: 'include'
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -97,8 +114,8 @@ let task={
     createProject(title, startDate, endDate, assignedUserId){
         return fetch(`${baseUrl}/project`,{
             method:'POST',
-            credentials:'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body:JSON.stringify({
@@ -125,7 +142,9 @@ let task={
     getAllProject(){
         return fetch(`${baseUrl}/project`,{
             method:'GET',
-            credentials:'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response=>{
             if(response.ok){
                 return response.json()
@@ -143,7 +162,9 @@ let task={
     getProjectById(id){
         return fetch(`${baseUrl}/project/${id}`,{
             method:'GET',
-            credentials:'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response=>{
             if(response.ok){
                 return response.json()
@@ -161,7 +182,9 @@ let task={
     getProjectProgress(){
         return fetch(`${baseUrl}/project/progress`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -180,8 +203,8 @@ let task={
     updateProject(updateData){
         return fetch(`${baseUrl}/project`, {
             method: 'PATCH',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body:JSON.stringify({
@@ -197,8 +220,8 @@ let task={
     deleteProject(id){
         return fetch(`${baseUrl}/project/${id}`, {
             method: 'DELETE',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
         }).then(response => {
@@ -211,8 +234,8 @@ let task={
     createTask(title, description, status, priority, startDate, dueDate, assignedUserId, projectId){
         return fetch(`${baseUrl}/task`,{
             method:'POST',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -242,7 +265,9 @@ let task={
     getAllTask(id){
         return fetch(`${baseUrl}/task/project/${id}`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -260,7 +285,9 @@ let task={
     getTaskDetail(id){
         return fetch(`${baseUrl}/task/${id}`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -279,7 +306,9 @@ let task={
     getTodayTask(){
         return fetch(`${baseUrl}/task/today`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -297,7 +326,9 @@ let task={
     getUpcomingTask(){
         return fetch(`${baseUrl}/task/upcoming`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -315,7 +346,9 @@ let task={
     getAllTaskForUser(){
         return fetch(`${baseUrl}/task/user`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -334,8 +367,8 @@ let task={
     updateTaskStatus(task){
         return fetch(`${baseUrl}/task`,{
             method:'PUT',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
@@ -358,7 +391,9 @@ let task={
     deleteTask(id){
         return fetch(`${baseUrl}/task/${id}`,{
             method:'DELETE',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -375,7 +410,9 @@ let task={
     getAllUser(){
         return fetch(`${baseUrl}/user`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -393,7 +430,9 @@ let task={
     getUserByProjectId(projectId){
         return fetch(`${baseUrl}/user/${projectId}`,{
             method:'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response => {
             if (response.ok) {
               return response.json();
@@ -413,7 +452,10 @@ let task={
         formData.append('image', file);
         return fetch(`${baseUrl}/upload/image`, {
           method: 'POST',
-          credentials: 'include',
+          headers:{
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+          },
           body: formData, // Gửi FormData với dữ liệu file
           
         }).then(response => {
@@ -426,8 +468,8 @@ let task={
     updateProfile(updateData){
         return fetch(`${baseUrl}/user`, {
             method: 'PATCH',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body:JSON.stringify({
@@ -443,7 +485,9 @@ let task={
     getSetting(){
         return fetch(`${baseUrl}/setting`,{
             method:'GET',
-            credentials:'include'
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
         }).then(response=>{
             if(response.ok){
                return response.json();
@@ -461,8 +505,8 @@ let task={
     updateUserSetting(updateData){
         return fetch(`${baseUrl}/setting`, {
             method: 'PATCH',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body:JSON.stringify({
@@ -478,7 +522,9 @@ let task={
     getPresignedUrl(key){
         return fetch(`${baseUrl}/s3/download/${key}`, {
             method: 'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
           }).then(response => {
             if (!response.ok) {
               throw new Error(`Request failed with status ${response.status}`);
@@ -489,8 +535,8 @@ let task={
     deleteAttachment(key, id){
         return fetch(`${baseUrl}/s3/delete/${key}`, {
             method: 'DELETE',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body:JSON.stringify({
@@ -510,7 +556,10 @@ let task={
         formData.append('task_id', id)
         return fetch(`${baseUrl}/upload/file`, {
           method: 'POST',
-          credentials: 'include',
+          headers:{
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+          },
           body: formData, // Gửi FormData với dữ liệu file
           
         }).then(response => {
@@ -525,6 +574,7 @@ let task={
             method: 'PATCH',
             credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body:JSON.stringify({
@@ -550,8 +600,8 @@ let task={
     createNewComment(data){
         return fetch(`${baseUrl}/comment`, {
             method: 'POST',
-            credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data),
@@ -575,6 +625,7 @@ let task={
             method: 'POST',
             credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data),
@@ -588,7 +639,9 @@ let task={
     getAllNoti(){
         return fetch(`${baseUrl}/notification`, {
             method: 'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
           }).then(response => {
             if (!response.ok) {
               throw new Error(`Request failed with status ${response.status}`);
@@ -601,6 +654,7 @@ let task={
             method: 'PATCH',
             credentials: 'include',
             headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(data),
@@ -614,7 +668,9 @@ let task={
     getUserRole(projectId){
         return fetch(`${baseUrl}/user/role/${projectId}`, {
             method: 'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
           }).then(response => {
             if (!response.ok) {
               throw new Error(`Request failed with status ${response.status}`);
@@ -625,7 +681,9 @@ let task={
     getAllUserRole(){
         return fetch(`${baseUrl}/user/role`, {
             method: 'GET',
-            credentials: 'include',
+            headers:{
+                'Authorization': `Bearer ${token}`,
+            }
           }).then(response => {
             if (!response.ok) {
               throw new Error(`Request failed with status ${response.status}`);

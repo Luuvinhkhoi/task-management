@@ -1,9 +1,9 @@
 const service=require('../Services/userService')
 const createUser= async(req, res)=>{
   try{
-     const {email, password, firstname, lastname}=req.body
-     const user= await service.createUser(email, password, firstname, lastname)
-     res.status(201).json(user)
+     const {email, cognitoId, firstname, lastname}=req.body
+     const user= await service.createUser(email, cognitoId, firstname, lastname)
+     res.status(201).json({message:'User created successfully'})
   } catch(error){
      res.status(500).json({error: error.message})
   }

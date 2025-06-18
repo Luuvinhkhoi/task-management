@@ -103,6 +103,9 @@ const getUserRole=async(userId, projectId)=>{
 
   }
 }
+const findUserByCognitoId = async (cognitoId) => {
+  return await db.User.findOne({ where: { cognitoId } });
+};
 const getAllUserRole=async(userId)=>{
   try{
     let result= await db.ProjectMember.findAll(
@@ -126,5 +129,6 @@ module.exports={
     updateUser,
     getUserByProjectId,
     getUserRole, 
-    getAllUserRole
+    getAllUserRole, 
+    findUserByCognitoId
 }

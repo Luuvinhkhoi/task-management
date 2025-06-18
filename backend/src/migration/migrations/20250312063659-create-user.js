@@ -14,17 +14,17 @@ module.exports = {
         allowNull: false,
         unique: true
       },
-      password: {
+      cognitoid: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      firstname: { // ✅ Thêm cột
+      firstname: {
         type: Sequelize.STRING
       },
-      lastname: { // ✅ Thêm cột
+      lastname: {
         type: Sequelize.STRING
       },
-      avatar: { // ✅ Thêm cột
+      avatar: {
         type: Sequelize.STRING
       },
       phonenumber:{
@@ -40,7 +40,6 @@ module.exports = {
       }
     });
 
-    // ❌ Xóa cột `username`
   },
 
   async down(queryInterface, Sequelize) {
