@@ -7,10 +7,11 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   User.init({
-    cognitoId: {
+    cognitoid: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true
+      unique: true,
+      field:'cognitoid'
     },
     email: {
       type: DataTypes.STRING,

@@ -22,8 +22,8 @@ module.exports = function(io) {
       jwt.verify(token, getKey, {}, async (err, decoded) => {
         if (err) return next(new Error('Invalid token'));
 
-        const cognitoId = decoded.sub;
-        const user = await User.findOne({ where: { cognitoId } });
+        const cognitoid = decoded.sub;
+        const user = await User.findOne({ where: { cognitoid } });
         if (!user) return next(new Error('User not found'));
 
         socket.user = user;

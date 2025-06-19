@@ -1,10 +1,12 @@
 const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 const db = require('../Model/models');
-
+require('dotenv').config();
+console.log(` hihi ${process.env.AWS_REGION}`)
+console.log(` hihi ${process.env.COGNITO_USER_POOL_ID}`)
 // Lấy JWKS từ Cognito
 const client = jwksClient({
-  jwksUri: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.USER_POOL_ID}/.well-known/jwks.json`
+  jwksUri: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}/.well-known/jwks.json`
 });
 
 function getKey(header, callback) {
@@ -34,10 +36,10 @@ const attachUserToRequest = (req, res, next) => {
       return res.status(401).json({ message: 'Invalid token' });
     }
 
-    const cognitoId = decoded.sub;
+    const cognitoid = decoded.sub;
 
     try {
-      const user = await db.User.findOne({ where: { cognitoId } });
+      const user = await db.User.findOne({ where: { cognitoid } });
 
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
