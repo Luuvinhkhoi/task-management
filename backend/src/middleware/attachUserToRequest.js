@@ -1,32 +1,60 @@
+const jwt = require('jsonwebtoken');
+const jwksClient = require('jwks-rsa');
 const db = require('../Model/models');
 
-const attachUserToRequest = async (req, res, next) => {
-  try {
-    const cognitoId = req.headers['x-user-sub'];
+// Lấy JWKS từ Cognito
+const client = jwksClient({
+  jwksUri: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.USER_POOL_ID}/.well-known/jwks.json`
+});
 
-    if (!cognitoId) {
-      return res.status(401).json({ message: 'Missing Cognito ID' });
+function getKey(header, callback) {
+  client.getSigningKey(header.kid, (err, key) => {
+    if (err) {
+      console.error('Error fetching signing key:', err);
+      callback(err);
+    } else {
+      const signingKey = key.getPublicKey();
+      callback(null, signingKey);
     }
+  });
+}
 
-    const user = await db.User.findOne({
-      where: { cognitoId }
-    });
+const attachUserToRequest = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    req.user = {
-      id: user.userId, 
-      email: user.email,
-      username: user.username,
-    };
-
-    next();
-  } catch (error) {
-    console.error('Error in attachUserToRequest:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: 'Missing or invalid Authorization header' });
   }
+
+  const token = authHeader.split(' ')[1];
+
+  jwt.verify(token, getKey, {}, async (err, decoded) => {
+    if (err) {
+      console.error('JWT verification failed:', err);
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    const cognitoId = decoded.sub;
+
+    try {
+      const user = await db.User.findOne({ where: { cognitoId } });
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      req.user = {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+      };
+
+      next();
+    } catch (error) {
+      console.error('Database error in attachUserToRequest:', error);
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  });
 };
 
 module.exports = attachUserToRequest;
