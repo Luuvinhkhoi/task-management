@@ -36,7 +36,7 @@ app.use(cors());
 
 socketJwtMiddleware(io);
 global._io.on('connection',Socket.connection)
-app.post('/auth/signUp', userController.createUser);
+app.post('/signUp', userController.createUser);
 app.use('/auth', attachUserToRequest,authRouter)
 app.use('/user',attachUserToRequest,userRouter)
 app.use('/project',attachUserToRequest,projectRouter)
