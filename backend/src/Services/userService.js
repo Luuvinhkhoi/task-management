@@ -1,12 +1,11 @@
 const { where } = require('sequelize')
 const db = require('../Model/models')
 const bcrypt=require('bcryptjs');
-const createUser=async(email, password, firstname, lastname)=>{
+const createUser=async(email, cognitoId , firstname, lastname)=>{
   try{
-    const hashedPassword = await bcrypt.hash(password, 10);
     const result=await db.User.create({
         email: email,
-        password:hashedPassword,
+        cognitoid:cognitoId,
         firstname:firstname,
         lastname: lastname,
     })
