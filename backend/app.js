@@ -7,6 +7,7 @@ const { Server } = require('socket.io')
 const attachUserToRequest = require('./src/middleware/attachUserToRequest')
 const socketJwtMiddleware = require('./src/middleware/socketJwtMiddleware');
 const cors = require('cors');
+const userController=require('./src/Controller/userController')
 const userRouter = require('./src/Routes/user');
 const projectRouter = require('./src/Routes/project');
 const taskRouter = require('./src/Routes/task');
@@ -35,7 +36,7 @@ app.use(cors());
 
 socketJwtMiddleware(io);
 global._io.on('connection',Socket.connection)
-
+app.post('/auth/signUp', userController.createUser);
 app.use('/auth', attachUserToRequest,authRouter)
 app.use('/user',attachUserToRequest,userRouter)
 app.use('/project',attachUserToRequest,projectRouter)
