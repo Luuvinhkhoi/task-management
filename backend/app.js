@@ -47,5 +47,5 @@ app.use('/setting', attachUserToRequest, settingRouter)
 app.use('/comment', attachUserToRequest,commentRouter)
 app.use('/search',attachUserToRequest,searchRouter)
 app.use('/notification', attachUserToRequest, notificationRouter)
-server.listen(process.env.PORT||4001, () => console.log(`Server listening on port ${process.env.PORT}`));
+server.listen(process.env.PORT||4001,'0.0.0.0' ,() => console.log(`Server listening on port ${process.env.PORT}`));
 
