@@ -58,11 +58,6 @@ const formFields = {
   },
 };
 
-// CSS tùy chỉnh để làm cho firstname và lastname nằm cùng hàng
-
-console.log('UserPool ID:', import.meta.env.VITE_COGNITO_USER_POOL_ID);
-console.log('UserPool Client ID:', import.meta.env.VITE_COGNITO_USER_POOL_CLIENT_ID);
-
 export const AuthProvider = ({ children }) => {
   return (
     <div style={{ marginTop: '1rem' }}>

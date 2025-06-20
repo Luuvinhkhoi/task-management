@@ -2,8 +2,6 @@ const jwt = require('jsonwebtoken');
 const jwksClient = require('jwks-rsa');
 const db = require('../Model/models');
 require('dotenv').config();
-console.log(` hihi ${process.env.AWS_REGION}`)
-console.log(` hihi ${process.env.COGNITO_USER_POOL_ID}`)
 // Lấy JWKS từ Cognito
 const client = jwksClient({
   jwksUri: `https://cognito-idp.${process.env.AWS_REGION}.amazonaws.com/${process.env.COGNITO_USER_POOL_ID}/.well-known/jwks.json`

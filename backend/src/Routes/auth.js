@@ -11,7 +11,7 @@ authRouter.post('/logout', function(req, res, next){
     });
 });
 authRouter.get('/', (req, res) => { 
-  if (req.isAuthenticated()) { 
+  if (req.user) { 
     res.json({ id:req.user.id ,firstname: req.user.firstname,lastname: req.user.lastname , email: req.user.email, avatar:req.user.avatar, phone:req.user.phonenumber  }); 
   } else { 
     res.status(401).json({ message: 'Not authenticated' }); 
