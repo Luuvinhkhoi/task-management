@@ -61,19 +61,19 @@ export const List = ()=>{
 
     const [deleteAttachment, setDeleteAttachment]=useState(false)
     const tabs=[
-        { value: 'Detail', label: 'Detail' },
-        { value: 'Comment', label: 'Comment' },
+        { value: 'Detail', label: t('taskDetail.detail') },
+        { value: 'Comment', label: t('taskDetail.comment')},
     ]
     const options = [
-        { value: 'Low', label: 'Low' },
-        { value: 'Medium', label: 'Medium' },
-        { value: 'High', label: 'High' },
-        { value: 'Urgent', label: 'Urgent' }
+        { value: 'Low', label: t('list.priority.Low') },
+        { value: 'Medium', label: t('list.priority.Medium') },
+        { value: 'High', label: t('list.priority.High') },
+        { value: 'Urgent', label: t('list.priority.Urgent') }
     ];
     const statusOptions = [
-        { value: 'To do', label: 'To do' },
-        { value: 'In progress', label: 'In progress' },
-        { value: 'Complete', label: 'Complete' },
+        { value: 'To do', label: t('list.To do') },
+        { value: 'In progress', label: t('list.In progress') },
+        { value: 'Complete', label: t('list.Complete') }
     ];
     const customStyles =(darkMode) =>({
         control: (base, state) => ({
@@ -260,6 +260,7 @@ export const List = ()=>{
     },[id])
     async function getTaskDetail(task_id){
         try{
+            setOverlay(true)
             const result=await task.getTaskDetail(task_id)
             setTaskId(task_id)
             setTaskDetail(result)
@@ -271,7 +272,6 @@ export const List = ()=>{
             setDescription(result[0].description)
             setTaskDetailMember(result[0].users)
             setTaskDetailOpen(true)
-            setOverlay(true)
           } catch(error){
             console.log(error)
         }
@@ -476,7 +476,7 @@ export const List = ()=>{
                 {mergeTask.map(task=>
                     <div className='listContentItem' key={task.id} onClick={()=>getTaskDetail(task.id)}>
                         <div style={{textAlign:'left', fontWeight:'600'}}>{task.title}</div>                        
-                        <div>{task.description.length>50?task.description.slice(0,50)+'...':task.description}</div>
+                        <p style={{color:`${theme?'#fff':'rgb(75, 85, 99)'}`, marginBottom:'.25rem', textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{task.description}</p>
                         <div style={{borderRadius:'1rem'}} className={`status-${task.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${task.status}`)}</div>
                         <div style={{textAlign:'center'}}>{t(`list.priority.${task.priority}`)}</div>
                         <div style={{display:'flex', gap:'5px', justifyContent:'center'}}>
@@ -538,7 +538,7 @@ export const List = ()=>{
                                 >
                                     <Loader2 style={{color:' #007bff'}} />
                                 </motion.div>
-                                <p style={{fontWeight:500, color:'black'}}>Please wait...</p>
+                                <p style={{fontWeight:500, color:'black'}}>{t("taskDetail.wait")}</p>
                             </div>
                         </div>
                     ):(
@@ -546,26 +546,26 @@ export const List = ()=>{
                                 updateError?(
                                     <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                         <div className='close-button' onClick={()=>{setNotiOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                        <p style={{fontWeight:500}}>Failed to update task.</p>
-                                        <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                        <p style={{fontWeight:500}}>{t('taskDetail.updateFail')}</p>
+                                        <p style={{fontSize:12}}>{t('taskDetail.failMessage')}</p>
                                     </div>
                                 ):(
                                     <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                         <div className='close-button' onClick={()=>{setNotiOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                        <p style={{fontWeight:500}}>Failed to delete task.</p>
-                                        <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                        <p style={{fontWeight:500}}>{t('taskDetail.deleteFail')}</p>
+                                        <p style={{fontSize:12}}>{t('taskDetail.failMessage')}</p>
                                     </div>
                                 )
                         ):(
                                 updateSuccess?(
                                     <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                         <div className='close-button' onClick={()=>{setNotiOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                        <p style={{fontWeight:500}}>Task updated successfully.</p>
+                                        <p style={{fontWeight:500}}>{t('taskDetail.updateSuccess')}</p>
                                     </div>
                                 ):(
                                     <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                         <div className='close-button' onClick={()=>{setNotiOverlay(false), setOverlay(null),dispatch(getAllTask(id))}}><X style={{height:12, width:12}}></X></div>
-                                        <p style={{fontWeight:500}}>Task deleted successfully.</p>
+                                        <p style={{fontWeight:500}}>{t('taskDetail.deleteSuccess')}</p>
                                     </div>
                                 )
                         )
@@ -573,15 +573,15 @@ export const List = ()=>{
                 </div>
                 {deleteTask?(
                     <div className='delete-warning'>
-                        <h2>Xác nhận xóa</h2>
-                        <span>Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác.</span>
+                        <h2>{t('taskDetail.confirm')}</h2>
+                        <span>{t('taskDetail.message')}</span>
                         <div className='delete-warning-footer'>
                             <div className='edit' onClick={()=>{setOverlay(null), setDeleteTask(null)}}>
-                            <p>Cancel</p>
+                            <p>{t('taskDetail.Cancel')}</p>
                             </div>
                             <div className='delete' onClick={(e)=>{handleDeleteTask(e, taskId), setNotiOverlay(true), setLoading(true)}}>
                                 <Trash2 color='white'></Trash2>
-                                <p style={{color:'white'}}>Delete</p>
+                                <p style={{color:'white'}}>{t("taskDetail.delete")}</p>
                             </div>
                         </div>
                     </div>
@@ -601,7 +601,8 @@ export const List = ()=>{
                             <p style={{border: 'none',outline: 'none', boxShadow: 'none', fontWeight:700, fontSize:28}}>{title}</p>
                         </div>
                         <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
-                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                            <div className='startDate'>
+                                <div>{t('taskDetail.startDate')}</div>
                                 <div style={{display:'flex', gap:'.5rem', fontSize:'14px', fontWeight:'500'}}>
                                     <div>
                                         {new Intl.DateTimeFormat('en-CA', {
@@ -622,7 +623,8 @@ export const List = ()=>{
                                 </div>
                             </div>
 
-                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                            <div className='dueDate'>
+                                <div>{t('taskDetail.dueDate')}</div>
                                 <div style={{display:'flex', gap:'.5rem', fontSize:'14px',fontWeight:'500'}}>
                                     <div>
                                         {new Intl.DateTimeFormat('en-CA', {
@@ -643,7 +645,7 @@ export const List = ()=>{
                                 </div>
                             </div>
                         </div>
-                        <div className="taskHeader" style={{width:'165px'}}>
+                        <div className="taskHeader" style={{width:'fit-content'}}>
                             {tabs.map(tab => (
                             <div
                                 key={tab.value}
@@ -656,14 +658,14 @@ export const List = ()=>{
                         </div>
                         {isOpenTab==='Detail'?<div className='taskDetail-body'>
                             <div className='body-item'>
-                                <h4>Description</h4>
+                                <h4>{t("taskDetail.description")}</h4>
                                 <div>
                                     <p style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}>{description}</p>
                                 </div>
                             </div>
                             <div className='body-item'>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t("taskDetail.assign")}</h4>
                                 </div>
                                 
                                 <div style={{maxHeight:'150px', overflowY:'scroll'}}>
@@ -681,11 +683,11 @@ export const List = ()=>{
                             </div>
                             <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t('taskDetail.attachment')}</h4>
                                     <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
                                         <input type='file' ref={fileInputRef} 
                                         onChange={(e)=>handleFileChange(e, item.id)} 
-                                        style={{ display: 'none' }}></input>Upload</div>
+                                        style={{ display: 'none' }}></input>{t('taskDetail.upload')}</div>
                                 </div>
                                 <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
                                 {item.attachment.map((file, index) => {
@@ -749,8 +751,9 @@ export const List = ()=>{
                         <div className='title'>
                             <input value={title} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none'}}></input>
                         </div>
-                        <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
-                            <div style={{display:'flex', gap:'.5rem'}}>Start date: 
+                        <div className='date'>
+                            <div className='startDate'>
+                                <div>{t('taskDetail.startDate')}</div>
                                 <input type='datetime-local'
                                        value={toDateTimeLocal(startDate)}
                                        onChange={(e) => {
@@ -761,12 +764,13 @@ export const List = ()=>{
                                           alert('Start date cannot be after due date!');
                                         }
                                        }}
-                                       style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                       style={{border: 'none',outline: 'none', boxShadow: 'none', width:'150px',fontSize:'14px', color:'rgb(107, 114, 128)'}}
                                 >  
                                 </input>
                             </div>
 
-                            <div style={{display:'flex', gap:'.5rem'}}>Due date: 
+                            <div className='dueDate'>
+                                <p>{t('taskDetail.dueDate')}:</p> 
                                 <input type='datetime-local'
                                        value={toDateTimeLocal(dueDate)}
                                        onChange={(e) => {
@@ -777,12 +781,12 @@ export const List = ()=>{
                                           alert('Due date cannot be before start date!');
                                         }
                                       }}
-                                       style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                       style={{border: 'none',outline: 'none', boxShadow: 'none', width:'150px',fontSize:'14px', color:'rgb(107, 114, 128)'}}
                                 >  
                                 </input>
                             </div>
                         </div>
-                        <div className="taskHeader" style={{width:'165px'}}>
+                        <div className="taskHeader" style={{width:'fit-content'}}>
                             {tabs.map(tab => (
                             <div
                                 key={tab.value}
@@ -795,26 +799,26 @@ export const List = ()=>{
                         </div>
                         {isOpenTab==='Detail'?<div className='taskDetail-body'>
                             <div className='body-item'>
-                                <h4>Description</h4>
+                                <h4>{t("taskDetail.description")}</h4>
                                 <div>
                                     <input value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
                                 </div>
                             </div>
                             <div className='body-item'>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t("taskDetail.assign")}</h4>
                                     {isSelecting ?(<span
                                         onClick={() => setIsSelecting(false)}
                                         style={{color:'#007bff', fontWeight:'600'}}
                                         >
-                                        Done
+                                        {t("taskDetail.done")}
                                         </span>
                                     ): (
                                         <span
                                         onClick={() => setIsSelecting(true)}
                                         style={{color:'#007bff', fontWeight:'600'}}
                                         >
-                                        Add
+                                        {t("taskDetail.add")}
                                         </span>
                                     )}
                                 </div>
@@ -845,11 +849,11 @@ export const List = ()=>{
                             </div>
                             <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t('taskDetail.attachment')}</h4>
                                     <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
                                         <input type='file' ref={fileInputRef} 
                                         onChange={(e)=>handleFileChange(e, item.id)} 
-                                        style={{ display: 'none' }}></input>Upload</div>
+                                        style={{ display: 'none' }}></input>{t('taskDetail.upload')}</div>
                                 </div>
                                 <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
                                 {item.attachment.map((file, index) => {
@@ -889,71 +893,53 @@ export const List = ()=>{
                 
                         </div>:<Comment socket={socket} taskId={item.id} assignedUserId={assignedUserId} projectId={id}></Comment>}
                         <div className='taskDetail-footer'>
-                                <div className='edit' onClick={()=>{handleSaveEdit(),setErrorOverlay(true), setLoading(true)}}>
+                                <div className='edit' onClick={()=>{handleSaveEdit(),setNotiOverlay(true), setLoading(true)}}>
                                    <FilePenLine></FilePenLine>
-                                   <p>Save</p>
+                                   <p>{t('taskDetail.save')}</p>
                                 </div>
                                 <div className='delete' onClick={()=>{setDeleteTask(true), setTaskDetail(false)}}>
                                     <Trash2 color='white'></Trash2>
-                                    <p style={{color:'white'}}>Delete</p>
+                                    <p style={{color:'white'}}>{t('taskDetail.delete')}</p>
                                 </div>
                         </div>
                         <div className={`overlay-${deleteAttachment?'active':'unActive'}`}>
                             <div className='delete-warning'>
-                                <h2>Xác nhận xóa</h2>
-                                <span>Bạn có chắc chắn muốn xóa file này? Hành động này không thể hoàn tác.</span>
+                                <h2>{t('taskDetail.confirm')}</h2>
+                                <span>{t('taskDetail.fileMessage')}</span>
                                 <div className='delete-warning-footer'>
                                     <div className='edit' onClick={()=>{ setDeleteAttachment(false)}}>
-                                    <p>Cancel</p>
+                                        <p>{t('taskDetail.Cancel')}</p>
                                     </div>
                                     <div className='delete' onClick={(e)=>handleDeleteAttachment(attachmentUrl, attachmentId, taskId)}>
                                         <Trash2 color='white'></Trash2>
-                                        <p style={{color:'white'}}>Delete</p>
+                                        <p style={{color:'white'}}>{t("taskDetail.delete")}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div className={`overlay-${errorOverlay?'active':'unActive'}`}>
-                                                {loading?(
-                                                    <div className={`overlay-${loading?'active':'unActive'}`}>
-                                                        <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
-                                                            <motion.div
-                                                                animate={{ rotate: [0, 360] }}
-                                                                transition={{ 
-                                                                    duration: 1, 
-                                                                    repeat: Infinity, 
-                                                                    ease: "linear",
-                                                                    repeatType: "loop" // Quan trọng!
-                                                                }}
-                                                                style={{
-                                                                    width: "24px",
-                                                                    height: "24px",
-                                                                    transformOrigin: "12px 12px" // Chỉ định chính xác tâm
-                                                                }}
-                                                            >
-                                                                <Loader2 style={{color:' #007bff'}} />
-                                                            </motion.div>
-                                                            <p style={{fontWeight:500, color:'black'}}>Updating task...</p>
-                                                        </div>
-                                                    </div>
-                                                ):(
-                                                    error?(
-                                                            <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
-                                                                <div className='close-button' onClick={()=>{setErrorOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                                                <p style={{fontWeight:500}}>Failed to update the task.</p>
-                                                                <p style={{fontSize:12}}>Please try again or check your permission</p>
-                                                            </div>
-                                                    ):(
-                                                            <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
-                                                                <div className='close-button' onClick={()=>{setErrorOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                                                <p style={{fontWeight:500}}>Task updated successfully.</p>
-                                                            </div>
-                                                    )
-                                                )}
-                                               </div>
+
                     </div>
                     )                   
-                }):<div>Loading</div>
+                }):<div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'15%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                                    <motion.div
+                                        animate={{ rotate: [0, 360] }}
+                                        transition={{ 
+                                            duration: 1, 
+                                            repeat: Infinity, 
+                                            ease: "linear",
+                                            repeatType: "loop" // Quan trọng!
+                                        }}
+                                        style={{
+                                            width: "24px",
+                                            height: "24px",
+                                            transformOrigin: "12px 12px" // Chỉ định chính xác tâm
+                                        }}
+                                    >
+                                        <Loader2 style={{color:' #007bff'}} />
+                                    </motion.div>
+                                    <p style={{fontWeight:500, color:'black'}}>{t('taskDetail.loading')}</p>
+                    </div>
+
                 )}
             </div>
            </div>

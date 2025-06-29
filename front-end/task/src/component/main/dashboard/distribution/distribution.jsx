@@ -27,66 +27,64 @@ export const Distribution = ({tasks}) => {
     'In progress': 'rgba(243, 175, 115, 0.8)',   // xanh dương
     'Complete': '#32d583',      // xanh lá
   };
-  const chartData = getStatusCounts(tasks);
-  const total = chartData.reduce((sum, entry) => sum + entry.value, 0);
-  useEffect(()=>{
-    async function getTask(){
-      try{
-        const result=await task.getAllTaskForUser()
-        if(result){
-            setTask(result)
-        }
-      } catch(error){
-          console.log(error)
-      }
-    }
-    getTask()
-  },[])
+  const chartData = getStatusCounts(tasks);  
   return(
     <div id='distribution'>
-       <h3 style={{textAlign:'start'}}>{t('dashboard.statusOverview')}</h3>
-       <ResponsiveContainer width="100%" height='100%' maxHeight='300px'>
-        <PieChart>
-          <Pie
-            data={chartData}
-            dataKey="value"
-            nameKey="name"
-            cx="50%"
-            cy="50%"
-            innerRadius={70}
-            outerRadius={100}
-            label={false}
-          >
-            {chartData.map((entry, index) => (
-              <Cell key={`cell-${index}`} fill={entry.color} />
-            ))}       
-            <Label
-              value={`Total: ${tasks.length}`}
-              position="center"
-              style={{ fontSize: '16px', fontWeight: 'bold', fill:`${theme?'white':'black'}` }}
+      <h3 style={{ textAlign: 'start' }}>{t('dashboard.statusOverview')}</h3>
+      
+      {tasks.length === 0 ? (
+        <div style={{
+          height: '200px',
+          display: 'flex',
+          alignItems: 'start',
+          justifyContent: 'center',
+          fontSize: '16px',
+          textAlign: 'center',
+          padding: '1rem'
+        }}>
+          {t('statusOverview.noTaskData') || 'The status overview for this project will display here'}
+        </div>
+      ) : (
+        <ResponsiveContainer width="100%" height="100%" maxHeight="300px">
+          <PieChart>
+            <Pie
+              data={chartData}
+              dataKey="value"
+              nameKey="name"
+              cx="50%"
+              cy="50%"
+              innerRadius={70}
+              outerRadius={100}
+              label={false}
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+              <Label
+                value={`Total: ${tasks.length}`}
+                position="center"
+                style={{ fontSize: '16px', fontWeight: 'bold', fill: `${theme ? 'white' : 'black'}` }}
+              />
+            </Pie>
+            <Tooltip
+              contentStyle={{
+                border: 'none',
+                backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                borderRadius: '8px',
+                fontSize: '14px',
+                color: '#333',
+              }}
+              itemStyle={{
+                padding: 0,
+                margin: 0,
+              }}
+              formatter={(value, name) => [`${value}`, `${name}`]}
             />
-          </Pie>
-          <Tooltip
-            contentStyle={{
-              border: 'none',
-              backgroundColor: 'rgba(255, 255, 255, 0.95)',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
-              borderRadius: '8px',
-              fontSize: '14px',
-              color: '#333',
-            }}
-            itemStyle={{
-              padding: 0,
-              margin: 0,
-            }}
-            formatter={(value, name) => [`${value}`, `${name}`]}
-          />          
-
-          <Legend 
-            
-          />        
-        </PieChart>
-       </ResponsiveContainer>
-    </div>
+            <Legend />
+          </PieChart>
+        </ResponsiveContainer>
+      )}
+  </div>
   )
 };

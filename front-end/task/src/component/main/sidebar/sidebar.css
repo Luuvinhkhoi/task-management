@@ -1,5 +1,6 @@
 .sideBar{
     font-weight: 500;
+    min-width: 220px;
     height: 100%;
     border-right:1px solid var(--border);
 }
@@ -11,6 +12,11 @@
     display: flex;
     align-items: center;
     gap:1rem
+}
+.sideBar .error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
 }
 .sideBar .menu{
     height: calc(100% - 100px);
@@ -36,6 +42,8 @@
 
 .sideBar .projectList{
     padding-left: 1rem;
+    max-height: 250px;
+    overflow: auto;
 }
 .sideBar .projectList ul{
     width: 100%;
@@ -86,6 +94,8 @@
     z-index: 1000;
     border-radius: unset !important;
     background-color: rgba(0, 0, 0, 0.5);
+    cursor: auto;
+
 }
 .sideBar .overlay-unActive{
     display: none !important;
@@ -116,6 +126,8 @@
     display: inline-block;
     padding: unset;
     border: unset;
+    height: 30px;
+    width: 30px;
     color: var(--text-color);
 }
 .sideBar  .projectForm-active .title{

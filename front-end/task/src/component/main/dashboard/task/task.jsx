@@ -38,7 +38,7 @@ export const TodayTask = () => {
             className={`tabItem ${isOpenTab === tab.value ? 'active' : ''}`}
             onClick={() => setIsOpenTab(tab.value)}
           >
-            {tab.label}
+            {t(`list.${tab.label}`)}
           </div>
         ))}
       </div>
@@ -54,7 +54,7 @@ export const TodayTask = () => {
                 </div>
                 <div style={{fontSize:'14px'}}>{item.description}</div>
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center'}}>
-                  <div style={{display:'flex', gap:'.5rem', fontSize:'14px'}}>Due date: <div>
+                  <div style={{display:'flex', gap:'.5rem', fontSize:'14px'}}>{t('task.dueDate')}: <div>
                                     {new Intl.DateTimeFormat('en-CA', {
                                       year: 'numeric',
                                       month: '2-digit',

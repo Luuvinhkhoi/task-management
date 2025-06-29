@@ -58,7 +58,7 @@ export const Dashboard = () =>{
      fetch()
   }, [])
   return(
-    <div style={{height:'95%',width:'100%', overflowY:'auto'}}>
+    <div style={{height:'100%',width:'100%', overflowY:'auto'}}>
       <div className='dashboard'>
         <div id='row1'>
           <Task socket={socket}></Task>

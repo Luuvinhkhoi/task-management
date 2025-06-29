@@ -15,8 +15,13 @@ import { useTranslation } from 'react-i18next';
 import { fetchProjects } from '../../../store/project'
 import { RenderDropdown } from './optionMenu'
 import { fetchProgress } from '../../../store/progress'
-export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
+export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar, onClose })=>{
    let location=useLocation()
+   const [formErrors, setFormErrors] = useState({});
+   const [touched, setTouched] = useState({
+        title: false,
+        member: false
+   });
    const theme=useSelector((state)=>state.setting.darkMode)
    const userId=useSelector((state)=>state.userProfile.id)
    const darkMode = useSelector((state) => state.setting.darkMode);
@@ -118,7 +123,23 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
     const handleCreateProjectSubmit = async(e)=>{
       e.preventDefault()
       try{
-        await task.createProject(title, startDate, dueDate,assignedUserId)
+        const errors = {};
+
+        if (!title.trim()) {
+          errors.title = t("createProject.errorTitle");
+        }
+        if (projectUsers.length === 0) {
+          errors.member = t("createProject.errorNoMember");
+        } 
+        if (Object.keys(errors).length > 0) {
+          setFormErrors(errors);
+          setTouched({
+            title: true,
+            member: true
+          });
+          return;
+        }
+        await task.createProject(title, assignedUserId)
         dispatch(fetchProjects())
         setProjectFormOpen(null)
         setCreateProjectFormOpen(null)
@@ -128,28 +149,38 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
         setAssignedUserId([])
         selectRef.current.clearValue();
       } catch(error){
-        console.log(error)
       }
     } 
    const handleProjectSubmit = async(e, id)=>{
       e.preventDefault()
       try{
+        const errors = {};
+
+        if (!title.trim()) {
+          errors.title = t("createProject.errorTitle");
+        }
+        if (projectUsers.length === 0) {
+          errors.member = t("createProject.errorNoMember");
+        } 
+        if (Object.keys(errors).length > 0) {
+          setFormErrors(errors);
+          return;
+        }
         setProjectFormOpen(!projectFormOpen)
+        setOverlay(id);
+        setLoading(true);
         const result= await task.updateProject(
               {id:id,
                title:title,
                assignedUserId:assignedUserId,
                role:userRole,
-               startDate:startDate,
-               dueDate: dueDate
               }
         )
         if(result){
-            setTimeout(()=>{setLoading(false)},1000 )
+            setTimeout(()=>{setLoading(false),setError(false),dispatch(fetchProjects())},1000 )
         }
-        await fetchProjects()
       } catch(error){
-        setTimeout(()=>{setLoading(false),setError(true)},1000 )
+        setTimeout(()=>{setOverlay(id),setLoading(false),setError(true)},1000 )
       }
    }
    const handleToggle = (e,id) => { //handle option form affected by overflow-y
@@ -292,7 +323,7 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                <h3>TASK</h3>
            </div>
            <div className='menu'>
-               <div onClick={()=>{navigate('/'), onToggleSidebar()}} className={`menuItem ${isActive('/')?'active':''}`}>
+               <div onClick={()=>{navigate('/'), onClose()}} className={`menuItem ${isActive('/')?'active':''}`}>
                   <div>
                      <LayoutDashboard></LayoutDashboard>
                      {t('sideBar.dashboard')}
@@ -324,18 +355,20 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                            
                             {projects.map((project)=>
                              <div key={project.id} style={{position:'relative'}} className={isSubActive(`/project/${project.id}`)|| isSubActive(`/project/${project.id}/list`)? 'sub-active' : ''} 
-                             onClick={(e)=>{e.stopPropagation(), setOptionFormOpen(null), navigate( `/project/${project.id}`), onToggleSidebar()}}
+                             onClick={(e)=>{e.stopPropagation(), setOptionFormOpen(null), navigate( `/project/${project.id}`), onClose()}}
                              >
-                                 <div style={{display:'flex', alignItems:'center', width:'100%', justifyContent:'space-between'}}><li>{project.title}</li>
-                                 <Ellipsis 
-                                          style={{paddingRight: '1rem'}}
-                                          onClick={(e) => {
-                                             e.stopPropagation(); // Ngăn chặn sự kiện click lan lên menuItem
-                                             setOptionFormOpen(project.id)
-                                             handleToggle(e,project.id)
-                                             handlePermission(project.id)
-                                          }}
-                                 ></Ellipsis></div>
+                                 <div style={{display:'flex', alignItems:'center', width:'100%', justifyContent:'space-between'}}>
+                                  <li>{project.title}</li>
+                                  <Ellipsis className="ellipsis"
+                                            style={{paddingRight: '1rem', height:32, width:32}}
+                                            onClick={(e) => {
+                                              e.stopPropagation()
+                                              setOptionFormOpen(project.id)
+                                              handleToggle(e,project.id)
+                                              handlePermission(project.id)
+                                            }}
+                                  ></Ellipsis>
+                                 </div>
                                  {optionFormOpen&&(<RenderDropdown
                                     isOpen={optionFormOpen === project.id}
                                     onClose={() => setOptionFormOpen(null)}
@@ -355,7 +388,7 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                                  <div className={`overlay-${checkViewerPermission!==project.id?'unActive':'active'}`} onClick={(e)=>e.stopPropagation()}>
                                     <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                       <div className='close-button' onClick={(e)=>{e.stopPropagation(),setCheckViewerPermission(true)}}><X style={{height:14, width:14}}></X></div>
-                                      <p>Sorry, you don't have permission on this project</p>
+                                      <p>{t('sideBar.noPermission')}</p>
                                     </div>
                                  </div>
                                  <div className={`overlay-${overlay===project.id?'active':'unActive'}`}>
@@ -378,20 +411,20 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                                                 >
                                                     <Loader2 style={{color:' #007bff'}} />
                                                 </motion.div>
-                                                <p style={{fontWeight:500, color:'black'}}>Please wait...</p>
+                                                <p style={{fontWeight:500, color:'black'}}>{t('taskDetail.wait')}</p>
                                             </div>
                                         </div>
                                     ):(
                                         error?(
                                                 <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                                     <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                                    <p style={{fontWeight:500}}>Failed</p>
-                                                    <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                                    <p style={{fontWeight:500}}>{t('sideBar.fail')}</p>
+                                                    <p style={{fontSize:12}}>{t('sideBar.failMessage')}</p>
                                                 </div>
                                         ):(
                                                 <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                                     <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                                    <p style={{fontWeight:500}}>Project update successfully.</p>
+                                                    <p style={{fontWeight:500}}>{t('sideBar.success')}</p>
                                                 </div>
                                         )
                                     )}
@@ -399,68 +432,79 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                                  <div className={`overlay-${projectFormOpen===project.id?'active':'unActive'}`} onClick={(e)=>e.stopPropagation()} >
                                     {deleteProject?(
                                       <div className='delete-warning'>
-                                        <h2>Xác nhận xóa</h2>
-                                        <span>Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác.</span>
+                                        <h2>{t('taskDetail.confirm')}</h2>
+                                        <span>{t('sideBar.message')}</span>
                                         <div className='delete-warning-footer'>
                                             <div className='edit' onClick={()=>{setProjectFormOpen(null),setDeleteProject(null)}}>
-                                              <p>Cancel</p>
+                                                <p>{t('taskDetail.Cancel')}</p>
                                             </div>
                                             <div className='delete' onClick={(e)=>{handleDeleteProject(e, project.id),setOverlay(project.id), setLoading(true)}}>
                                                 <Trash2 color='white'></Trash2>
-                                                <p style={{color:'white'}}>Delete</p>
+                                                <p style={{color:'white'}}>{t("taskDetail.delete")}</p>
                                             </div>
                                         </div>
                                       </div>
                                     ):(
-                                      <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`} onSubmit={(e)=>{handleProjectSubmit(e, project.id),setOverlay(project.id), setLoading(true)  }}>
-                                            <div className='close-button' onClick={(e)=>{e.stopPropagation(),setEditFormOpen(null), setProjectFormOpen(null), setFormatedProjectUser([])}}><X></X></div>
-                                            <h3>Edit project</h3>
+                                      <form className={`projectForm-${editFormOpen===project.id?'active':'unActive'}`}
+                                            onSubmit={async(e)=>{handleProjectSubmit(e, project.id)
+                                            }}
+                                      >
+                                            <div className='close-button' onClick={(e)=>{e.stopPropagation(),setFormErrors({}),setDueDate(null), setStartDate(null),setEditFormOpen(null), setProjectFormOpen(null), setTitle(''),setFormatedProjectUser([])}}><X></X></div>
+                                            <h3>{t('editProject.head')}</h3>
                                             <div className='title'>
-                                              <input value={title} onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
+                                              <input
+                                                placeholder={t("createProject.title")}
+                                                value={title}
+                                                onChange={(e) => {
+                                                  setTitle(e.target.value);
+
+                                                  // Xoá lỗi nếu giá trị hợp lệ
+                                                  if (e.target.value.trim()) {
+                                                    setFormErrors(prev => ({ ...prev, title: null }));
+                                                  }
+                                                }}
+                                                onBlur={() => {
+                                                  setTouched(prev => ({ ...prev, title: true }));
+                                                  
+                                                  if (!title.trim()) {
+                                                    setFormErrors(prev => ({ ...prev, title: t("createProject.errorTitle") }));
+                                                  }
+                                                }}
+                                              />                                              
                                               <small>{title.length}/20</small>
                                             </div>
-                                            <div className='date' style={{justifyContent:'space-between'}}>
-                                              <div>
-                                                <p>Start date</p>
-                                                <div><input type='date'
-                                                      value={startDate ? new Date(startDate).toISOString().slice(0, 10) : ''}                                                      
-                                                      onChange={(e) => {
-                                                        const newStart = e.target.value;
-                                                        if (!dueDate || newStart <= dueDate) {
-                                                          setStartDate(newStart);
-                                                        } else {
-                                                          alert('Start date cannot be after due date!');
-                                                        }
-                                                  }}
-                                                ></input></div>
-                                              </div>
-                                              <div>
-                                                <p>Due date</p>
-                                                <div>
-                                                  <input type='date' 
-                                                        value={dueDate ? new Date(dueDate).toISOString().slice(0, 10) : ''}                                                      
-                                                        onChange={(e) => {
-                                                        const newDue = e.target.value;
-                                                        if (!startDate || newDue >= startDate) {
-                                                          setDueDate(newDue);
-                                                        } else {
-                                                          alert('Due date cannot be before start date!');
-                                                        }
-                                                      }}
-                                                  >
-                                                </input></div>
-                                              </div>
-                                            </div>
+                                            {formErrors.title && <p className="error">{formErrors.title}</p>}
                                             <div className='select'>
-                                              <Select 
+                                              <Select
+                                                closeMenuOnSelect={false}
                                                 components={animatedComponents}
                                                 isMulti
+                                                ref={selectRef}
                                                 value={formattedProjectUser}
                                                 styles={getCustomStyle}
                                                 options={formattedUser}
-                                                onChange={handleSelect}
-                                                required
-                                              ></Select>
+                                                onChange={(selectedOptions) => {
+                                                  handleSelect(selectedOptions);
+
+                                                  // Ẩn lỗi khi có dữ liệu
+                                                  if (selectedOptions.length > 0) {
+                                                    setFormErrors(prev => ({ ...prev, member: null }));
+                                                  }
+                                                }}
+                                                onBlur={() => {
+                                                  setTouched(prev => ({ ...prev, member: true }));
+
+                                                  if (formattedProjectUser.length === 0) {
+                                                    setFormErrors(prev => ({
+                                                      ...prev,
+                                                      member: t("createProject.errorNoMember")
+                                                    }));
+                                                  }
+                                                }}
+                                              />
+                                              {touched.member && formErrors.member && (
+                                                <p className="error">{formErrors.member}</p>
+                                              )}                                            
                                             </div>
                                             <div className='member'>
                                                 <div>
@@ -485,10 +529,10 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                                                             </div>
 
                                                         </div>
-                                                    ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>Not any member yet</span>)}
+                                                    ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>{t('createProject.noMember')}</span>)}
                                                 </div>
                                             </div>
-                                            <button>Save</button>
+                                            <button>{t('taskDetail.save')}</button>
                                       </form>
                                     )}
                                   </div>
@@ -500,7 +544,7 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                   </AnimatePresence>
                 
                </div>
-               <div onClick={()=>{navigate('/setting'), onToggleSidebar()}} className={`menuItem ${isActive('/setting')?'active':''}`}>
+               <div onClick={()=>{navigate('/setting'), onClose()}} className={`menuItem ${isActive('/setting')?'active':''}`}>
                   <div>
                      <Settings></Settings>
                      {t('sideBar.setting')}
@@ -508,46 +552,35 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                </div>
               <div className={`overlay-${createProjectFormOpen?'active':'unActive'}`}>
                                 <form className={`projectForm-${projectFormOpen?'active':'unActive'}`} onSubmit={handleCreateProjectSubmit}>
-                                    <div className='close-button' onClick={()=>{setProjectFormOpen(!projectFormOpen), setCreateProjectFormOpen(false), setFormatedProjectUser([])}}><X></X></div>
-                                    <h3>Create new project</h3>
+                                    <div className='close-button' onClick={()=>{setProjectFormOpen(!projectFormOpen), setTitle('') ,setFormErrors({}),setCreateProjectFormOpen(false),setFormatedProjectUser([])}}><X></X></div>
+                                    <h3>{t('createProject.head')}</h3>
                                     <div className='title'>
-                                      <input placeholder='Title' value={title} onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20}></input>
+                                      <input
+                                        placeholder={t("createProject.title")}
+                                        value={title}
+                                        onChange={(e) => {
+                                          setTitle(e.target.value);
+
+                                          // Xoá lỗi nếu giá trị hợp lệ
+                                          if (e.target.value.trim()) {
+                                            setFormErrors(prev => ({ ...prev, title: null }));
+                                          }
+                                        }}
+                                        onBlur={() => {
+                                          setTouched(prev => ({ ...prev, title: true }));
+                                          
+                                          if (!title.trim()) {
+                                            setFormErrors(prev => ({ ...prev, title: t("createProject.errorTitle") }));
+                                          }
+                                        }}
+                                      />
                                       <small>{title.length}/20</small>
-                                    </div>
-                                    <div className='date' style={{justifyContent:'space-between'}}>
-                                      <div>
-                                        <p>Start date</p>
-                                        <div><input type='date'  
-                                              value={startDate}
-                                              onChange={(e) => {
-                                                const newStart = e.target.value;
-                                                if (!dueDate || newStart <= dueDate) {
-                                                  setStartDate(newStart);
-                                                } else {
-                                                  alert('Start date cannot be after due date!');
-                                                }
-                                          }}
-                                        ></input></div>
-                                      </div>
-                                      <div>
-                                        <p>Due date</p>
-                                        <div>
-                                          <input type='date'  
-                                              value={dueDate}
-                                              onChange={(e) => {
-                                                const newDue = e.target.value;
-                                                if (!startDate || newDue >= startDate) {
-                                                  setDueDate(newDue);
-                                                } else {
-                                                  alert('Due date cannot be before start date!');
-                                                }
-                                              }}
-                                          >
-                                        </input></div>
-                                      </div>
-                                    </div>
+                                    </div>  
+                                    {(touched.title || formErrors.title) && (
+                                      <p className="error">{formErrors.title}</p>
+                                    )}                                     
                                     <div className='select'>
-                                      <Select 
+                                      <Select
                                         closeMenuOnSelect={false}
                                         components={animatedComponents}
                                         isMulti
@@ -555,9 +588,28 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                                         value={formattedProjectUser}
                                         styles={getCustomStyle}
                                         options={formattedUser}
-                                        onChange={handleSelect}
-                                        required
-                                      ></Select>
+                                        onChange={(selectedOptions) => {
+                                          handleSelect(selectedOptions);
+
+                                          // Ẩn lỗi khi có dữ liệu
+                                          if (selectedOptions.length > 0) {
+                                            setFormErrors(prev => ({ ...prev, member: null }));
+                                          }
+                                        }}
+                                        onBlur={() => {
+                                          setTouched(prev => ({ ...prev, member: true }));
+
+                                          if (formattedProjectUser.length === 0) {
+                                            setFormErrors(prev => ({
+                                              ...prev,
+                                              member: t("createProject.errorNoMember")
+                                            }));
+                                          }
+                                        }}
+                                      />
+                                      {touched.member && formErrors.member && (
+                                        <p className="error">{formErrors.member}</p>
+                                      )}                                            
                                     </div>
                                     <div className='member'>
                                         <div>
@@ -581,10 +633,10 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar })=>{
                                                     <X style={{height:'16px', width:'16px'}} onClick={()=>handleRemoveUser(user.id)}></X>
                                                   </div>
                                                </div>
-                                            ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>Not any member yet</span>)}
+                                            ):(<span style={{marginTop:'1rem', display:'block', textAlign:'center'}}>{t('createProject.noMember')}</span>)}
                                         </div>
                                     </div>
-                                    <button>Create Project</button>
+                                    <button>{t('createProject.head')}</button>
                                 </form>
                 </div>
            </div>

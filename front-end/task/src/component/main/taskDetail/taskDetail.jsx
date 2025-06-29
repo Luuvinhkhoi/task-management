@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Download, Paperclip, Trash2, FilePenLine, Loader2 } from 'lucide-react';
 import { AnimatePresence, motion} from 'framer-motion'
 import Select from 'react-select'
+import { useTranslation } from 'react-i18next';
 import makeAnimated from 'react-select/animated';
 import { Comment } from '../project/comment/comment';
 import pdf from '../../../assets/pdf.png'
@@ -19,6 +20,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
     const animatedComponents = makeAnimated();
     const { timezone } = useTimezone();
     const dispatch=useDispatch()
+    const {t}=useTranslation()
     const theme=useSelector((state)=>state.setting.darkMode)
     const [error, setError]=useState(false)
     const [loading, setLoading]=useState(false)
@@ -48,19 +50,20 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
     const [users, setUser]=useState([])//list of user
     const [deleteAttachment, setDeleteAttachment]=useState(false)
     const tabs=[
-        { value: 'Detail', label: 'Detail' },
-        { value: 'Comment', label: 'Comment' },
+        { value: 'Detail', label: t('taskDetail.detail') },
+        { value: 'Comment', label: t('taskDetail.comment')},
     ]
     const options = [
-        { value: 'Low', label: 'Low' },
-        { value: 'Medium', label: 'Medium' },
-        { value: 'High', label: 'High' },
-        { value: 'Urgent', label: 'Urgent' }
+        { value: 'Low', label: t('list.priority.Low') },
+        { value: 'Medium', label: t('list.priority.Medium') },
+        { value: 'High', label: t('list.priority.High') },
+        { value: 'Urgent', label: t('list.priority.Urgent') }
     ];
+
     const statusOptions = [
-        { value: 'To do', label: 'To do' },
-        { value: 'In progress', label: 'In progress' },
-        { value: 'Complete', label: 'Complete' },
+        { value: 'To do', label: t('list.To do') },
+        { value: 'In progress', label: t('list.In progress') },
+        { value: 'Complete', label: t('list.Complete') }
     ];
     const customStyles =(darkMode) =>({
         control: (base, state) => ({
@@ -417,7 +420,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         >
                             <Loader2 style={{color:' #007bff'}} />
                         </motion.div>
-                        <p style={{fontWeight:500, color:'black'}}>Please wait...</p>
+                        <p style={{fontWeight:500, color:'black'}}>{t("taskDetail.wait")}</p>
                     </div>
                 </div>
             ):(
@@ -425,26 +428,26 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         updateError?(
                             <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                 <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                <p style={{fontWeight:500}}>Failed to update task.</p>
-                                <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                <p style={{fontWeight:500}}>{t('taskDetail.updateFail')}</p>
+                                <p style={{fontSize:12}}>{t('taskDetail.failMessage')}</p>
                             </div>
                         ):(
                             <div className='fail'style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                 <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                <p style={{fontWeight:500}}>Failed to delete task.</p>
-                                <p style={{fontSize:12}}>Please try again or check your permission</p>
+                                <p style={{fontWeight:500}}>{t('taskDetail.deleteFail')}</p>
+                                <p style={{fontSize:12}}>{t('taskDetail.failMessage')}</p>
                             </div>
                         )
                 ):(
                         updateSuccess?(
                             <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                 <div className='close-button' onClick={()=>{setOverlay(false)}}><X style={{height:12, width:12}}></X></div>
-                                <p style={{fontWeight:500}}>Task updated successfully.</p>
+                                <p style={{fontWeight:500}}>{t('taskDetail.updateSuccess')}</p>
                             </div>
                         ):(
                             <div className='success' style={{ padding:'.5rem', borderRadius:'.5rem'}}>
                                 <div className='close-button' onClick={()=>{setOverlay(false), setOverlayId(null)}}><X style={{height:12, width:12}}></X></div>
-                                <p style={{fontWeight:500}}>Task deleted successfully.</p>
+                                <p style={{fontWeight:500}}>{t('taskDetail.deleteSuccess')}</p>
                             </div>
                         )
                 )
@@ -453,15 +456,15 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
 
             {deleteTask?(
                 <div className='delete-warning'>
-                    <h2>Xác nhận xóa</h2>
-                    <span>Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác.</span>
+                    <h2>{t('taskDetail.confirm')}</h2>
+                    <span>{t('taskDetail.message')}</span>
                     <div className='delete-warning-footer'>
                         <div className='edit' onClick={()=>{setOverlayId(null), setDeleteTask(null)}}>
-                        <p>Cancel</p>
+                        <p>{t('taskDetail.Cancel')}</p>
                         </div>
                         <div className='delete' onClick={(e)=>{handleDeleteTask(e, taskId),setOverlay(true), setLoading(true)}}>
                             <Trash2 color='white'></Trash2>
-                            <p style={{color:'white'}}>Delete</p>
+                            <p style={{color:'white'}}>{t("taskDetail.delete")}</p>
                         </div>
                     </div>
                 </div>
@@ -481,7 +484,8 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                             <p style={{border: 'none',outline: 'none', boxShadow: 'none', fontWeight:700, fontSize:28}}>{title}</p>
                         </div>
                         <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)'}}>
-                            <div style={{display:'flex', gap:'.5rem'}}><p>Start date: </p>
+                            <div className='start'>
+                                <div>{t('taskDetail.startDate')}</div>
                                 <div style={{display:'flex', gap:'.5rem', fontSize:'14px', fontWeight:'500'}}>
                                     <div>
                                         {new Intl.DateTimeFormat('en-CA', {
@@ -502,8 +506,8 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                 </div>
                             </div>
 
-                            <div style={{display:'flex', gap:'.5rem'}}>
-                                <p>Due date:</p> 
+                            <div className='dueDate'>
+                                <p>{t('taskDetail.dueDate')}:</p> 
                                 <div style={{display:'flex', gap:'.5rem', fontSize:'14px',fontWeight:'500'}}>
                                     <div>
                                         {new Intl.DateTimeFormat('en-CA', {
@@ -524,7 +528,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                 </div>
                             </div>
                         </div>
-                        <div className="taskHeader" style={{width:'165px'}}>
+                        <div className="taskHeader" style={{width:'fit-content'}}>
                             {tabs.map(tab => (
                             <div
                                 key={tab.value}
@@ -537,14 +541,14 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         </div>
                         {isOpenTab==='Detail'?<div className='taskDetail-body'>
                             <div className='body-item'>
-                                <h4>Description</h4>
+                                <h4>{t("taskDetail.description")}</h4>
                                 <div>
                                     <p style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}>{description}</p>
                                 </div>
                             </div>
                             <div className='body-item'>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t("taskDetail.assign")}</h4>
                                 </div>
                                 
                                 <div style={{maxHeight:'150px', overflowY:'scroll'}}>
@@ -562,11 +566,11 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                             </div>
                             <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t('taskDetail.attachment')}</h4>
                                     <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
                                         <input type='file' ref={fileInputRef} 
                                         onChange={(e)=>handleFileChange(e, item.id)} 
-                                        style={{ display: 'none' }}></input>Upload</div>
+                                        style={{ display: 'none' }}></input>{t('taskDetail.upload')}</div>
                                 </div>
                                 <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
                                 {item.attachment.map((file, index) => {
@@ -633,8 +637,8 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                             <input value={title} onChange={(e)=>setTitle(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none'}}></input>
                         </div>
                         <div style={{fontSize:'14px', display:'flex', gap:'1rem', color:'rgb(107, 114, 128)',width:'100%'}}>
-                            <div style={{display:'flex', gap:'.5rem'}}>
-                                <p style={{minWidth:80}}>Start date: </p>
+                            <div className='startDate'>
+                                <div>{t('taskDetail.startDate')}: </div>
                                 <input type='datetime-local'
                                         value={toDateTimeLocal(startDate)}
                                         onChange={(e) => {
@@ -645,12 +649,12 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                             alert('Start date cannot be after due date!');
                                         }
                                         }}
-                                        style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                        style={{border: 'none',outline: 'none', boxShadow: 'none', width:150,fontSize:'14px', color:'rgb(107, 114, 128)'}}
                                 >  
                                 </input>
                             </div>
-                            <div style={{display:'flex', gap:'.5rem'}}>
-                                <p style={{minWidth:'80px'}}>Due date:</p> 
+                            <div className='dueDate'>
+                                <div>{t('taskDetail.dueDate')}:</div> 
                                 <input type='datetime-local'
                                         value={toDateTimeLocal(dueDate)}
                                         onChange={(e) => {
@@ -661,12 +665,12 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                             alert('Due date cannot be before start date!');
                                         }
                                         }}
-                                        style={{border: 'none',outline: 'none', boxShadow: 'none', fontSize:'16px', color:'rgb(107, 114, 128)'}}
+                                        style={{border: 'none',outline: 'none', boxShadow: 'none', width:150,fontSize:'14px', color:'rgb(107, 114, 128)'}}
                                 >  
                                 </input>
                             </div>
                         </div>
-                        <div className="taskHeader" style={{width:'165px'}}>
+                        <div className="taskHeader" style={{width:'fit-content'}}>
                             {tabs.map(tab => (
                             <div
                                 key={tab.value}
@@ -679,26 +683,26 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         </div>
                         {isOpenTab==='Detail'?<div className='taskDetail-body'>
                             <div className='body-item' style={{padding:'1rem 1rem 0 1rem'}}>
-                                <h4>Description</h4>
+                                <h4>{t("taskDetail.description")}</h4>
                                 <div>
                                     <textarea value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></textarea>
                                 </div>
                             </div>
                             <div className='body-item'>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Assign</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t("taskDetail.assign")}</h4>
                                     {isSelecting ?(<span
                                         onClick={() => setIsSelecting(false)}
                                         style={{color:'#007bff', fontWeight:'600'}}
                                         >
-                                        Done
+                                        {t("taskDetail.done")}
                                         </span>
                                     ): (
                                         <span
                                         onClick={() => setIsSelecting(true)}
                                         style={{color:'#007bff', fontWeight:'600'}}
                                         >
-                                        Add
+                                        {t("taskDetail.add")}
                                         </span>
                                     )}
                                 </div>
@@ -729,11 +733,11 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                             </div>
                             <div className='body-item' style={{border:`${theme?'1px solid rgb(29, 41, 57)':'1px solid rgb(229, 229, 229)'}`, borderRadius:'1rem', maxHeight:'200px', overflowY:'scroll'}}>
                                 <div style={{display:'flex', gap:'1rem'}}>
-                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>Attachment</h4>
+                                    <h4 style={{paddingRight:'1rem',borderRight:`${theme?'2px solid rgb(29, 41, 57)':'2px solid rgb(229, 229, 229)'}`}}>{t('taskDetail.attachment')}</h4>
                                     <div style={{color:'#007bff', fontWeight:'600'}}  onClick={handleUploadClick}>
                                         <input type='file' ref={fileInputRef} 
                                         onChange={(e)=>handleFileChange(e, item.id)} 
-                                        style={{ display: 'none' }}></input>Upload</div>
+                                        style={{ display: 'none' }}></input>{t('taskDetail.upload')}</div>
                                 </div>
                                 <div style={{display:'flex', flexDirection:'column', gap:'1rem'}}>
                                 {item.attachment.map((file, index) => {
@@ -778,32 +782,32 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         <div className='taskDetail-footer'>
                                 <div className='edit' onClick={()=>{handleSaveEdit(),setOverlay(true), setLoading(true)}}>
                                     <FilePenLine></FilePenLine>
-                                    <p>Save</p>
+                                    <p>{t("taskDetail.save")}</p>
                                 </div>
                                 <div className='delete' onClick={()=>{setDeleteTask(true), setTaskDetail(false)}}>
                                     <Trash2 color='white'></Trash2>
-                                    <p style={{color:'white'}}>Delete</p>
+                                    <p style={{color:'white'}}>{t("taskDetail.delete")}</p>
                                 </div>
                         </div>
                         <div className={`overlay-${deleteAttachment?'active':'unActive'}`}>
                             <div className='delete-warning'>
-                                <h2>Xác nhận xóa</h2>
-                                <span>Bạn có chắc chắn muốn xóa file này? Hành động này không thể hoàn tác.</span>
+                                <h2>{t('taskDetail.confirm')}</h2>
+                                <span>{t('taskDetail.fileMessage')}</span>
                                 <div className='delete-warning-footer'>
                                     <div className='edit' onClick={()=>{ setDeleteAttachment(false)}}>
-                                        <p>Cancel</p>
+                                        <p>{t('taskDetail.Cancel')}</p>
                                     </div>
                                     <div className='delete' onClick={(e)=>handleDeleteAttachment(attachmentUrl, attachmentId, taskId)}>
                                         <Trash2 color='white'></Trash2>
-                                        <p style={{color:'white'}}>Delete</p>
+                                        <p style={{color:'white'}}>{t("taskDetail.delete")}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                 </div>
                 )}
-            ):
-                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+              ):
+                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'15%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
                     <motion.div
                         animate={{ rotate: [0, 360] }}
                         transition={{ 
@@ -820,7 +824,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                     >
                         <Loader2 style={{color:' #007bff'}} />
                     </motion.div>
-                    <p style={{fontWeight:500, color:'black'}}>Loading...</p>
+                    <p style={{fontWeight:500, color:'black'}}>{t('taskDetail.loading')}</p>
                 </div>
             )}
         </div>

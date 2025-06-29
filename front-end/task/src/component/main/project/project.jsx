@@ -14,6 +14,13 @@ import { getAllTask } from '../../../store/task'
 export const Project = ()=>{
     const { t } = useTranslation();
     const userId=useSelector(state=>state.userProfile.id)
+    const [touched, setTouched] = useState({
+      title: false,
+      startDate: false,
+      dueDate: false,
+      description:false,
+      member:false
+    });
     const userName=useSelector((state)=>state.userProfile.firstname)
     const lastname=useSelector((state)=>state.userProfile.lastname)
     const avatar=useSelector((state)=>state.userProfile.avatar)
@@ -32,6 +39,7 @@ export const Project = ()=>{
     const [status, setStatus] = useState('To do');
     const [priority, setPriority] = useState('Medium');
     const [startDate, setStartDate] = useState("");
+    const [formErrors, setFormErrors] = useState({});
     const [dueDate, setDueDate] = useState("");
     const [assignedUserId, setAssignedUserId] = useState([]);
     const [projectId, setProjectId] = useState("");
@@ -51,15 +59,15 @@ export const Project = ()=>{
       }
     }
     const options = [
-      { value: 'Low', label: 'Low' },
-      { value: 'Medium', label: 'Medium' },
-      { value: 'High', label: 'High' },
-      { value: 'Urgent', label: 'Urgent' }
+        { value: 'Low', label: t('list.priority.Low') },
+        { value: 'Medium', label: t('list.priority.Medium') },
+        { value: 'High', label: t('list.priority.High') },
+        { value: 'Urgent', label: t('list.priority.Urgent') }
     ];
     const statusOptions = [
-      { value: 'To do', label: 'To do' },
-      { value: 'In progress', label: 'In progress' },
-      { value: 'Complete', label: 'Complete' },
+        { value: 'To do', label: t('list.To do') },
+        { value: 'In progress', label: t('list.In progress') },
+        { value: 'Complete', label: t('list.Complete') }
     ];
     const customStyles =(darkMode) =>({
             control: (base, state) => ({
@@ -69,7 +77,7 @@ export const Project = ()=>{
               color: darkMode ? '#ddd' : '#000',
               border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
               padding: '8px',
-              fontSize: '12px',
+              fontSize: '14px',
               '&:hover': {
                 border: darkMode?'1px solid rgb(29, 41, 57)': '1px solid rgb(228, 231, 236)',
               },
@@ -81,7 +89,7 @@ export const Project = ()=>{
                 ? (darkMode ? '#007bff' : '#eaeaea')
                 : (darkMode ? '#1c2536' : '#fff'),
               color: darkMode ? '#fff' : '#000',
-              fontSize: '12px',
+              fontSize: '14px',
               cursor: 'pointer',
             }),
             singleValue: (base) => ({
@@ -108,13 +116,45 @@ export const Project = ()=>{
             placeholder:(base)=>({
                 ...base,
                 padding:'unset',
-                fontSize:'12px'
+                fontSize:'14px'
             }),
         });
 
     const getCustomStyle=customStyles(darkMode)
     const handleTaskSubmit = async (e) => {
       e.preventDefault()
+       const errors = {};
+
+      if (!title.trim()) {
+        errors.title = t("createProject.errorTitle");
+      }
+      if (!startDate) {
+        errors.startDate = t("createProject.errorStartDate");
+      }
+      if(!description){
+        errors.description=t("createTask.description")
+      }
+      if (!dueDate) {
+        errors.dueDate = t("createProject.errorDueDate");
+      }
+      if (startDate && dueDate && startDate > dueDate) {
+        errors.date = t("createProject.errorInvalidRange");
+      }
+      if (assignedUserId.length === 0) {
+        errors.member = t("createProject.errorNoMember");
+      }
+      console.log(assignedUserId)
+      if (Object.keys(errors).length > 0) {
+        setFormErrors(errors);
+        setTouched({
+            title: true,
+            startDate:true,
+            dueDate:true,
+            description:true,
+            member:true
+        });
+        return;
+      }
       const formattedUsersId=assignedUserId.map(user=>user.value)
       const result=await task.createTask(
         title,
@@ -177,7 +217,50 @@ export const Project = ()=>{
         setAssignedUserId([]);
       }
     };
-    
+    const handleStartDateChange = (e) => {
+      const newStart = e.target.value;
+      setStartDate(newStart);
+
+      if (!newStart) {
+        setFormErrors((prev) => ({
+          ...prev,
+          startDate: t("createProject.errorStartDate")
+        }));
+      } else if (dueDate && new Date(newStart) > new Date(dueDate)) {
+        setFormErrors((prev) => ({
+          ...prev,
+          startDate: t("createProject.errorStartBeforeDue"),
+        }));
+      } else {
+        setFormErrors((prev) => ({
+          ...prev,
+          startDate: null,
+        }));
+      }
+    };
+
+    const handleDueDateChange = (e) => {
+      const newDue = e.target.value;
+      setDueDate(newDue);
+
+      if (!newDue) {
+        setFormErrors((prev) => ({
+          ...prev,
+          dueDate: t("createProject.errorDueDate")
+        }));
+      } else if (startDate && new Date(startDate) > new Date(newDue)) {
+        setFormErrors((prev) => ({
+          ...prev,
+          dueDate: t("createProject.errorDueAfterStart")
+        }));
+      } else {
+        setFormErrors((prev) => ({
+          ...prev,
+          dueDate: null
+        }));
+      }
+    };
+
     const handleSelect = (selectedUsers) => {
       if (!selectedUsers || selectedUsers.length === 0) {
           setMember([]);
@@ -271,11 +354,30 @@ export const Project = ()=>{
                 )}
                 <div className={`overlay-${taskFormOpen?'active':'unActive'}`}>
                   <form className={`projectForm-${taskFormOpen?'active':'unActive'}`} onSubmit={handleTaskSubmit} >
-                      <div className='close-button' onClick={()=>{setTaskFormOpen(!taskFormOpen)}}><X></X></div>
-                      <h3>Create new task</h3>
+                      <div className='close-button' onClick={()=>{setTaskFormOpen(!taskFormOpen), setFormErrors({}) ,setTitle(""),setDescription(''),setDueDate(''),setStartDate(''),setAssignedUserId([])}}><X></X></div>
+                      <h3>{t('createTask.head')}</h3>
                       <div className='title'>
-                        <input value={title} placeholder='Title'  onChange={(e)=>setTitle(e.target.value)} minLength={2} maxLength={20} required></input>
+                        <input
+                          placeholder={t("createProject.title")}
+                          value={title}
+                          onChange={(e) => {
+                            setTitle(e.target.value);
+
+                            // Xoá lỗi nếu giá trị hợp lệ
+                            if (e.target.value.trim()) {
+                              setFormErrors(prev => ({ ...prev, title: null }));
+                            }
+                          }}
+                          onBlur={() => {
+                            setTouched(prev => ({ ...prev, title: true }));
+                            
+                            if (!title.trim()) {
+                              setFormErrors(prev => ({ ...prev, title: t("createProject.errorTitle") }));
+                            }
+                          }}
+                        />                        
                       </div>
+                      {formErrors.title && <p className="error">{formErrors.title}</p>}
                       <div className='option'>
                         <div className='select'>
                           <Select
@@ -295,40 +397,30 @@ export const Project = ()=>{
                         </div>
                       </div>
                       <div className='title'>
-                        <input placeholder='Description' required value={description} onChange={(e)=>setDescription(e.target.value)} minLength={2} maxLength={200}></input>
+                        <input placeholder={t("taskDetail.description")} value={description} onChange={(e)=>setDescription(e.target.value)} minLength={2} maxLength={200}></input>
                       </div>
                       <div className='date'>
                         <div>
-                          <p>Start date</p>
-                          <div><input type='datetime-local' 
-                                required 
-                                value={startDate}
-                                onChange={(e) => {
-                                  const newStart = e.target.value;
-                                  if (!dueDate || newStart <= dueDate) {
-                                    setStartDate(newStart);
-                                  } else {
-                                    alert('Start date cannot be after due date!');
-                                  }
-                            }}
-                          ></input></div>
+                          <p>{t("taskDetail.startDate")}</p>
+                          <div>
+                           <input
+                              type="datetime-local"
+                              value={startDate}
+                              onChange={handleStartDateChange}
+                            />
+                          </div>
+                          {formErrors.startDate && <p className="error">{formErrors.startDate}</p>}
                         </div>
                         <div>
-                          <p>Due date</p>
+                          <p>{t("taskDetail.dueDate")}</p>
                           <div>
-                            <input type='datetime-local'  
-                                required
-                                value={dueDate}
-                                onChange={(e) => {
-                                  const newDue = e.target.value;
-                                  if (!startDate || newDue >= startDate) {
-                                    setDueDate(newDue);
-                                  } else {
-                                    alert('Due date cannot be before start date!');
-                                  }
-                                }}
-                            >
-                          </input></div>
+                            <input
+                              type="datetime-local"
+                              value={dueDate}
+                              onChange={handleDueDateChange}
+                            />
+                          </div>
+                          {formErrors.dueDate && <p className="error">{formErrors.dueDate}</p>}
                         </div>
                       </div>
                       <Select 
@@ -339,10 +431,9 @@ export const Project = ()=>{
                         options={formattedProjectUser}
                         onChange={handleSelect}
                         isClearable={true}
-                        required
                       ></Select>
-                      
-                      <button>Create Task</button>
+                      {formErrors.member && <p className="error">{formErrors.member}</p>}
+                      <button style={{fontWeight:500}}>{t("createTask.head")}</button>
                   </form>
                 </div>
              </div>

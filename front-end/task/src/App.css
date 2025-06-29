@@ -19,6 +19,16 @@ html{
   will-change: filter;
   transition: filter 300ms;
 }
+input[type="date"] {
+  font-weight: 400; /* hoặc 400, 500, 600, 700 */
+  font-size: 14px;
+  font-family: inherit; /* Đảm bảo kế thừa font nếu cần */
+}
+input[type="datetime-local"] {
+  font-weight: 400; /* hoặc 400, 500, 600, 700 */
+  font-size: 14px;
+  font-family: inherit; /* Đảm bảo kế thừa font nếu cần */
+}
 h1, h2, h3, h4, h5, p{
   margin: 0;
   padding: 0;

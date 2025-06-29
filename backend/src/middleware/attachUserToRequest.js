@@ -46,7 +46,10 @@ const attachUserToRequest = (req, res, next) => {
       req.user = {
         id: user.id,
         email: user.email,
-        username: user.username,
+        firstname: user.firstname,
+        lastname:user.lastname,
+        avatar:user.avatar,
+        phonenumber:user.phonenumber
       };
 
       next();

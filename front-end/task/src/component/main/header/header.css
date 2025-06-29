@@ -42,7 +42,7 @@
     font-weight: 500;
     width: 90%;
 }
-.header .profile{
+.header .profileHeader{
     color: var(--text-color);
     display: flex;
     gap: .5rem;
@@ -50,7 +50,7 @@
     padding:unset;
     position: relative;
 }
-.header .profile span{
+.header .profileHeader span{
     color: var(--button-bg);
     font-size: 20px;
     font-weight: 500;
@@ -65,8 +65,8 @@
     text-align: start;
     border-radius: .5rem;
     border: 2px solid var(--border);
-    z-index: 10;
-    min-width: 200px
+    z-index: 101;
+    min-width: 250px
 }
 .header #authOption{
     display: flex;
@@ -95,7 +95,7 @@
     border: 2px solid var(--border);
     z-index: 10;
     left: 0;
-    width: 95% !important;
+    width: 100% !important;
     max-height: 200px;
     overflow-y:scroll ;
 }
@@ -135,7 +135,8 @@
     border-radius: .5rem;
     border: 2px solid var(--border);
     z-index: 10;
-    height: 300px;
+    max-height: 300px;
+    min-height: 100px;
     overflow-y: auto;
 }
 @media screen and (max-width:1200px) {
@@ -148,7 +149,7 @@
     }
 }
 @media screen and (max-width: 1024px) {
-    .header .profile p{
+    .header .profileHeader p{
         display: none;
     }
     .header-pc{
@@ -174,7 +175,7 @@
         border: 1px solid var(--border)
     }
     .header .searchDropDown{
-        width: 97% !important;
+        width: 100% !important;
         top: 4rem;
     }
 }

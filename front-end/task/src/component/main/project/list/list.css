@@ -3,7 +3,7 @@
     border-top:  1px solid var(--border);
     padding: 1rem;
     overflow-y: auto;
-    height: calc(-200px + 100vh); 
+    height: calc(-170px + 100vh); 
 }
 .list h3{
     text-align: start;
@@ -17,7 +17,7 @@
 }
 .listHeader{
     display: grid;
-    grid-template-columns: .5fr 1fr .5fr .5fr .5fr .5fr .5fr;
+    grid-template-columns: .5fr 1fr .4fr .5fr .5fr .5fr .5fr;
     font-size: 14px;
     font-weight: 500;
     padding-bottom: .5rem;
@@ -31,7 +31,7 @@
 }
 .listContentItem{
     display: grid;
-    grid-template-columns: .5fr 1fr .5fr .5fr .5fr .5fr .5fr;
+    grid-template-columns: .5fr 1fr .4fr .5fr .5fr .5fr .5fr;
     align-items: center;
     text-align: left;
     font-size: 14px;
@@ -103,6 +103,12 @@
 .taskDetail-footer .delete{
     background-color:#dc2626 ;
 }
+.taskDetail-active .date{
+    font-size:14px;
+    display:flex;
+    gap:1rem;
+    color:rgb(107, 114, 128)
+}
 @media screen and (max-width:1200px) {
     .list{
         overflow-x: auto;
@@ -115,9 +121,9 @@
 @media screen and (max-width:800px) {
     .list{
         overflow-x: auto;
-        height: calc(100vh - 190px - 69px) !important
+        height: calc(100vh - 190px - 39px) !important
     }
     .taskDetail-active{
-        width: 90%;
+        width: 90% !important;
     }
 }

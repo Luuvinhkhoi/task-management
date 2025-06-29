@@ -34,7 +34,7 @@ export const Upcoming= () => {
             className={`tabItem ${isOpenTab === tab.value ? 'active' : ''}`}
             onClick={() => setIsOpenTab(tab.value)}
           >
-            {tab.label}
+            {t(`list.${tab.label}`)}
           </div>
         ))}
       </div>
@@ -50,7 +50,7 @@ export const Upcoming= () => {
                 </div>
                 <div style={{fontSize:'14px'}}>{item.description}</div>
                 <div style={{display:'flex', justifyContent:'space-between', alignContent:'center', fontSize:'14px'}}>
-                  <div>Start date: {new Date(item.createdAt).toISOString().split('T')[0]}</div>
+                  <div>{t('task.startDate')}: {new Date(item.createdAt).toISOString().split('T')[0]}</div>
                   <div className='task-member' style={{display:'flex', gap:'.5rem'}}>
                         {item.user.length>3?(
                                   <>

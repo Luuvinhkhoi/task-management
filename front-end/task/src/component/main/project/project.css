@@ -61,7 +61,7 @@
     color: var(--text-color);
     padding: 20px;
     border-radius: 8px;
-    width: 450px;
+    width: 600px;
     max-width: 90%;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     position: relative;
@@ -95,8 +95,9 @@
 }
 .project  .projectForm-active .date {
     padding: unset;
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    gap:1rem;
+    grid-template-columns: 1fr 1fr;
 }
 .project  .projectForm-active .date >div>div{
     background-color: var(--search-bg);
@@ -151,6 +152,13 @@
     cursor: pointer;
 
 }
-@media screen and (max-width:1200px) {
-    
+.project .error {
+  color: red;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+@media screen and (max-width:660px) {
+    .project .projectForm-active .date {
+        display: block;
+    }
 }

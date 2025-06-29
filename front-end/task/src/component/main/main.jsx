@@ -77,9 +77,9 @@ export const Main = () =>{
   return(
     <div className="main">
       <div style={{height:'100%'}}>
-        <Header socket={socket} role={role} onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}></Header>
-        <div style={{display:'flex', height:'100vh', width:'100vw'}}>
-          <SideBar role={role} isMobile={isMobile} isSideBarOpen={isSidebarOpen} onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}></SideBar>
+        <Header socket={socket} role={role} onClose={()=>setIsSidebarOpen(false)} onToggleSidebar={() => setIsSidebarOpen(prev=>!prev)}></Header>
+        <div className='second-child' style={{display:'flex',width:'100vw'}}>
+          <SideBar role={role} isMobile={isMobile} isSideBarOpen={isSidebarOpen} onClose={()=>setIsSidebarOpen(false)} onToggleSidebar={() => setIsSidebarOpen(prev => !prev)}></SideBar>
           <Outlet context={{socket, role}}></Outlet>
         </div>
       </div>

@@ -103,7 +103,7 @@ let task={
             console.log(networkError.message);
         });
     },
-    async createProject(title, startDate, endDate, assignedUserId){
+    async createProject(title, assignedUserId){
         const token = await getJWT();
         return fetch(`${baseUrl}/project`,{
             method:'POST',
@@ -113,8 +113,6 @@ let task={
             },
             body:JSON.stringify({
                 title,
-                startDate,
-                endDate, 
                 assignedUserId
             })
         }).then(response=>{
@@ -463,7 +461,6 @@ let task={
           method: 'POST',
           headers:{
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
           },
           body: formData, // Gửi FormData với dữ liệu file
           
@@ -588,7 +585,6 @@ let task={
         const token = await getJWT();
         return fetch(`${baseUrl}/task`, {
             method: 'PATCH',
-            credentials: 'include',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -675,7 +671,6 @@ let task={
         const token = await getJWT();
         return fetch(`${baseUrl}/notification`, {
             method: 'PATCH',
-            credentials: 'include',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'

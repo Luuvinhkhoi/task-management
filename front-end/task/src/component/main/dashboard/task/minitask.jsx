@@ -41,7 +41,7 @@ export const Task = ({socket}) =>{
                   <div style={{display:'flex', gap:'1rem', alignContent:'center', justifyContent:'space-between'}}>
                     <h4>{task.title.length>20?task.title.slice(0,20)+'...':task.title}</h4>
                   </div>
-                  <p style={{color:`${theme?'#fff':'rgb(75, 85, 99)'}`, marginBottom:'.25rem'}}>{task.description.length>70?task.description.slice(0,70)+'...':task.description}</p>
+                  <p style={{color:`${theme?'#fff':'rgb(75, 85, 99)'}`, marginBottom:'.25rem', textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical',}}>{task.description}</p>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
                     <div className='task-member' style={{display:'flex', gap:'.25rem'}}>
                         {task.user.length>3?(
@@ -90,7 +90,7 @@ export const Task = ({socket}) =>{
                     </div>
                   </div>
               </div>
-            ):<p>Tasks assigned to you will appear here. </p>}
+            ):<p>{t('dashboard.noData')}</p>}
           </div>
           {isClick !== null && todayTask && (
                 <TaskDetail
@@ -103,7 +103,7 @@ export const Task = ({socket}) =>{
           )}  
           {todayTask.length>0?
           <div className='task-footer'>
-              {todayTask.length >0 ?<p>You have {todayTask.length} tasks today. Keep it up!</p>:<p></p>}
+              {todayTask.length >0 ?<p>{t('dashboard.taskMessage', { count: todayTask.length })}</p>:<p></p>}
           </div>:null}
         </div>
     )

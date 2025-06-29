@@ -92,7 +92,7 @@ export const MiniUpcoming = ({socket}) => {
                   </div>
                   
               </div>
-            ):<p>Tasks assigned to you will appear here. </p>}
+            ):<p>{t('dashboard.noData')}</p>}
         </div>
         {isClick !== null && upcomingTask && (
               <TaskDetail 

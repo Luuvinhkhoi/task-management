@@ -3,8 +3,9 @@
     text-align: left;
     padding: 1rem;
     width: 100%;
+    height: calc(-118px + 100vh);
 }
-.profileHeader{
+.profile .profileHeader{
     display: flex;
     gap: 1rem;
     padding: 2rem;
@@ -13,12 +14,12 @@
     border-radius: .5rem;
     justify-content: space-between;
 }
-.profileHeader>div{
+.profile .profileHeader>div{
     display: flex;
     gap: 1rem;
     align-items: center;
 }
-.profileHeader .avatar{
+.profile .profileHeader .avatar{
     height: 120px;
     width: 120px;
     border-radius: 10rem;
@@ -77,7 +78,9 @@
 .profile .overlay-unActive{
     display: none !important;
 }
-
+.profile label{
+    color: #ffff;
+}
 .profile  .avaForm-unActive{
     display: none;
 }
@@ -88,7 +91,6 @@
     color: var(--text-color);
     padding: 20px;
     border-radius: 8px;
-    width: 400px;
     max-width: 90%;
     box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
     position: relative;
@@ -116,25 +118,48 @@
     outline: none;
     width: 180px;
 }
+.profile .avaForm-active .name {
+    grid-template-columns: 1fr 1fr;
+}
+.profile .avaForm-active .email-phone{
+    grid-template-columns: 1fr 1fr;
+}
 .profile .avaForm-active .name >div >div{
-    padding: .2rem;
     border-radius: .5rem;
     background-color: var(--task-bg);
 }
 .profile .avaForm-active .email-phone >div >div{
-    padding: .2rem;
     border-radius: .5rem;
     background-color: var(--task-bg);
 }
 .profile .avaForm-active .name >div >div input{
     background: none;
-    border: none;
+    border: 1px var(--border) solid;
+    border-radius: .5rem;
+    padding: .2rem;
     outline: none;
     color: var(--text-color);
+    width: 100%;
 }
 .profile .avaForm-active .email-phone >div >div input{
     background: none;
-    border: none;
+    border: 1px var(--border) solid;
+    border-radius: .5rem;
+    padding: .2rem;
     outline: none;
     color:var(--text-color);
+    width: 100%;
+}
+@media screen and (max-width: 800px) {
+    .profile {
+        height: calc(100vh - 160px - 69px) !important;
+    }
+}
+@media screen and (max-width: 600px) {
+    .avaForm-active .name{
+        display: block !important;
+    }
+    .avaForm-active .email-phone{
+        display: block !important;
+    }
 }

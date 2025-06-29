@@ -5,21 +5,16 @@ import { useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import notFound from '../../../assets/notFound.png'
 import { useAuth } from '../../../authContext'
-import { Link } from 'react-router-dom'
-import {X} from 'lucide-react'
-import { Download, Paperclip, Trash2, FilePenLine } from 'lucide-react';
-import Select from 'react-select'
 import makeAnimated from 'react-select/animated';
 import { getProfile } from '../../../store/userProfile'
 import { AnimatePresence, motion} from 'framer-motion'
 import { useTranslation } from "react-i18next";
 import { useTimezone } from '../../../timezoneContext'
-import { Comment } from '../project/comment/comment';
 import app from '../../../assets/app.png'
 import { TaskDetail } from '../taskDetail/taskDetail'
 import { Notification } from './noti/noti'
-import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot, AlignJustify } from 'lucide-react'
-export const Header=({socket, role, onToggleSidebar})=>{
+import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot, AlignJustify, } from 'lucide-react'
+export const Header=({socket, role, onToggleSidebar, onClose})=>{
     const dispatch=useDispatch()
     const navigate=useNavigate()
     const userId=useSelector(state=>state.userProfile.id)
@@ -57,6 +52,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
     const dropdownRef = useRef(null);
+    const toogleRef=useRef(null)
     const notiRef=useRef(null)
     const notiDropRef=useRef(null)
     const searchBarRef=useRef(null)
@@ -230,6 +226,30 @@ export const Header=({socket, role, onToggleSidebar})=>{
     }, []);
     useEffect(() => {
             const handleScroll = () => {
+              onClose();
+            };
+            window.addEventListener("scroll", handleScroll);
+            const handleClickOutside = (event) => {
+                const clickedToggle = toogleRef.current?.contains(event.target);
+                const clickSideBar=event.target.closest('.sideBar.mobile.open')
+                const clickedEllipsis = event.target.closest('.ellipsis'); // class cho Ellipsis
+                const clickedRenderDropdown = event.target.closest('.render-dropdown'); // nếu có dropdown
+                const clickClose=event.target.closest('.option-active')
+                if (!clickedToggle &&!clickSideBar&&!clickClose&& !clickedEllipsis && !clickedRenderDropdown) {
+                    onClose(); // chỉ đóng sidebar khi click ngoài hết các vùng liên quan
+                }
+            };
+
+          
+            document.addEventListener("mousedown", handleClickOutside);
+    
+            return () => {
+              document.removeEventListener("mousedown", handleClickOutside);
+              window.removeEventListener("scroll", handleScroll);
+            };
+    }, []);
+    useEffect(() => {
+            const handleScroll = () => {
               setOpenNotification(false)
             };
             window.addEventListener("scroll", handleScroll);
@@ -275,7 +295,9 @@ export const Header=({socket, role, onToggleSidebar})=>{
         <div className='header'>
             <div className='header-pc'>
                 <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
-                    <AlignJustify className='toggle-button'  onClick={onToggleSidebar}></AlignJustify>
+                    <div ref={toogleRef} onClick={onToggleSidebar}>
+                        <AlignJustify className='toggle-button' ></AlignJustify>
+                    </div>
                     <div className='brand'>
                         <img src={app} style={{width:'32px', height:'32px'}}></img>
                         <h3>TASK</h3>
@@ -295,7 +317,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                     {results.project.length<1 && results.task.length<1?(
                                         <div style={{display:'flex', alignContent:'center', flexDirection:'column', flexWrap:'wrap'}}>
                                             <img src={notFound} style={{height:'64px', width:'64px', margin:'0 auto'}}></img>
-                                            <p style={{display:'inline-block'}}>We couldn't find anything</p>
+                                            <p style={{display:'inline-block'}}>{t('searchBar.noData')}</p>
                                         </div>
                                     ):(
                                         <div>
@@ -303,12 +325,12 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                                 <div>
                                                     <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                                         <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
-                                                        <p style={{fontWeight:500}}>Project</p>
+                                                        <p style={{fontWeight:500}}>{t(`sideBar.project`)}</p>
                                                     </div>
                                                     {results.project?results.project.map(item=>
                                                         <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={()=>navigate(`/project/${item.id}`)}>
                                                             <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
-                                                            <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                                                            <p style={{fontSize:'12px'}}>{t(`project.Member`)}: <span>{item.memberCount}</span></p>
                                                         </div>
                                                     ):null}
                                                 </div>
@@ -317,15 +339,15 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                                 <div >
                                                 <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                                     <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
-                                                    <p style={{fontWeight:500}}>Task</p>
+                                                    <p style={{fontWeight:500}}>{t('project.Task')}</p>
                                                 </div>
                                                 {results.task?results.task.map(item=>
                                                     <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
                                                         <div style={{display:'flex', justifyContent:'space-between'}}>
                                                             <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
-                                                            <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{item.priority}</div>
+                                                            <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{t(`list.priority.${item.priority}`)}</div>
                                                         </div>
-                                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
+                                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>{t(`task.dueDate`)}: <div>
                                                                             {new Intl.DateTimeFormat('en-CA', {
                                                                             year: 'numeric',
                                                                             month: '2-digit',
@@ -383,7 +405,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                     ref={notiDropRef} 
                                     initial={{ height: 0, opacity: 0 }} 
                                     onMouseDown={(e) => e.stopPropagation()}
-                                    animate={{ height: "300px", opacity: 1 }} 
+                                    animate={{  opacity: 1 }} 
                                     exit={{ opacity: 0, height: 0 }}
                                     transition={{ duration: 0.3, ease: "easeOut" }}
                                     className='notiDropDown'
@@ -394,7 +416,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                         </AnimatePresence>
                     </div>
                     <div style={{display:'inline-block'}}>
-                        <div className='profile' style={{cursor:'pointer'}} ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
+                        <div className='profileHeader' style={{cursor:'pointer'}} ref={profileRef}  onClick={()=>setOpenDropDown(!OpenDropdown)}>
                             <CircleUser></CircleUser>
                             <p>{t(`header.Welcome`)} <span>{userName}</span></p>
                         </div>
@@ -410,11 +432,11 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                 >
                                     <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={()=>navigate('/profile')}>
                                         <UserPen></UserPen>
-                                        <p>Edit profile</p>
+                                        <p>{t('header.Edit profile')}</p>
                                     </div>
                                     <div style={{display:'flex',gap:'.5rem', cursor:'pointer'}} onClick={signOut}>
                                         <LogOut></LogOut>
-                                        <p>Log out</p>
+                                        <p>{t('header.Log out')}</p>
                                     </div>
                                 </motion.div>
             
@@ -449,7 +471,7 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                     {results.project.length<1 && results.task.length<1?(
                                         <div style={{display:'flex', alignContent:'center', flexDirection:'column', flexWrap:'wrap'}}>
                                             <img src={notFound} style={{height:'64px', width:'64px', margin:'0 auto'}}></img>
-                                            <p style={{display:'inline-block'}}>We couldn't find anything</p>
+                                            <p style={{display:'inline-block'}}>{t('searchBar.noData')}</p>
                                         </div>
                                     ):(
                                         <div>
@@ -457,12 +479,12 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                                 <div>
                                                     <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                                         <FolderOpenDot style={{color:' rgb(59, 130, 246)'}}></FolderOpenDot>
-                                                        <p style={{fontWeight:500}}>Project</p>
+                                                        <p style={{fontWeight:500}}>{t(`sideBar.project`)}</p>
                                                     </div>
                                                     {results.project?results.project.map(item=>
                                                         <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={()=>navigate(`/project/${item.id}`)}>
                                                             <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
-                                                            <p style={{fontSize:'12px'}}>Member: <span>{item.memberCount}</span></p>
+                                                            <p style={{fontSize:'12px'}}>{t(`project.Member`)}: <span>{item.memberCount}</span></p>
                                                         </div>
                                                     ):null}
                                                 </div>
@@ -471,15 +493,15 @@ export const Header=({socket, role, onToggleSidebar})=>{
                                                 <div >
                                                 <div style={{display:'flex',gap:'.5rem', marginBottom:'.5rem'}} >
                                                     <ClipboardCheck style={{color:' rgb(59, 130, 246)'}}></ClipboardCheck>
-                                                    <p style={{fontWeight:500}}>Task</p>
+                                                    <p style={{fontWeight:500}}>{t(`project.Task`)}</p>
                                                 </div>
                                                 {results.task?results.task.map(item=>
                                                     <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
                                                         <div style={{display:'flex', justifyContent:'space-between'}}>
                                                             <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
-                                                            <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{item.priority}</div>
+                                                            <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{t(`list.priority.${item.priority}`)}</div>
                                                         </div>
-                                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>Due date: <div>
+                                                        <div style={{display:'flex', gap:'.5rem', fontSize:'12px'}}>{t(`task.dueDate`)}: <div>
                                                                             {new Intl.DateTimeFormat('en-CA', {
                                                                             year: 'numeric',
                                                                             month: '2-digit',

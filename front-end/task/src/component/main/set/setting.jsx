@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { toggleDarkMode, setLanguage } from '../../../store/setting.js';
 export const Setting = () => {
   const { i18n } = useTranslation();
+  const {t}=useTranslation()
   const dispatch = useDispatch();
   const darkMode = useSelector((state) => state.setting.darkMode);
   const changeLang = (event) => {
@@ -96,14 +97,14 @@ export const Setting = () => {
     <div className='setting-parent'>
       <form onSubmit={handleSubmit} id='setting'>
         <div className='language'>
-          <h2>Language</h2>
+          <h2>{t('setting.language')}</h2>
           <select id="language-select" onChange={changeLang} value={i18n.language}>
-            <option value="en">English</option>
-            <option value="vi">Vietnamese</option>
+            <option value="en">{t('setting.en')}</option>
+            <option value="vi">{t('setting.vn')}</option>
           </select>
         </div>
         <div className='darkMode'>
-          <h2>Dark mode</h2>
+          <h2>{t('setting.Darkmode')}</h2>
           <FormControlLabel
             control={<MaterialUISwitch 
               checked={darkMode}
@@ -114,7 +115,7 @@ export const Setting = () => {
           />
         </div>
         <div className='timezone'>
-          <h2>Timezone Setting</h2>
+          <h2>{t('setting.Timezone')}</h2>
           <select value={timezone} onChange={(e) => changeTimezone(e.target.value)}>
             {timezones.map((tz) => (
               <option key={tz} value={tz}>
@@ -123,7 +124,7 @@ export const Setting = () => {
             ))}
           </select>
         </div>
-        <button style={{color:'#fff',marginLeft:'5rem', backgroundColor:'#007bff'}}>Save Setting</button>
+        <button style={{color:'#fff',marginLeft:'5rem', backgroundColor:'#007bff'}}>{t("setting.save")}</button>
       </form>
     </div>
   );

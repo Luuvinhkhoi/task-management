@@ -2,22 +2,52 @@
     "header":{
       "Sign in":"Sign in",
       "Create account":"Create account",
-      "Welcome":"Welcome"
+      "Welcome":"Welcome",
+      "Edit profile":"Edit profile",
+      "Log out":"Log out"
     },
     "project":{
       "Kanban board":"Kanban board",
       "List":"List",
       "New project":"New project",
-      "New task":"New task"
+      "New task":"New task",
+      "Task":"Task",
+      "Member":"Member"
     },
     "createProject":{
       "head":"Create new project",
-      "title":"Title"
+      "title":"Title",
+      "noMember":"Not any member yet",
+      "errorTitle": "Project title is required.",
+      "errorStartDate": "Start date is required.",
+      "errorDueDate": "Due date is required.",
+      "errorInvalidRange": "Start date must be before or same as due date.",
+      "errorNoMember": "Please add at least one member.",
+      "errorMissingRole": "All members must be assigned a role.",
+      "errorStartBeforeDue": "Start date cannot be after the due date.",
+      "errorDueAfterStart": "Due date cannot be before the start date."  
     },
     "createTask":{
       "head":"Create new task",
       "title":"Title"
-      
+    },
+    "editProject":{
+      "head":"Edit project",
+      "title":"Title"
+    },
+    "profile":{
+      "profile":"Profile",
+      "edit":"Edit",
+      "firstname":"Firstname",
+      "lastname":"Lastname",
+      "phone":"Phone",      
+      "email":"Email address",
+      "choose":"Choose Image",
+      "updateSuccess":"Profile update successfully",
+      "updateFail":"Update failed",
+      "failMessage":"Please try again or check your connection",
+      "personal":"Personal Information",
+      "form":"Edit Personal Information"
     }
     ,
     "kanban": {
@@ -42,12 +72,17 @@
       "To do": "To do",
       "In progress": "In progress",
       "Complete": "Complete",
+      "All":"All",
       "priority": {
         "Urgent":"Urgent",
         "High": "High",
         "Medium":"Medium",
         "Low":"Low"
       }
+    },
+    "task":{
+      "dueDate":"Due date",
+      "startDate":"Start date"
     }
     ,
     "dashboard":{
@@ -55,12 +90,62 @@
         "upcomingTask":"Upcoming Task",
         "statusOverview":"Status Overview",
         "progress":"Progress",
-        "seeAll":"See All"
+        "seeAll":"See All",
+        "taskMessage": "You have {{count}} task today. Keep it up!",
+        "taskMessage_plural": "You have {{count}} tasks today. Keep it up!",
+        "noData":"Tasks assigned to you will appear here."
     },
     "sideBar":{
         "dashboard":"Dashboard",
         "project":"Project",
-        "setting":"Setting"
-    }
+        "setting":"Setting",
+        "noPermission":"Sorry, you don't have permission on this project",
+        "success":"Project update successfully",
+        "fail":"Failed",
+        "failMessage":"Please try again or check your permission",
+        "message":"Are you sure to delete this project? This action can't be undo."
 
+    },
+    "statusOverview":{
+      "noTaskData":"The status overview will display here"
+    },
+    "notification":{
+      "noData":"You have no notifications"
+    },
+    "searchBar":{
+      "noData":"We couldn't find anything"
+    },
+    "taskDetail":{
+      "wait":"Please wait...",
+      "loading":"Loading...",
+      "dueDate":"Due date",
+      "startDate":"Start date",
+      "detail":"Detail",
+      "comment":"Comment",
+      "description":"Description",
+      "assign":"Assign",
+      "attachment":"Attachment",
+      "upload":"Upload",
+      "add":"Add",
+      "save":"Save",
+      "delete":"Delete",
+      "done":"Done",
+      "confirm":"Confirm delete",
+      "message":"Are you sure to delete this task? This action can't be undo.",
+      "fileMessage":"Are you sure to delete this file? This action can't be undo.",
+      "updateSuccess":"Task updated successfully.",
+      "updateFail":"Failed to update task.",
+      "deleteSuccess":"Task deleted successfully.",
+      "deleteFail":"Failed to delete task.",
+      "failMessage":"Please try again or check your permission",
+      "Cancel":"Cancel"
+    },
+    "setting":{
+      "language":"Language",
+      "Darkmode":"Dark mode",
+      "Timezone":"Timezone",
+      "en":"English",
+      "vn":"Vietnamese",
+      "save":"Save setting"
+    }
 }

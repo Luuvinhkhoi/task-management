@@ -2,13 +2,31 @@
     "header":{
       "Sign in":"Đăng nhập",
       "Create account":"Tạo mới tài khoản",
-      "Welcome":"Chào mừng"
+      "Welcome":"Chào mừng",
+      "Edit profile":"Chỉnh sửa hồ sơ",
+      "Log out":"Đăng xuất"
     },
     "project":{
       "Kanban board":"Bảng Kanban",
       "List":"Danh sách",
       "New project":"Dự án mới",
-      "New task":"Nhiệm vụ mới"
+      "New task":"Nhiệm vụ mới",
+      "Task":"Nhiệm vụ",
+      "Member":"Thành viên"
+    },
+    "profile":{
+      "profile":"Hồ sơ",
+      "edit":"Chỉnh sửa",
+      "firstname":"Tên",
+      "lastname":"Họ",
+      "phone":"Số điện thoại",
+      "choose":"Chọn ảnh",
+      "updateSuccess":"Cập nhập thành công",
+      "updateFail":"Cập nhập không thành công",
+      "failMessage":"Vui lòng thử lại hoặc kiểm tra kết nối của bạn",
+      "email":"Địa chỉ email",
+      "personal":"Thông tin cá nhân",
+      "form":"Chỉnh sửa thông tin cá nhân"
     },
     "kanban": {
       "todo": "CẦN LÀM",
@@ -29,15 +47,43 @@
       "Assign":"Giao cho",
       "Start Date":"Ngày bắt đầu",
       "Due Date":"Ngày kết thúc",
-      "To do": "CẦN LÀM",
-      "In progress": "ĐANG LÀM",
-      "Complete": "HOÀN THÀNH",
+      "To do": "Cần làm",
+      "In progress": "Đang làm",
+      "Complete": "Hoàn thành",
+      "All":"Tất cả",
       "priority": {
         "Urgent":"Khẩn cấp",
         "High": "Cao",
         "Medium":"Bình thường",
         "Low":"Thấp"
       }
+    },
+    "task":{
+      "dueDate":"Hạn cuối",
+      "startDate":"Bắt đầu"
+    }
+    ,
+    "createProject":{
+      "head":"Tạo mới dự án",
+      "title":"Tiêu đề",
+      "noMember":"Chưa có thành viên nào",
+      "errorTitle": "Vui lòng nhập tiêu đề dự án.",
+      "errorStartDate": "Vui lòng chọn ngày bắt đầu.",
+      "errorDueDate": "Vui lòng chọn ngày kết thúc.",
+      "errorInvalidRange": "Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.",
+      "errorNoMember": "Vui lòng thêm ít nhất một thành viên.",
+      "errorMissingRole": "Mỗi thành viên phải được gán một vai trò.",
+      "errorStartBeforeDue": "Ngày bắt đầu không được sau hạn chót.",
+      "errorDueAfterStart": "Hạn cuối không được trước ngày bắt đầu."
+    },
+    "createTask":{
+      "head":"Tạo mới nhiệm vụ",
+      "title":"Tiêu đề"
+      
+    },
+    "editProject":{
+      "head":"Chỉnh sửa dự án",
+      "title":"Title"
     }
     ,
     "dashboard":{
@@ -45,11 +91,62 @@
         "upcomingTask":"Nhiệm vụ sắp tới",
         "statusOverview":"Tổng quan trạng thái",
         "progress":"Tiến độ",
-        "seeAll":"Xem thêm"
+        "seeAll":"Xem thêm",
+        "taskMessage": "Bạn có {{count}} nhiệm vụ ngày hôm nay. Cố gắng lên!",
+        "taskMessage_plural": "Bạn có {{count}} nhiệm vụ ngày hôm nay. Cố gắng lên!"
     },
     "sideBar":{
         "dashboard":"Tổng quan",
         "project":"Dự án",
-        "setting":"Cài đặt"
+        "setting":"Cài đặt",
+        "noPermission":"Xin lỗi, bạn không được cấp quyền cho dự án này",
+        "success":"Dự án cập nhập thành công",
+        "fail":"Thất bại",
+        "failMessage":"Làm ơn thử lại hoặc kiểm tra quyền của bạn",
+        "message":"Bạn có chắc chắn muốn xóa dự án này? Hành động này không thể hoàn tác."
+
+    },
+    "statusOverview":{
+      "noTaskData":"Tổng quan trạng thái sẽ được hiển thị ở đây"
+    },
+    "notification":{
+      "noData":"Bạn chưa có thông báo nào"
+    },
+    "searchBar":{
+      "noData":"Chúng tôi không tìm thấy thứ gì"
+    },
+    "taskDetail":{
+      "wait":"Vui lòng chờ...",
+      "loading":"Đang tải...",
+      "dueDate":"Hạn cuối",
+      "startDate":"Bắt đầu",
+      "detail":"Chi tiết",
+      "comment":"Bình luận",
+      "description":"Mô tả",
+      "assign":"Giao cho",
+      "attachment":"Tệp đính kèm",
+      "upload":"Tải lên",
+      "add":"Thêm",
+      "save":"Lưu",
+      "delete":"Xóa",
+      "done":"Xong",
+      "confirm":"Xác nhận xóa",
+      "message":"Bạn có chắc chắn muốn xóa nhiệm vụ này? Hành động này không thể hoàn tác.",
+      "fileMessage":"Bạn có chắc chắn muốn xóa tệp này? Hành động này không thể hoàn tác.",
+      "updateSuccess":"Cập nhập thành công",
+      "updateFail":"Cập nhập không thành công",
+      "deleteSuccess":"Xóa nhiệm vụ thành công",
+      "deleteFail":"Xóa nhiệm vụ không thành công",
+      "failMessage":"Vui lòng thử lại hoặc kiểm tra quyền của bạn",
+      "Cancel":"Hủy"
+    },
+    "setting":{
+      "language":"Ngôn ngữ",
+      "Darkmode":"Chế độ tối",
+      "Timezone":"Múi giờ",
+      "en":"Tiếng Anh",
+      "vn":"Tiếng Việt",
+      "save":"Lưu cài đặt"
     }
+
   }

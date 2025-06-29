@@ -1,12 +1,10 @@
 const { where } = require('sequelize')
 const { Op } = require('sequelize');
 const db =require('../Model/models')
-const createProject=async(title, startDate, dueDate, assignedUserId)=>{
+const createProject=async(title, assignedUserId)=>{
     try{
         const result=await db.Project.create({
             title:title,
-            createdAt:startDate,
-            endedAt:dueDate
         })
         const taskMembers = assignedUserId.map(member => ({
             projectId: result.id,
@@ -53,7 +51,7 @@ const createProject=async(title, startDate, dueDate, assignedUserId)=>{
         throw new Error(`check error ${error}`)
     }
 }
-const updateProject=async(userId, id,title, startDate, dueDate, assignedUserId, assignedRoles )=>{
+const updateProject=async(userId, id,title,assignedUserId, assignedRoles )=>{
     try{
         const checkRole=await db.ProjectMember.findOne({
             where:{
@@ -67,8 +65,6 @@ const updateProject=async(userId, id,title, startDate, dueDate, assignedUserId, 
             const result = await db.Project.update(
                 {
                     title: title,
-                    createdAt: startDate,
-                    endedAt: dueDate
                 },
                 {
                     where: {

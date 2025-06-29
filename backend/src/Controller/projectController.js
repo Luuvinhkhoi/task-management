@@ -1,13 +1,8 @@
 const service=require('../Services/projectService')
 const createProject= async(req, res)=>{
   try{
-     const {title, startDate, endDate, assignedUserId}=req.body
-     const startTimestamp = new Date(startDate).toISOString(); 
-     const endTimestamp = new Date(endDate).toISOString();
-     if (!startDate || !endDate || isNaN(new Date(startDate).getTime()) || isNaN(new Date(endDate).getTime())) {
-        return res.status(400).json({error: "Invalid date format"});
-     }
-     const project= await service.createProject(title, startTimestamp, endTimestamp, assignedUserId)
+     const {title, assignedUserId}=req.body
+     const project= await service.createProject(title,assignedUserId)
      res.status(201).json(project)
   } catch(error){
      res.status(500).json({error: error.message})
@@ -41,13 +36,8 @@ const getProjectProgress=async(req, res)=>{
 }
 const updateProject=async(req, res)=>{
    try{
-      const {id,title,assignedUserId,startDate, dueDate, role}=req.body.updateData
-      const startTimestamp = new Date(startDate).toISOString(); 
-      const endTimestamp = new Date(dueDate).toISOString();
-      if (!startDate || !dueDate || isNaN(new Date(startDate).getTime()) || isNaN(new Date(dueDate).getTime())) {
-         return res.status(400).json({error: "Invalid date format"});
-      }
-      const task= await service.updateProject(req.user.id,id, title,startTimestamp, endTimestamp,assignedUserId, role)
+      const {id,title,assignedUserId,role}=req.body.updateData
+      const task= await service.updateProject(req.user.id,id, title,assignedUserId, role)
       res.status(201).json('success')
    } catch(error){
       res.status(500).json({error: error.message})
