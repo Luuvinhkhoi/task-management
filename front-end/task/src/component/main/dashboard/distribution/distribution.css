@@ -4,9 +4,12 @@
     border-radius: 1rem;
     margin: 1rem 1rem 0.5rem 0;
     padding: 1rem .5rem;
-    height: 350px;
+    height: 320px;
     min-height: 190px;
     overflow: hidden;
+}
+.recharts-wrapper{
+  max-height: 270px !important;
 }
 #distribution svg:focus,
 #distribution path:focus,

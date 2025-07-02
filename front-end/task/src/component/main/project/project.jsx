@@ -9,6 +9,7 @@ import makeAnimated from 'react-select/animated';
 import { useOutletContext } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { useTranslation } from "react-i18next";
+import { useSocket } from '../../../../socketContext'
 import { fetchProjects } from '../../../store/project'
 import { getAllTask } from '../../../store/task'
 export const Project = ()=>{
@@ -24,7 +25,7 @@ export const Project = ()=>{
     const userName=useSelector((state)=>state.userProfile.firstname)
     const lastname=useSelector((state)=>state.userProfile.lastname)
     const avatar=useSelector((state)=>state.userProfile.avatar)
-    const {socket}=useOutletContext()
+    const socket=useSocket()
     const dispatch=useDispatch()
     const theme = useSelector((state) => state.setting.darkMode);
     const darkMode = useSelector((state) => state.setting.darkMode);
@@ -177,7 +178,7 @@ export const Project = ()=>{
               lastname:lastname
         },
         createdAt:result.createdAt,
-        message:`${lastname} ${userName} vừa thêm vào 1 task mới`,
+        message:`task.created`,
         projectId: projectId
       }
       const result2 = await task.createNoti(data)
@@ -193,7 +194,7 @@ export const Project = ()=>{
               lastname:lastname
         },
         createdAt:result.createdAt,
-        message:`${lastname} ${userName} vừa thêm vào 1 task mới`,
+        message:`task.created`,
         projectId: projectId
       }
       socket.emit('new-task', socketData)

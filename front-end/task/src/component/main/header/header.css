@@ -135,7 +135,7 @@
     border-radius: .5rem;
     border: 2px solid var(--border);
     z-index: 10;
-    max-height: 300px;
+    max-height: 200px;
     min-height: 100px;
     overflow-y: auto;
 }

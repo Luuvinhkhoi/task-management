@@ -12,12 +12,14 @@ import pdf from '../../../assets/pdf.png'
 import './taskDetail.css'
 import word from '../../../assets/word.png'
 import excel from '../../../assets/excel.png'
+import { useSocket } from '../../../../socketContext';
 import { useTimezone } from '../../../timezoneContext'
 import { getAllTask } from '../../../store/task';
 import { getAllTodayTask } from '../../../store/todayTask';
 import { getAllUpcomingTask } from '../../../store/upcomingTask';
-export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectId})=>{
+export const TaskDetail=({role, overlayId,setOverlayId,taskId, projectId})=>{
     const animatedComponents = makeAnimated();
+    const socket = useSocket();
     const { timezone } = useTimezone();
     const dispatch=useDispatch()
     const {t}=useTranslation()
@@ -205,7 +207,9 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
             const file = event.target.files[0]; // Lấy file người dùng chọn
             if (file) {
             try{
-                await task.uploadAttachment(file, id)
+                setOverlay(true)
+                setLoading(true)
+                const result=await task.uploadAttachment(file, id)
                 const data={
                     taskId:taskId,
                     actorId:userId,
@@ -216,7 +220,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
@@ -232,11 +236,15 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
                 socket.emit('new-update', socketData)
+                if(result){
+                    setLoading(false)
+                    setOverlay(false)
+                }
                 getTaskDetail(id)
             } catch (error) {
                 console.log(error)
@@ -274,7 +282,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
@@ -290,7 +298,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
@@ -403,7 +411,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
             <div className={`overlay-${overlay?'active':'unActive'}`}>
             {loading?(
                 <div className={`overlay-${loading?'active':'unActive'}`}>
-                    <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                    <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'200px', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
                         <motion.div
                             animate={{ rotate: [0, 360] }}
                             transition={{ 
@@ -594,7 +602,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                             )}
 
                                             <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
-                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <p style={{fontSize:'14px'}}>{file.name}</p>
                                             <div style={{display:'flex', gap:'1rem'}}>
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
@@ -761,7 +769,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                                             )}
 
                                             <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
-                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <p style={{fontSize:'14px'}}>{file.name}</p>
                                             <div style={{display:'flex', gap:'1rem'}}>
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
@@ -807,7 +815,7 @@ export const TaskDetail=({role, overlayId, socket ,setOverlayId,taskId, projectI
                 </div>
                 )}
               ):
-                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'15%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'150px', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
                     <motion.div
                         animate={{ rotate: [0, 360] }}
                         transition={{ 

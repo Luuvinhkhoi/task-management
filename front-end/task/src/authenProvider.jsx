@@ -47,6 +47,7 @@ const formFields = {
       order: 5,
       placeholder: "Confirm your password",
       label: "Confirm Password",
+      inputProps: { required: true },
     },
     username: {
       order: 6,
@@ -60,7 +61,7 @@ const formFields = {
 
 export const AuthProvider = ({ children }) => {
   return (
-    <div style={{ marginTop: '1rem' }}>
+    <div style={{height:'100vh', overflow:'auto', marginTop: '1rem' }}>
       {/* Thêm custom styles */}
       
       <Authenticator formFields={formFields}>

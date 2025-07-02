@@ -21,7 +21,7 @@ import Select from 'react-select'
 import { Download, Paperclip, Trash2, FilePenLine, Loader2 } from 'lucide-react';
 import { Comment } from '../comment/comment';
 import { useOutletContext } from 'react-router-dom';
-
+import { useSocket } from '../../../../../socketContext';
 const ItemType = "KANBAN_ITEM";
 
 export const Kanban = () => {
@@ -34,6 +34,8 @@ export const Kanban = () => {
     const tasks=useSelector((state)=>state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
     const hasUnsavedChanges = useSelector(state => state.tasks.hasUnsavedChanges);
+    console.log(tasks)
+    console.log(hasUnsavedChanges)
     const [users, setUser]=useState([])//list of user
     const [formattedUsers, setFormatedUser]=useState([])
     const [taskDetailMembers, setTaskDetailMember]=useState([])
@@ -81,6 +83,9 @@ export const Kanban = () => {
       }
       fetchTask()
     }, [id])
+    useEffect(()=>{
+        console.log('change')
+    },[hasUnsavedChanges])
     useEffect(() => {
             // Lưu URL hiện tại để theo dõi trang
             const currentPath = location.pathname;
@@ -88,14 +93,16 @@ export const Kanban = () => {
             // Function gửi cart lên server
             const saveTask = async () => {
                 if (hasUnsavedChanges) {
+                    console.log(tasks)
                     const updatedTasks = tasks.filter(task=>task.isModified)
+                    console.log(updateTaskStatus)
                     if (updatedTasks.length > 0) {
                        await dispatch(updateTaskStatus(updatedTasks)); 
                     }
                     console.log("Cart data saved!");
                 }
             };
-    
+            saveTask();
             // Xử lý khi tải lại trang hoặc đóng tab
             const handleBeforeUnload = (event) => {
                 if (hasUnsavedChanges) {
@@ -276,7 +283,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
         }),
     });
         const dispatch=useDispatch()
-        const {socket}=useOutletContext()
+        const socket = useSocket();
         const {timezone}=useTimezone()
         const animatedComponents = makeAnimated();
         const theme=useSelector((state)=>state.setting.darkMode)
@@ -291,16 +298,16 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
         const [overlay, setOverlay]=useState(false)
         const [deleteTask,setDeleteTask]=useState(false)
         const [taskDetailOpen, setTaskDetailOpen]=useState(false)
-        const [taskDetail, setTaskDetail]=useState()
+        const [taskDetail, setTaskDetail]=useState(null)
         const tasks=useSelector(state=> state.tasks.tasks)
         const taskMembers=useSelector((state)=>state.tasks.members)
         const [taskId, setTaskId]=useState()
         const [attachmentId, setAttachmentId]=useState()
         const [attachmentUrl, setAttachmentUrl]=useState()
-        const [priority, setPriority] = useState();
+        const [priority, setPriority] = useState(null);
         const [title, setTitle] = useState("");
         const [description, setDescription] = useState("");
-        const [status, setStatus] = useState();
+        const [status, setStatus] = useState(null);
         const [startDate, setStartDate] = useState("");
         const [dueDate, setDueDate] = useState("");
         const [isSelecting, setIsSelecting] = useState(false);
@@ -429,6 +436,8 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
           const file = event.target.files[0]; // Lấy file người dùng chọn
           if (file) {
             try{
+                setNotiOverlay(true)
+                setLoading(true)
                const result=await task.uploadAttachment(file, id)
                const data={
                     taskId:taskId,
@@ -440,7 +449,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
@@ -456,12 +465,17 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
                 socket.emit('new-update', socketData)
+                if(result){
+                    setLoading(false)
+                    setNotiOverlay(false)
+                }
                getTaskDetail(id)
+               
             } catch (error) {
                 console.error('Error uploading file:', error);
             }
@@ -473,6 +487,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
             try{
                 setOverlay(true)
                 const result=await task.getTaskDetail(task_id)
+                await new Promise(resolve => setTimeout(resolve, 500));
                 setTaskId(task_id)
                 setTaskDetail(result)
                 setStatus(result[0].status)
@@ -530,6 +545,10 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
         }
         async function handleDeleteAttachment(s3UrlFromDB, id, task_id){
             try{
+                setLoading(true)
+                setNotiOverlay(true)
+                setDeleteAttachment(false)
+
                 const key = extractS3KeyFromUrl(s3UrlFromDB);
                 const formattedUsersId=assignedUserId.map(user=>user.value)
                 const result=await task.deleteAttachment(key, id)
@@ -543,7 +562,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
@@ -559,11 +578,15 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
                 socket.emit('new-update', socketData)
+                if(result){
+                    setLoading(false)
+                    setNotiOverlay(false)
+                }
                 getTaskDetail(task_id)
                 setDeleteAttachment(false)
             }catch (error){
@@ -617,7 +640,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
@@ -633,7 +656,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: projectId,
                     createdAt:new Date().toISOString()
                 }
@@ -745,7 +768,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                <div className={`overlay-${notiOverlay?'active':'unActive'}`}>
                             {loading?(
                                 <div className={`overlay-${loading?'active':'unActive'}`}>
-                                    <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                                    <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'200px', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
                                         <motion.div
                                             animate={{ rotate: [0, 360] }}
                                             transition={{ 
@@ -935,7 +958,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                                             )}
 
                                             <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
-                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <p style={{fontSize:'14px'}}>{file.name}</p>
                                             <div style={{display:'flex', gap:'1rem'}}>
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
@@ -1103,7 +1126,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                                             )}
 
                                             <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
-                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <p style={{fontSize:'14px'}}>{file.name}</p>
                                             <div style={{display:'flex', gap:'1rem'}}>
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
@@ -1148,7 +1171,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         </div>
                     </div>
                     )
-                }):<div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'15%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                }):<div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'150px', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
                                     <motion.div
                                         animate={{ rotate: [0, 360] }}
                                         transition={{ 

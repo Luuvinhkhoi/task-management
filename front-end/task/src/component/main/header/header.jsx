@@ -13,14 +13,13 @@ import { useTimezone } from '../../../timezoneContext'
 import app from '../../../assets/app.png'
 import { TaskDetail } from '../taskDetail/taskDetail'
 import { Notification } from './noti/noti'
+import { useSocket } from '../../../../socketContext'
 import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot, AlignJustify, } from 'lucide-react'
-export const Header=({socket, role, onToggleSidebar, onClose})=>{
+export const Header=({role, onToggleSidebar, onClose})=>{
     const dispatch=useDispatch()
+    const socket = useSocket();
     const navigate=useNavigate()
-    const userId=useSelector(state=>state.userProfile.id)
-    const theme=useSelector((state)=>state.setting.darkMode)
     const { t } = useTranslation();
-    const animatedComponents = makeAnimated();
     const [isClick, setIsClick]=useState(null)
     const [OpenDropdown, setOpenDropDown]=useState(false)
     const [openNotification, setOpenNotification]=useState(false)
@@ -28,27 +27,13 @@ export const Header=({socket, role, onToggleSidebar, onClose})=>{
     const [timeoutId, setTimeoutId] = useState(null);
     const [results, setResults]=useState([])
     const [loading, setLoading] = useState(true);
-    const [searchString, setSearchString]=useState('')
-    const [taskDetail, setTaskDetail]=useState()
-    const [dueDate, setDueDate] = useState("");
-    const [startDate, setStartDate] = useState("");
-    const [description, setDescription] = useState("");
-    const [status, setStatus] = useState();
-    const [priority, setPriority] = useState();
-    const [title, setTitle] = useState("");
-    const [overlay, setOverlay]=useState(false)
+    const [searchString, setSearchString]=useState('')    
     const [taskDetailMembers, setTaskDetailMember]=useState([])
-    const [taskDetailOpen, setTaskDetailOpen]=useState(false) 
-    const [isOpenTab, setIsOpenTab] = useState('Detail');
-    const [isSelecting, setIsSelecting] = useState(false);
-    const [attachmentId, setAttachmentId]=useState()
-    const [attachmentUrl, setAttachmentUrl]=useState()
     const [formattedUsers, setFormatedUser]=useState([])
     const [assignedUserId, setAssignedUserId] = useState([]);
     const [users, setUser]=useState([])//list of user
     const [view, setView]=useState(true)
     const { user, signOut } = useAuth();
-    const [deleteAttachment, setDeleteAttachment]=useState(false)
     const userName=useSelector((state)=>state.userProfile.firstname)
     const profileRef = useRef(null);
     const dropdownRef = useRef(null);
@@ -67,12 +52,13 @@ export const Header=({socket, role, onToggleSidebar, onClose})=>{
     const [noti, setNoti]=useState([])
     const [projectRole, setProjectRole]=useState()
     useEffect(()=>{
-        if (!socket) return; 
+        if (!socket) return;
         socket.on('notification', (data) => {
+            console.log(data)
             setView(false)
             setNoti(prev=>[data,...prev])
         });
-    }, [userId])
+    }, [socket])
     useEffect(() => {
       const interval = setInterval(() => {
         setDate(new Date());
@@ -403,7 +389,7 @@ export const Header=({socket, role, onToggleSidebar, onClose})=>{
                                 {openNotification==true&&(
                                     <motion.div 
                                     ref={notiDropRef} 
-                                    initial={{ height: 0, opacity: 0 }} 
+                                    initial={{opacity: 0 }} 
                                     onMouseDown={(e) => e.stopPropagation()}
                                     animate={{  opacity: 1 }} 
                                     exit={{ opacity: 0, height: 0 }}

@@ -20,7 +20,8 @@ const s3 = new S3Client({
 const uploadFileToS3 = async (file, taskId) => {
   const fileStream = fs.createReadStream(file.path);
   const key = `uploads/${Date.now()}-${file.originalname}`;
-
+  const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+  console.log(originalName)
   const uploadParams = {
     Bucket: process.env.S3_BUCKET_NAME,
     Key: key,
@@ -33,7 +34,7 @@ const uploadFileToS3 = async (file, taskId) => {
 
   const url= `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
   await db.Attachment.create(
-    {url: url, taskId:taskId}
+    {url: url, taskId:taskId, name: originalName}
   )
   return url
 };

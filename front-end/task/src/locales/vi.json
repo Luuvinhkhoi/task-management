@@ -110,7 +110,10 @@
       "noTaskData":"Tổng quan trạng thái sẽ được hiển thị ở đây"
     },
     "notification":{
-      "noData":"Bạn chưa có thông báo nào"
+      "noData":"Bạn chưa có thông báo nào",
+      "task.created": "đã thêm bạn vào 1 nhiệm vụ mới.",
+      "task.updated": "đã cập nhập 1 nhiệm vụ",
+      "user.comment": "đã bình luận vào 1 nhiệm vụ"
     },
     "searchBar":{
       "noData":"Chúng tôi không tìm thấy thứ gì"

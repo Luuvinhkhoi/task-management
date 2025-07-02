@@ -17,12 +17,13 @@ import { Comment } from '../comment/comment';
 import { getAllTodayTask } from '../../../../store/todayTask';
 import { getAllUpcomingTask } from '../../../../store/upcomingTask';
 import {X} from 'lucide-react'
+import { useSocket } from '../../../../../socketContext';
 import { Placeholder } from 'react-select/animated';
 export const List = ()=>{
     const dispatch=useDispatch()
     const {role}=useOutletContext()    
     const {timezone}=useTimezone()
-    const {socket}=useOutletContext()
+    const socket=useSocket()
     const animatedComponents = makeAnimated();
     const theme=useSelector((state)=>state.setting.darkMode)
     const { t } = useTranslation();
@@ -184,6 +185,9 @@ export const List = ()=>{
           const file = event.target.files[0]; // Lấy file người dùng chọn
           if (file) {
             try{
+                setLoading(true)
+                setNotiOverlay(true)
+
                const result=await task.uploadAttachment(file, taskId)
                const data={
                     taskId:taskId,
@@ -195,7 +199,7 @@ export const List = ()=>{
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: id,
                     createdAt:new Date().toISOString()
                 }
@@ -211,11 +215,15 @@ export const List = ()=>{
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: id,
                     createdAt:new Date().toISOString()
                 }
                 socket.emit('new-update', socketData)
+                if(result){
+                    setLoading(false)
+                    setNotiOverlay(false)
+                }
                getTaskDetail(taskId)
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -319,6 +327,9 @@ export const List = ()=>{
     }
     async function handleDeleteAttachment(s3UrlFromDB, fileid, task_id){
             try{
+                setLoading(true)
+                setNotiOverlay(true)
+                setDeleteAttachment(false)
                 const key = extractS3KeyFromUrl(s3UrlFromDB);
                 const formattedUsersId=assignedUserId.map(user=>user.value)
                 const result=await task.deleteAttachment(key, fileid)
@@ -332,7 +343,7 @@ export const List = ()=>{
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: id,
                     createdAt:new Date().toISOString()
                 }
@@ -348,13 +359,17 @@ export const List = ()=>{
                         firstname:firstname,
                         lastname:lastname
                     },
-                    message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                    message:`task.updated`,
                     projectId: id,
                     createdAt:new Date().toISOString()
                 }
                 socket.emit('new-update', socketData)
+                if(result){
+                    setLoading(false)
+                    setNotiOverlay(false)
+                }
+
                 getTaskDetail(task_id)
-                setDeleteAttachment(false)
             }catch (error){
                 console.log(error)
             }
@@ -404,7 +419,7 @@ export const List = ()=>{
                             firstname:firstname,
                             lastname:lastname
                         },
-                        message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                        message:`task.updated`,
                         projectId: id,
                         createdAt:new Date().toISOString()
                     }
@@ -420,7 +435,7 @@ export const List = ()=>{
                             firstname:firstname,
                             lastname:lastname
                         },
-                        message:`${lastname} ${firstname} vừa cập nhập 1 task`,
+                        message:`task.updated`,
                         projectId: id,
                         createdAt:new Date().toISOString()
                     }
@@ -521,7 +536,7 @@ export const List = ()=>{
                 <div className={`overlay-${notiOverlay?'active':'unActive'}`}>
                     {loading?(
                         <div className={`overlay-${loading?'active':'unActive'}`}>
-                            <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'20%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                            <div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'200px', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
                                 <motion.div
                                     animate={{ rotate: [0, 360] }}
                                     transition={{ 
@@ -709,7 +724,7 @@ export const List = ()=>{
                                             )}
 
                                             <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
-                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <p style={{fontSize:'14px'}}>{file.name}</p>
                                             <div style={{display:'flex', gap:'1rem'}}>
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
@@ -874,7 +889,7 @@ export const List = ()=>{
                                             )}
 
                                             <div style={{display:'flex', justifyContent:'space-between', width:'100%', alignItems:'center'}}>
-                                            <p style={{fontSize:'14px'}}>{file.url.split('/').pop().replace(/^\d+-/, '')}</p>
+                                            <p style={{fontSize:'14px'}}>{file.name}</p>
                                             <div style={{display:'flex', gap:'1rem'}}>
                                                 <div onClick={()=>handleDownload(file.url)}>
                                                     <Download style={{color:'#007bff'}} />
@@ -920,7 +935,7 @@ export const List = ()=>{
 
                     </div>
                     )                   
-                }):<div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'15%', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
+                }):<div style={{display:'flex',justifyContent:'center',alignItems:'center', gap: '.5rem', width:'150px', backgroundColor:'white', padding:'.5rem', borderRadius:'.5rem'}}>
                                     <motion.div
                                         animate={{ rotate: [0, 360] }}
                                         transition={{ 

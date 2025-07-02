@@ -75,6 +75,7 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
     grouped.sort((a, b) => new Date(b.latestNoti.createdAt) - new Date(a.latestNoti.createdAt))
       return grouped
     }
+    console.log(groupedNoti)
     return (
       <div className='notification'>
         {noti.length>0?(
@@ -89,8 +90,8 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
                   <div style={{ display: 'flex', gap: '.5rem',alignItems:'center' ,marginBottom:'1rem' }}>
                     <img src={item.latestNoti.user.avatar?item.latestNoti.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 32, height: 32, borderRadius: '50%' }} />
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', gap:'1rem', width:'100%', fontWeight:500, fontSize:14}}>
-                      {item.latestNoti.message}
-                      <div style={{ fontSize: 12, minWidth:'70px', display:'flex', gap:8, alignItems:'center' }}>
+                      <p style={{textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{item.latestNoti.user.lastname} {item.latestNoti.user.firstname} {t(`notification.${item.latestNoti.message}`)}</p>
+                      <div style={{ fontSize: 12, minWidth:'85px', display:'flex', gap:0, alignItems:'center' }}>
                         {new Intl.DateTimeFormat('en-CA', {
                                           year: 'numeric',
                                           month: '2-digit',
@@ -107,8 +108,8 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
                   <div style={{ display: 'flex', gap: '.5rem',alignItems:'center' ,marginBottom:'1rem' }} onClick={()=>handleClick(item.id)}>
                     <img src={item.latestNoti.user.avatar?item.latestNoti.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 32, height: 32, borderRadius: '50%' }} />
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', gap:'1rem', width:'100%', fontWeight:500, fontSize:14}}>
-                      {item.latestNoti.message}
-                      <div style={{ fontSize: 12, minWidth:'70px', display:'flex', gap:8, alignItems:'center' }}>
+                      <p style={{textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{item.latestNoti.user.lastname} {item.latestNoti.user.firstname} {t(`notification.${item.latestNoti.message}`)}</p>
+                      <div style={{ fontSize: 12, minWidth:'85px', display:'flex', gap:0, alignItems:'center' }}>
                         {new Intl.DateTimeFormat('en-CA', {
                                           year: 'numeric',
                                           month: '2-digit',
@@ -126,12 +127,12 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
                 <div className="noti-expanded" style={{ marginLeft: 20, marginTop: 10 }}>
                   {item.others.map((sub, index) => (
                     sub.isRead?(
-                      <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 8}} >
+                      <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 0}} >
                         <img src={sub.user.avatar?sub.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 30, height: 30, borderRadius: '50%', marginRight: 5 }} />
                         <div style={{display:'flex',fontSize:14, fontWeight:500, justifyContent:'space-between',alignItems:'center', width:'100%'}}>
-                          <span>{sub.message}</span>
-                          <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                            <div style={{ fontSize: 12 , minWidth:'70px'}}> {new Intl.DateTimeFormat('en-CA', {
+                          <p style={{textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{sub.user.lastname} {sub.user.firstname} {t(`notification.${sub.message}`)}</p>
+                          <div style={{display:'flex', gap:0, alignItems:'center'}}>
+                            <div style={{ fontSize: 12 , minWidth:'85px'}}> {new Intl.DateTimeFormat('en-CA', {
                                               year: 'numeric',
                                               month: '2-digit',
                                               day: '2-digit',
@@ -144,12 +145,12 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
                         </div>
                       </div>
                     ):(
-                      <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 8}} onClick={()=>handleClick(sub.id)}>
+                      <div key={index} style={{ marginBottom: 16 , display:'flex', gap: 0}} onClick={()=>handleClick(sub.id)}>
                         <img src={sub.user.avatar?sub.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 30, height: 30, borderRadius: '50%', marginRight: 5 }} />
                         <div style={{display:'flex',alignItems:'center',fontSize:14, fontWeight:500, justifyContent:'space-between', width:'100%'}}>
-                          <span>{sub.message}</span>
-                          <div style={{display:'flex', gap:8, alignItems:'center'}}>
-                            <div style={{ fontSize: 12 , minWidth:'70px'}}> {new Intl.DateTimeFormat('en-CA', {
+                          <p style={{textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{sub.user.lastname} {sub.user.firstname} {t(`notification.${sub.message}`)}</p>
+                          <div style={{display:'flex', gap:0, alignItems:'center'}}>
+                            <div style={{ fontSize: 12 , minWidth:'85px'}}> {new Intl.DateTimeFormat('en-CA', {
                                               year: 'numeric',
                                               month: '2-digit',
                                               day: '2-digit',

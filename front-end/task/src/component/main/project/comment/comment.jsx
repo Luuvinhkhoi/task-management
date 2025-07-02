@@ -75,7 +75,7 @@ export const Comment=({role,projectId,assignedUserId,socket,taskId})=>{
               firstname:firstname,
               lastname:lastname
             },
-            message:`${lastname} ${firstname} vừa comment vào 1 task`,
+            message:`user.comment`,
             projectId: projectId,
             createdAt:new Date().toISOString()
           }
@@ -92,7 +92,7 @@ export const Comment=({role,projectId,assignedUserId,socket,taskId})=>{
               firstname:firstname,
               lastname:lastname
             },
-            message:`${lastname} ${firstname} vừa comment vào 1 task`,
+            message:`user.comment`,
             projectId: projectId,
             createdAt:new Date().toISOString()
           }

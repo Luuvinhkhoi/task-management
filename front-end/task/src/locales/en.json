@@ -110,7 +110,10 @@
       "noTaskData":"The status overview will display here"
     },
     "notification":{
-      "noData":"You have no notifications"
+      "noData":"You have no notifications",
+      "task.created": "added you to a new task.",
+      "task.updated": "updated a task.",
+      "user.comment": "commented on a task."
     },
     "searchBar":{
       "noData":"We couldn't find anything"

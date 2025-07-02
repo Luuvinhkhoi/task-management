@@ -25,7 +25,7 @@ module.exports = {
           model: 'Tasks',
           key: 'id'
         },
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
       },
       projectId: {
         type: Sequelize.INTEGER,
@@ -34,7 +34,7 @@ module.exports = {
           model: 'Projects',
           key: 'id'
         },
-        onDelete: 'SET NULL'
+        onDelete: 'CASCADE'
       },
       message: {
         type: Sequelize.TEXT

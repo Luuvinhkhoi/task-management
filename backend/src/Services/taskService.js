@@ -256,7 +256,8 @@ const getTaskDetail=async (id)=>{
             ...task,
             attachment: plainResult4.map(file=>({
                 id:file.id,
-                url: file.url
+                url: file.url,
+                name:file.name
             }))
         }
       })
@@ -316,6 +317,7 @@ const updateTaskDetail= async (userId,id, title ,status, priority, description, 
     }
 }
 const deleteTask=async(userId,id)=>{
+    console.log(id)
     try{
         const checkProjectId=await db.Task.findByPk(id)
         const plainResult2=await checkProjectId.get({plain:true})
@@ -341,6 +343,7 @@ const deleteTask=async(userId,id)=>{
                     }
                 }
             )
+            
         } else{
             throw new Error(`User does not have permission to edit this task.`)
         }

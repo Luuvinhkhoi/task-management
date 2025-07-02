@@ -1,5 +1,6 @@
 class Socket {
   static async connection(socket) {
+    console.log(socket.user)
     socket.join(`user-${socket.user}`);
     socket.on('join-task', (roomName) => {
       socket.join( `task-${roomName}`);
@@ -31,6 +32,7 @@ class Socket {
     });
     socket.on('new-task',async(data)=>{
       const {notiId, taskId, assignedUserId, user,actorId,message, projectId, createdAt} = data;
+      console.log(assignedUserId)
       try{
         assignedUserId.forEach(userId => {
           if (userId !== actorId) {
@@ -62,7 +64,6 @@ class Socket {
               createdAt:createdAt,
               projectId:projectId
             });
-
           }
         });
       } catch(error){

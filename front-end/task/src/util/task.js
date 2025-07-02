@@ -570,7 +570,6 @@ let task={
           method: 'POST',
           headers:{
                 'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json'
           },
           body: formData, // Gửi FormData với dữ liệu file
           

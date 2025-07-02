@@ -26,7 +26,7 @@ module.exports = function(io) {
         const user = await User.findOne({ where: { cognitoid } });
         if (!user) return next(new Error('User not found'));
 
-        socket.user = user;
+        socket.user = user.id;
         next();
       });
     } catch (err) {
