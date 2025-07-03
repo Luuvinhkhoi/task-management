@@ -19,7 +19,6 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
     const [groupedNoti, setGroupedNoti] = useState([])
 
     useEffect(() => {
-      console.log('group')
       const grouped = groupNotiByTask(noti)
       setGroupedNoti(grouped)
     }, [noti])
@@ -55,7 +54,6 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
         }
         taskMap[taskId].push(noti)
       }
-      console.log(taskMap)
       const grouped = Object.entries(taskMap).map(([taskId, notifications]) => {
       const sorted = notifications.sort(
         (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
@@ -75,7 +73,6 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
     grouped.sort((a, b) => new Date(b.latestNoti.createdAt) - new Date(a.latestNoti.createdAt))
       return grouped
     }
-    console.log(groupedNoti)
     return (
       <div className='notification'>
         {noti.length>0?(
@@ -91,7 +88,7 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
                     <img src={item.latestNoti.user.avatar?item.latestNoti.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 32, height: 32, borderRadius: '50%' }} />
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', gap:'1rem', width:'100%', fontWeight:500, fontSize:14}}>
                       <p style={{textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{item.latestNoti.user.lastname} {item.latestNoti.user.firstname} {t(`notification.${item.latestNoti.message}`)}</p>
-                      <div style={{ fontSize: 12, minWidth:'85px', display:'flex', gap:0, alignItems:'center' }}>
+                      <div style={{ fontSize: 12, minWidth:'85px', display:'flex', gap:4, alignItems:'center' }}>
                         {new Intl.DateTimeFormat('en-CA', {
                                           year: 'numeric',
                                           month: '2-digit',
@@ -109,7 +106,7 @@ export const Notification=({socket,noti, setNoti, isClick, setIsClick})=>{
                     <img src={item.latestNoti.user.avatar?item.latestNoti.user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ width: 32, height: 32, borderRadius: '50%' }} />
                     <div style={{display:'flex', justifyContent:'space-between', alignItems:'baseline', gap:'1rem', width:'100%', fontWeight:500, fontSize:14}}>
                       <p style={{textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{item.latestNoti.user.lastname} {item.latestNoti.user.firstname} {t(`notification.${item.latestNoti.message}`)}</p>
-                      <div style={{ fontSize: 12, minWidth:'85px', display:'flex', gap:0, alignItems:'center' }}>
+                      <div style={{ fontSize: 12, minWidth:'85px', display:'flex', gap:4, alignItems:'center' }}>
                         {new Intl.DateTimeFormat('en-CA', {
                                           year: 'numeric',
                                           month: '2-digit',

@@ -15,6 +15,7 @@ import { TaskDetail } from '../taskDetail/taskDetail'
 import { Notification } from './noti/noti'
 import { useSocket } from '../../../../socketContext'
 import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot, AlignJustify, } from 'lucide-react'
+import { IoGitMerge } from 'react-icons/io5'
 export const Header=({role, onToggleSidebar, onClose})=>{
     const dispatch=useDispatch()
     const socket = useSocket();
@@ -54,7 +55,6 @@ export const Header=({role, onToggleSidebar, onClose})=>{
     useEffect(()=>{
         if (!socket) return;
         socket.on('notification', (data) => {
-            console.log(data)
             setView(false)
             setNoti(prev=>[data,...prev])
         });
@@ -328,7 +328,7 @@ export const Header=({role, onToggleSidebar, onClose})=>{
                                                     <p style={{fontWeight:500}}>{t('project.Task')}</p>
                                                 </div>
                                                 {results.task?results.task.map(item=>
-                                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
+                                                    <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
                                                         <div style={{display:'flex', justifyContent:'space-between'}}>
                                                             <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
                                                             <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{t(`list.priority.${item.priority}`)}</div>
@@ -482,7 +482,7 @@ export const Header=({role, onToggleSidebar, onClose})=>{
                                                     <p style={{fontWeight:500}}>{t(`project.Task`)}</p>
                                                 </div>
                                                 {results.task?results.task.map(item=>
-                                                    <div style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
+                                                    <div key={item.id} style={{marginBottom:'.5rem', marginLeft:'1rem', cursor:'pointer'}} onClick={(e)=>{e.stopPropagation(),setIsClick(item.id), getRole(item.project_id)}}>
                                                         <div style={{display:'flex', justifyContent:'space-between'}}>
                                                             <p style={{fontWeight:'600', fontSize:'15px'}}>{item.title}</p>
                                                             <div className={`priority-${item.priority.toLowerCase()}`} style={{marginBottom:4}}>{t(`list.priority.${item.priority}`)}</div>

@@ -30,7 +30,7 @@ const updateTaskStatus=async(req, res)=>{
       const result= await Promise.all(
          task.map(item => service.updateTaskStatus(item.id, item.status))
      );
-      res.status(201).json(result)
+      res.status(200).json(result)
    } catch(error){
       res.status(500).json({error: error.message})
    }
@@ -38,7 +38,7 @@ const updateTaskStatus=async(req, res)=>{
 const getTodayTask=async(req, res)=>{
    try{
       const result= await service.getTodayTask(req.user.id)
-      res.status(201).json(result)
+      res.status(200).json(result)
    } catch(error){
       res.status(500).json({error: error.message})
    }
@@ -46,7 +46,7 @@ const getTodayTask=async(req, res)=>{
 const getUpcomingTask=async(req, res)=>{
    try{
       const result= await service.getUpcomingTask(req.user.id)
-      res.status(201).json(result)
+      res.status(200).json(result)
    } catch(error){
       res.status(500).json({error: error.message})
    }
@@ -54,7 +54,7 @@ const getUpcomingTask=async(req, res)=>{
 const getAllTaskByUserId=async(req, res)=>{
    try{
       const result= await service.getAllTaskByUserId(req.user.id)
-      res.status(201).json(result)
+      res.status(200).json(result)
    } catch(error){
       res.status(500).json({error: error.message})
    }
@@ -62,7 +62,7 @@ const getAllTaskByUserId=async(req, res)=>{
 const getTaskDetail=async(req, res)=>{
    try{
       const result= await service.getTaskDetail(req.params.task_id)
-      res.status(201).json(result)
+      res.status(200).json(result)
    } catch(error){
       res.status(500).json({error: error.message})
    }
@@ -76,7 +76,7 @@ const updateTaskDetail=async(req, res)=>{
          return res.status(400).json({error: "Invalid date format"});
       }
       const task= await service.updateTaskDetail(req.user.id,id, title, status, priority, description, projectId  ,startTimestamp, endTimestamp,assignedUserId)
-      res.status(201).json('success')
+      res.status(200).json('success')
    } catch(error){
       res.status(500).json({error: error.message})
    }
@@ -85,7 +85,7 @@ const deleteTask=async(req, res)=>{
    try{
       const {id}=req.params
       const task= await service.deleteTask(req.user.id,id)
-      res.status(201).json('success')
+      res.status(200).json('success')
    } catch(error){
       res.status(500).json({error: error.message})
    }

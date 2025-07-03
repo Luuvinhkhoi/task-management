@@ -10,9 +10,8 @@ import { Project } from './component/main/project/project'
 import { Dashboard } from './component/main/dashboard/dashboard'
 import { List } from './component/main/project/list/list.jsx'
 import { Kanban } from './component/main/project/kanban/kanban.jsx'
-import { SignUp } from './component/main/sign-up/sign-up.jsx'
-import { SignIn } from './component/main/sign-in/sign-in.jsx'
 import { TodayTask } from './component/main/dashboard/task/task.jsx'
+import NotFound from './component/main/notFound/notFound.jsx';
 import { Profile } from './component/main/profile/profile.jsx'
 import { Upcoming } from './component/main/dashboard/upcoming/upcoming.jsx'
 import './i18n'
@@ -58,9 +57,8 @@ function App() {
         </Route>
         <Route path='/setting' element={<Setting></Setting>}></Route>
         <Route path='/profile' element={<Profile></Profile>}></Route>
+        <Route path="*" element={<NotFound />} />
       </Route>
-      <Route path='/sign-up' element={<SignUp></SignUp>}></Route>
-      <Route path='/sign-in' element={<SignIn></SignIn>}></Route>
     </>
   ))
   return (

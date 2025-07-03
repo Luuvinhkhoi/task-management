@@ -4,7 +4,7 @@ const getAllComment=async(req, res)=>{
   try {
     const{taskId}=req.params
     const getComment = await commentService.getCommentsByTaskId(taskId);
-    res.status(201).json(getComment)
+    res.status(200).json(getComment)
   } catch (error) {
     res.status(500).json({error: error.message})
   }
@@ -15,7 +15,7 @@ const createComment=async(req,res)=>{
     const getComment = await commentService.createComment(taskId,content, req.user.id)
     res.status(201).json(getComment)
   } catch (error) {
-    res.status(400).json({error: error.message})
+    res.status(500).json({error: error.message})
   }
 }
 module.exports = {

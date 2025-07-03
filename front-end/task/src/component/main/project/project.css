@@ -158,6 +158,12 @@
   margin-top: 0.25rem;
 }
 @media screen and (max-width:660px) {
+    .project .projectHeader{
+        width: 95%;
+    }
+    .project .projectHeader .headerItem{
+        gap: .5rem;
+    }
     .project .projectForm-active .date {
         display: block;
     }

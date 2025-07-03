@@ -34,8 +34,6 @@ export const Kanban = () => {
     const tasks=useSelector((state)=>state.tasks.tasks)
     const taskMembers=useSelector((state)=>state.tasks.members)
     const hasUnsavedChanges = useSelector(state => state.tasks.hasUnsavedChanges);
-    console.log(tasks)
-    console.log(hasUnsavedChanges)
     const [users, setUser]=useState([])//list of user
     const [formattedUsers, setFormatedUser]=useState([])
     const [taskDetailMembers, setTaskDetailMember]=useState([])
@@ -55,7 +53,7 @@ export const Kanban = () => {
                   const formatted = await result.map(user => ({
                     value: user.id, // Dùng ID làm giá trị
                     label: (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
+                        <div key={user.id} style={{ display: 'flex', alignItems: 'center', gap: '8px', color:`${theme?'rgb(229, 229, 229)':'rgb(29, 41, 57)'}` }}>
                           <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} alt="vinh" style={{ borderRadius: '50%', height:'32px ', width: '32px '}} />
                           <span>{user.firstname} {user.lastname}</span>
                         </div>
@@ -83,9 +81,6 @@ export const Kanban = () => {
       }
       fetchTask()
     }, [id])
-    useEffect(()=>{
-        console.log('change')
-    },[hasUnsavedChanges])
     useEffect(() => {
             // Lưu URL hiện tại để theo dõi trang
             const currentPath = location.pathname;
@@ -93,13 +88,10 @@ export const Kanban = () => {
             // Function gửi cart lên server
             const saveTask = async () => {
                 if (hasUnsavedChanges) {
-                    console.log(tasks)
                     const updatedTasks = tasks.filter(task=>task.isModified)
-                    console.log(updateTaskStatus)
                     if (updatedTasks.length > 0) {
                        await dispatch(updateTaskStatus(updatedTasks)); 
                     }
-                    console.log("Cart data saved!");
                 }
             };
             saveTask();
@@ -231,6 +223,7 @@ const KanbanColumn = ({
         return {
             ...task,
             members: members.map(mem => ({
+              id:mem.user.id,
               firstname: mem.user.firstname,
               lastname: mem.user.lastname,
               avatar: mem.user.avatar,
@@ -697,7 +690,6 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
             }
 
         }, [taskDetailMembers, formattedUsers]);
-        
     return (
       <div>
         <div 
@@ -734,7 +726,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                 {taskItem.members.length>3?(
                     <>
                         {taskItem.members.slice(2).map(member=>
-                            <div>
+                            <div key={member.id}>
                                 <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'24px ', width: '24px '}} alt="Avatar" />
                              </div>
                         )}
@@ -756,7 +748,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                             </div>
                     </>
                     ):(taskItem.members.map(member=>
-                        <div>
+                        <div key={member.id}>
                             <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'24px ', width: '24px '}} alt="Avatar" />
                         </div>
                     ))
@@ -834,7 +826,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                     </div>
                 ):(taskDetail&&status&&priority?taskDetail.map(item=>{
                     return role=='viewer'?(
-                        <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
+                        <div key={item.id} className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
                         <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail'), setOverlay(false)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'4px 8px', fontSize:14}}>
@@ -917,7 +909,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                                 
                                 <div style={{maxHeight:'150px', overflowY:'scroll'}}>
                                     {taskDetailMembers.map(user=>
-                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                        <div key={user.id} style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
                                             <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
                                             <div>
                                                 <span>{user.firstname}</span>
@@ -975,7 +967,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                         </div>:<Comment role={role} socket={socket} taskId={item.id} assignedUserId={assignedUserId} projectId={projectId}></Comment>}
                     </div>
                     ):(
-                    <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
+                    <div key={item.id} className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
                         <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail'), setOverlay(false)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
@@ -1085,7 +1077,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                                 ):(
                                 <div style={{maxHeight:'150px', overflowY:'scroll'}}>
                                     {taskDetailMembers.map(user=>
-                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                        <div key={user.id} style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
                                             <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
                                             <div>
                                                 <span>{user.firstname}</span>

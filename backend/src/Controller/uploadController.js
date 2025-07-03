@@ -4,9 +4,9 @@ const uploadImage = async (req, res) => {
   const userId = req.user.id;
   try {
     const result = await uploadService.uploadImageToCloudinary(req.file.path, userId);
-    res.json({ url: result.url });
+    res.status(200).json({ url: result.url });
   } catch (error) {
-    res.status(400).send('Error uploading and resizing file: ' + error.message);
+    res.status(500).send('Error uploading and resizing file: ' + error.message);
   }
 };
 const uploadToS3 = async (req, res) => {

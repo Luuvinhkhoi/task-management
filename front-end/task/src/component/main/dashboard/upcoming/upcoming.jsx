@@ -40,7 +40,7 @@ export const Upcoming= () => {
       </div>
       <div className='todayTaskList'>
          {filterTask.map(item=>
-            <div className='todayTaskListItem' onClick={()=>setIsClick(item.id)}>
+            <div key={item.id} className='todayTaskListItem' onClick={()=>setIsClick(item.id)}>
                 <div className='itemHeader'>
                     <div style={{fontWeight:'600'}}>{item.title}</div>
                     <div className='status-priority'>
@@ -55,7 +55,7 @@ export const Upcoming= () => {
                         {item.user.length>3?(
                                   <>
                                       {item.user.slice(2).map(member=>
-                                          <div>
+                                          <div key={member.id}>
                                               <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
                                           </div>
                                       )}
@@ -77,7 +77,7 @@ export const Upcoming= () => {
                                       </div>
                                   </>
                               ):(item.user.map(member=>
-                                  <div>
+                                  <div key={member.id}>
                                       <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'32px ', width: '32px '}} alt="Avatar" />
                                   </div>
                               ))

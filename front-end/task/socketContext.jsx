@@ -17,7 +17,6 @@ export const SocketProvider = ({ children }) => {
         const token = session.tokens?.idToken?.toString();
 
         if (!token) {
-          console.warn('No token available.');
           return;
         }
 
@@ -29,7 +28,6 @@ export const SocketProvider = ({ children }) => {
         setSocket(socketInstance);
 
         socketInstance.on('connect', () => {
-          console.log('Socket connected');
         });
 
         socketInstance.on('connect_error', (err) => {

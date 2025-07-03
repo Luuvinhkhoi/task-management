@@ -12,7 +12,11 @@
       "New project":"New project",
       "New task":"New task",
       "Task":"Task",
-      "Member":"Member"
+      "Member":"Member",
+      "role":"Your role:"
+    },
+    "notFound": {
+      "message": "The page you are looking for does not exist."
     },
     "createProject":{
       "head":"Create new project",

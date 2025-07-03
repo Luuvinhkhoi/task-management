@@ -12,7 +12,11 @@
       "New project":"Dự án mới",
       "New task":"Nhiệm vụ mới",
       "Task":"Nhiệm vụ",
-      "Member":"Thành viên"
+      "Member":"Thành viên",
+      "role":"Vai trò:"
+    },
+    "notFound": {
+      "message": "Trang bạn tìm không tồn tại."
     },
     "profile":{
       "profile":"Hồ sơ",

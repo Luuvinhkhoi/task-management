@@ -169,6 +169,7 @@ export const List = ()=>{
         return {
             ...task,
             members:taskMembers[index]?.map(mem => ({
+                id:mem.user.id,
                 firstname: mem.user.firstname,
                 lastname: mem.user.lastname,
                 avatar: mem.user.avatar,
@@ -498,7 +499,7 @@ export const List = ()=>{
                             {task.members.length>3?(
                                 <>
                                     {task.members.slice(2).map(member=>
-                                        <div>
+                                        <div key={member.id}>
                                             <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                         </div>
                                     )}
@@ -520,7 +521,7 @@ export const List = ()=>{
                                     </div>
                                 </>
                             ):(task.members.map(member=>
-                                <div>
+                                <div key={member.id}>
                                     <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                 </div>
                             ))
@@ -602,7 +603,7 @@ export const List = ()=>{
                     </div>
                 ):(taskDetail&&status&&priority?taskDetail.map(item=>{
                     return role=='viewer'?(
-                        <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
+                        <div key={item.id} className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
                         <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail'), setOverlay(false)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'4px 8px', fontSize:14}}>
@@ -685,7 +686,7 @@ export const List = ()=>{
                                 
                                 <div style={{maxHeight:'150px', overflowY:'scroll'}}>
                                     {taskDetailMembers.map(user=>
-                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                        <div key={user.id} style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
                                             <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'28px', height:'28px', borderRadius:'10rem'}}></img>
                                             <div>
                                                 <span>{user.firstname}</span>
@@ -741,7 +742,7 @@ export const List = ()=>{
                         </div>:<Comment role={role} socket={socket} taskId={item.id} assignedUserId={assignedUserId} projectId={id}></Comment>}
                     </div>
                     ):(
-                    <div className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
+                    <div key={item.id} className={`taskDetail-${taskDetailOpen?'active':'unActive'}`}>
                         <div className='close-button' onClick={()=>{setTaskDetailOpen(!taskDetailOpen), setIsOpenTab('Detail'), setOverlay(false)}}><X></X></div>
                         <div className='status-priority' style={{width: '250px'}}>
                             <div className={`priority-${priority.toLowerCase()}`} style={{padding:'unset'}}>
@@ -851,7 +852,7 @@ export const List = ()=>{
                                 ):(
                                 <div style={{maxHeight:'150px', overflowY:'scroll'}}>
                                     {taskDetailMembers.map(user=>
-                                        <div style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
+                                        <div key={user.id} style={{display:'flex', gap:'1rem', alignItems:'center', marginBottom:'1rem'}}>
                                             <img src={user.avatar?user.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{width:'32px', height:'32px', borderRadius:'10rem'}}></img>
                                             <div>
                                                 <span>{user.firstname}</span>

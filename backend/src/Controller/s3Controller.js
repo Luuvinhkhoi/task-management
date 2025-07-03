@@ -3,7 +3,7 @@ const generatePresignedUrl = async (req, res) => {
   const key = req.params[0];
   try {
     const url = await awsS3Service.getPresignedUrlForDownload(key);
-    res.json({ url });
+    res.status(200).json({ url });
   } catch (error) {
     console.error('Error generating presigned URL:', error);
     res.status(500).json({ error: 'Could not generate URL' });
@@ -14,9 +14,8 @@ const deleteAttachment=async(req, res)=>{
     const id=req.body.id
     const key = req.params[0];
     await awsS3Service.deleteFileFromS3(key, id);
-    res.json({ message: 'success'});
+    res.status(200).json({ message: 'success'});
   } catch (error) {
-    console.error('Error generating presigned URL:', error);
     res.status(500).json({ error: 'Could not generate URL' });
   }
 }

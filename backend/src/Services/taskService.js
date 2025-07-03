@@ -317,7 +317,6 @@ const updateTaskDetail= async (userId,id, title ,status, priority, description, 
     }
 }
 const deleteTask=async(userId,id)=>{
-    console.log(id)
     try{
         const checkProjectId=await db.Task.findByPk(id)
         const plainResult2=await checkProjectId.get({plain:true})

@@ -20,7 +20,7 @@ export const MiniUpcoming = ({socket}) => {
   const dispatch=useDispatch()
   useEffect(()=>{
     dispatch(getAllUpcomingTask())
-  },[])
+  },[]) 
   return (
     <div id='mini-upcoming'>
         <div className='upcomingTask-header'>
@@ -34,7 +34,7 @@ export const MiniUpcoming = ({socket}) => {
         </div>
         <div className='upcomingTask-list'>
             {upcomingTask.length>0? upcomingTask.slice(0,2).map(task=>
-              <div className='upcomingTask-item' onClick={()=>setIsClick(task.id)}>
+              <div key={task.id} className='upcomingTask-item' onClick={()=>setIsClick(task.id)}>
                   <div style={{display:'flex', gap:'1rem', alignContent:'center', justifyContent:'space-between'}} >
                     <h4>{task.title.length>30?task.title.slice(0,30)+'...':task.title}</h4>
                     <div style={{display:'flex', gap:'1rem'}}>
@@ -48,7 +48,7 @@ export const MiniUpcoming = ({socket}) => {
                         {task.user.length>3?(
                                   <>
                                       {task.user.slice(2).map(member=>
-                                          <div>
+                                          <div key={member.id}>
                                               <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                           </div>
                                       )}
@@ -70,7 +70,7 @@ export const MiniUpcoming = ({socket}) => {
                                       </div>
                                   </>
                               ):(task.user.map(member=>
-                                  <div>
+                                  <div key={member.id}>
                                       <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                   </div>
                               ))

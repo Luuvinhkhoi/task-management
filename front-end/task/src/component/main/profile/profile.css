@@ -152,7 +152,7 @@
 }
 @media screen and (max-width: 800px) {
     .profile {
-        height: calc(100vh - 160px - 69px) !important;
+        height: calc(100vh - 170px) !important;
     }
 }
 @media screen and (max-width: 600px) {

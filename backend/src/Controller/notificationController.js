@@ -11,7 +11,7 @@ const createNotification=async(req, res)=>{
 const getAllNotification=async(req, res)=>{
      try{
        const create = await notificationService.getAllNotification(req.user.id)
-       res.status(201).json(create)
+       res.status(200).json(create)
     } catch (error) {
        res.status(500).json({error: error.message})
     }
@@ -20,7 +20,7 @@ const updateNotificationStatus=async(req, res)=>{
      try{
        const {notiId}=req.body
        const create = await notificationService.updateNotificationStatus(req.user.id, notiId)
-       res.status(201).json({message:'success'})
+       res.status(200).json({message:'success'})
     } catch (error) {
        res.status(500).json({error: error.message})
     }

@@ -33,7 +33,7 @@ export const Task = ({socket}) =>{
           </div>
           <div className='task-list' style={{ display: todayTask.length > 0 ? 'grid' : 'block' }} >
             {todayTask.length>0 ? todayTask.slice(0,2).map(task=>
-              <div className='task-item' onClick={()=>setIsClick(task.id)}>
+              <div key={task.id} className='task-item' onClick={()=>setIsClick(task.id)}>
                   <div style={{display:'flex', gap:'1rem'}}>
                     <div className={`priority-${task.priority.toLowerCase()}`} style={{marginBottom:'.5rem'}}>{t(`list.priority.${task.priority}`)}</div>
                     <div style={{marginBottom:'.5rem'}} className={`status-${task.status.toLowerCase().replace(/\s/g, '')}`}>{t(`list.${task.status}`)}</div>
@@ -43,11 +43,11 @@ export const Task = ({socket}) =>{
                   </div>
                   <p style={{color:`${theme?'#fff':'rgb(75, 85, 99)'}`, marginBottom:'.25rem', textOverflow: 'ellipsis',  overflow: 'hidden',display: '-webkit-box', WebkitLineClamp: 1, WebkitBoxOrient: 'vertical',}}>{task.description}</p>
                   <div style={{display:'flex', justifyContent:'space-between', alignItems:'flex-start'}}>
-                    <div className='task-member' style={{display:'flex', gap:'.25rem'}}>
+                    <div  className='task-member' style={{display:'flex', gap:'.25rem'}}>
                         {task.user.length>3?(
                                   <>
                                       {task.user.slice(2).map(member=>
-                                          <div>
+                                          <div key={member.id}>
                                               <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px', width: '28px'}} alt="Avatar" />
                                           </div>
                                       )}
@@ -69,7 +69,7 @@ export const Task = ({socket}) =>{
                                       </div>
                                   </>
                               ):(task.user.map(member=>
-                                  <div>
+                                  <div key={member.id}>
                                       <img src={member.avatar? member.avatar:'https://cdn-icons-png.flaticon.com/512/3686/3686930.png'} style={{ borderRadius: '50%', height:'28px ', width: '28px '}} alt="Avatar" />
                                   </div>
                               ))

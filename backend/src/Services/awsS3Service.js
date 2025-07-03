@@ -21,7 +21,6 @@ const uploadFileToS3 = async (file, taskId) => {
   const fileStream = fs.createReadStream(file.path);
   const key = `uploads/${Date.now()}-${file.originalname}`;
   const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
-  console.log(originalName)
   const uploadParams = {
     Bucket: process.env.S3_BUCKET_NAME,
     Key: key,

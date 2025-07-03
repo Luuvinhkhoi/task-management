@@ -3,7 +3,6 @@ const baseUrl=
   import.meta.env.MODE=== "development"
     ? import.meta.env.VITE_BASE_URL_DEV
     : import.meta.env.VITE_BASE_URL_PROD;
-console.log('BASE_URL:', import.meta.env.VITE_BASE_URL_DEV);
 let task={
     async signIn(email, password){
         const token = await getJWT();
@@ -602,6 +601,10 @@ let task={
         const token = await getJWT();
         return fetch(`${baseUrl}/comment/${taskId}`, {
             method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
           }).then(response => {
             if (!response.ok) {
               throw new Error(`Request failed with status ${response.status}`);

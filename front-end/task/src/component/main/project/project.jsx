@@ -345,11 +345,11 @@ export const Project = ()=>{
              <div className='headerItem'>  
                 {role==='viewer'?(
                   <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
-                    <div style={{fontWeight:'500', fontSize:16}}>Your role: {role}</div>
+                    <div style={{fontWeight:'500', fontSize:16}}>{t("project.role")} {role}</div>
                   </div>
                 ):(
                   <div style={{display:'flex', gap:'1rem', alignItems:'center'}}>
-                    <div style={{fontWeight:'500', fontSize:16}}>Your role: {role}</div>
+                    <div style={{fontWeight:'500', fontSize:16}}>{t("project.role")} {role}</div>
                     <div className='create' onClick={()=>setTaskFormOpen(true)}>{t('project.New task')}</div>
                   </div>
                 )}
