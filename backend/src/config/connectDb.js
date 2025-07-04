@@ -1,7 +1,7 @@
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 const sequelize = new Sequelize('task', 'postgres', process.env.DATABASE_PASSWORD, {
-    host: 'localhost',
+    host:  process.env.DB_HOST,
     dialect: 'postgres'
 });
 const connection = async ()=>{

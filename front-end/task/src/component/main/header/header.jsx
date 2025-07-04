@@ -15,7 +15,6 @@ import { TaskDetail } from '../taskDetail/taskDetail'
 import { Notification } from './noti/noti'
 import { useSocket } from '../../../../socketContext'
 import { CircleUser, UserPen, LogOut, FolderOpenDot, ClipboardCheck,Bell, Dot, AlignJustify, } from 'lucide-react'
-import { IoGitMerge } from 'react-icons/io5'
 export const Header=({role, onToggleSidebar, onClose})=>{
     const dispatch=useDispatch()
     const socket = useSocket();
