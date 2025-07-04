@@ -47,14 +47,7 @@ const formFields = {
       order: 5,
       placeholder: "Confirm your password",
       label: "Confirm Password",
-      inputProps: { required: true },
-    },
-    username: {
-      order: 6,
-      // Ẩn trường username
-      style: { display: 'none' },
-      label:'',
-      inputProps: { type: "username", required: true },
+      inputProps: { type:'password', required: true },
     },
   },
 };
