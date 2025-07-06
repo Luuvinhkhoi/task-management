@@ -95,6 +95,7 @@
         "statusOverview":"Status Overview",
         "progress":"Progress",
         "seeAll":"See All",
+        "noProgress":"Project progress will appear here",
         "taskMessage": "You have {{count}} task today. Keep it up!",
         "taskMessage_plural": "You have {{count}} tasks today. Keep it up!",
         "noData":"Tasks assigned to you will appear here."

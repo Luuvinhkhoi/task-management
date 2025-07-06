@@ -91,10 +91,12 @@
     }
     ,
     "dashboard":{
+        "noData":"Nhiệm vụ được giao cho bạn sẽ xuất hiện tại đây",
         "todayTask":"Nhiệm vụ hôm nay",
         "upcomingTask":"Nhiệm vụ sắp tới",
         "statusOverview":"Tổng quan trạng thái",
         "progress":"Tiến độ",
+        "noProgress":"Tiến độ dự án sẽ xuất hiện tại đây",
         "seeAll":"Xem thêm",
         "taskMessage": "Bạn có {{count}} nhiệm vụ ngày hôm nay. Cố gắng lên!",
         "taskMessage_plural": "Bạn có {{count}} nhiệm vụ ngày hôm nay. Cố gắng lên!"

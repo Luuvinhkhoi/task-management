@@ -19,14 +19,24 @@ Amplify.configure({
 
 const formFields = {
   signUp: {
+    username: {
+      order: 0,
+      placeholder: "Enter your email address",
+      label: "Email",
+      inputProps: { 
+        type: "email", 
+        required: true,
+        autoComplete: "email"
+      },
+    },
     given_name: {
       order: 1,
       placeholder: "Enter your firstname",
-      label: "Firstname",
+      label: "Firstname", 
       inputProps: { required: true },
     },
     family_name: {
-      order: 2, // Đảm bảo lastname có order khác firstname
+      order: 2,
       placeholder: "Enter your lastname",
       label: "Lastname",
       inputProps: { required: true },
@@ -34,8 +44,12 @@ const formFields = {
     email: {
       order: 3,
       placeholder: "Enter your email address",
-      label: "Email",
-      inputProps: { type: "email", required: true },
+      label: "Email (Confirmation)",
+      inputProps: { 
+        type: "email", 
+        required: true,
+        autoComplete: "email"
+      },
     },
     password: {
       order: 4,
@@ -45,9 +59,9 @@ const formFields = {
     },
     confirm_password: {
       order: 5,
-      placeholder: "Confirm your password",
+      placeholder: "Confirm your password", 
       label: "Confirm Password",
-      inputProps: { type:'password', required: true },
+      inputProps: { type: "password", required: true },
     },
   },
 };

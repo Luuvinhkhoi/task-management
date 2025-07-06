@@ -12,12 +12,12 @@ const createUser=async(email, cognitoId , firstname, lastname)=>{
     const plainResult=await result.get({plain:true})
     await db.UserSetting.create({
         language:'English',
-        theme:'dark',
+        theme:'light',
         timezone:'Asia/Ho_Chi_Minh',
         userId:plainResult.id
     })
   } catch(error){
-    throw new Error(`check error ${error}`, error)
+    throw error
   }
 }
 const loginUser = async (email, password, done) => {

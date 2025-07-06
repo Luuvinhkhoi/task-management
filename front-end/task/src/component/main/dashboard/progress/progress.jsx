@@ -17,7 +17,9 @@ export const Progress = ({progress})=>{
             <div>{item.totalTask === 0 ? '0%' : Math.round((item.completeTask / item.totalTask) * 100) + '%'}</div>
           </div>
         </div>
-      ):null}
+      ):<div>
+          <p>{t('dashboard.noProgress')}</p>
+        </div>}
     </div>
   )
 }

@@ -14,6 +14,8 @@ import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next';
 import { fetchProjects } from '../../../store/project'
 import { RenderDropdown } from './optionMenu'
+import { getAllUpcomingTask } from '../../../store/upcomingTask'
+import { getAllTodayTask } from '../../../store/todayTask'
 import { fetchProgress } from '../../../store/progress'
 export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar, onClose })=>{
    let location=useLocation()
@@ -295,6 +297,9 @@ export const SideBar = ({role, isMobile, isSideBarOpen, onToggleSidebar, onClose
         await task.deleteProject(id)
         dispatch(fetchProjects())
         dispatch(fetchProgress())
+        dispatch(getAllTodayTask())
+        dispatch(getAllUpcomingTask())
+        navigate('/')
       } catch(error){
         setTimeout(()=>{setLoading(false),setError(true)},1000 )
       }

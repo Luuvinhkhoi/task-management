@@ -2,6 +2,8 @@ import { Outlet } from "react-router-dom"
 import { SideBar } from "./sidebar/sidebar"
 import { Header } from "./header/header"
 import { useEffect, useRef,useState } from "react"
+import { useDispatch } from "react-redux"
+import { getAllSetting } from "../../store/setting"
 import './main.css'
 import { SocketProvider } from "../../../socketContext"
 import task from "../../util/task"
@@ -9,9 +11,12 @@ export const Main = () =>{
   const SOCKET_URL =import.meta.env.VITE_SOCKET_URL || 'http://localhost:4001';
   const [socket, setSocket] = useState(null);
   const [role, setRole]=useState(null)
-   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const dispatch=useDispatch()
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
-
+  useEffect(() => {
+    dispatch(getAllSetting())
+  }, []);
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 1200);
