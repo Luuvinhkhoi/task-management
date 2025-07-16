@@ -23,19 +23,13 @@
         display: flex;
         flex-direction: column;
     }
-    .dashboard #row1{
-        display: block;
-    }
-    .dashboard #row2{
-        grid-template-columns: 1fr 1fr;
-
-    }
-    
 }
 @media screen and (max-width:779px) {
     .dashboard #row2{
         display: block;
         max-height: unset;
     }
-    
+    .dashboard #row1{
+        display: block;
+    }
 }

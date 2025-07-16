@@ -1,7 +1,7 @@
 @import url('../../../../theme.css');
 #task{
     background-color: var(--task-bg);
-    margin: 1rem 1rem 0.5rem 1rem;
+    margin: 1rem .5rem 0.5rem 1rem;
     padding: 1rem .5rem;
     border-radius: 1rem;
     max-height: 320px;
@@ -70,6 +70,12 @@
 @media screen and (max-width: 1279px) {
     #task{
         min-height: 300px;
+    }
+    
+}
+@media screen and (max-width: 779px) {
+    #task{
+        margin: 1rem 1rem .5rem 1rem;
     }
     
 }
