@@ -32,6 +32,9 @@ const uploadFileToS3 = async (file, taskId) => {
   await s3.send(command);
 
   const url= `https://${process.env.S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+  fs.unlink(file.path, (err) => {
+    if (err) console.error("Lỗi khi xóa file tạm:", err);
+  });
   await db.Attachment.create(
     {url: url, taskId:taskId, name: originalName}
   )

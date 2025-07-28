@@ -1,6 +1,6 @@
 const cloudinary = require('../config/cloudinary');
 const db = require('../Model/models');
-
+const fs = require("fs");
 const uploadImageToCloudinary = async (filePath, userId) => {
   return new Promise((resolve, reject) => {
     cloudinary.uploader.upload(filePath, async (err, result) => {
@@ -10,7 +10,10 @@ const uploadImageToCloudinary = async (filePath, userId) => {
         { avatar: result.url },
         { where: { id: userId } }
       );
-
+      // XÓA FILE TẠM
+      fs.unlink(filePath, (unlinkErr) => {
+        if (unlinkErr) console.error('Không xóa được file tạm:', unlinkErr);
+      });
       resolve(result);
     });
   });
