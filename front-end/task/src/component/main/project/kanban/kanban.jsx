@@ -1042,7 +1042,7 @@ const KanbanItem = ({ users,taskItem, projectId, formattedUsers, setFormatedUser
                             <div className='body-item'>
                                 <h4>{t("taskDetail.description")}</h4>
                                 <div>
-                                    <input value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></input>
+                                    <textarea value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></textarea>
                                 </div>
                             </div>
                             <div className='body-item'>

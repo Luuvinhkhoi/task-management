@@ -692,9 +692,8 @@ export const TaskDetail=({role, overlayId,setOverlayId,taskId, projectId})=>{
                         {isOpenTab==='Detail'?<div className='taskDetail-body'>
                             <div className='body-item' style={{padding:'1rem 1rem 0 1rem'}}>
                                 <h4>{t("taskDetail.description")}</h4>
-                                <div>
-                                    <textarea value={description} onChange={(e)=>setDescription(e.target.value)}  style={{border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></textarea>
-                                </div>
+                                <textarea value={description} onChange={(e)=>setDescription(e.target.value)}  style={{boxSizing: 'border-box',  wordWrap:'break-word',border: 'none',outline: 'none', boxShadow: 'none', width:'100%', fontSize:'16px'}}></textarea>
+                            
                             </div>
                             <div className='body-item'>
                                 <div style={{display:'flex', gap:'1rem'}}>
