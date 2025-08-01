@@ -410,7 +410,7 @@ export const Header=({role, onToggleSidebar, onClose})=>{
                                 <motion.div 
                                     ref={dropdownRef} 
                                 initial={{ height: 0, opacity: 0 }} 
-                                animate={{ height: "auto", opacity: 1 }} 
+                                animate={{ height: "auto", opacity: 1}} 
                                 exit={{ opacity: 0, height: 0 }}
                                 transition={{ duration: 0.3, ease: "easeOut" }}
                                 className='profileDropDown'

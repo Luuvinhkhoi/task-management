@@ -66,7 +66,7 @@
     border-radius: .5rem;
     border: 2px solid var(--border);
     z-index: 101;
-    min-width: 250px
+    min-width: 200px
 }
 .header #authOption{
     display: flex;
@@ -156,7 +156,7 @@
         padding: 0rem 1.5rem 1rem 1.5rem;
     }
     .header .profileDropDown{
-        right: 50px;
+        right: 30px;
         top: 4rem;
     }
 }
